@@ -1,0 +1,36 @@
+module Conway exposing (main)
+
+import Debug
+import Html exposing (Html)
+
+type Msg = Nothing
+
+type alias Model =
+    {
+    }
+
+viewState : Model -> Html Msg
+viewState model =
+    Html.text <| "Placeholder"
+
+initialState : ( Model, Cmd Msg )
+initialState = ( Model, Cmd.none )
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+updateState : Msg -> Model -> (Model, Cmd Msg)
+updateState msg model =
+    case msg of
+        _ -> Debug.log "Implement me!" (model, Cmd.none)
+
+main: Program Never Model Msg
+main =
+    Html.program
+        { init = initialState
+        , update = updateState
+        , subscriptions = subscriptions
+        , view = viewState
+        }
+
