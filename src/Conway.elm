@@ -2,6 +2,7 @@ module Conway exposing (main)
 
 import Debug
 import Html exposing (Html)
+import List
 
 type Msg = Nothing
 
@@ -12,15 +13,26 @@ type CellState =
 
 
 type alias Model =
-    {
+    { grid : List (List CellState)
     }
+
+type alias Dimension =
+    { w: Int    -- width
+    , h: Int    -- height
+    }
+    
+gridSize = Dimension 10 10
 
 viewState : Model -> Html Msg
 viewState model =
     Html.text <| "Placeholder"
 
-initialState : ( Model, Cmd Msg )
-initialState = ( Model, Cmd.none )
+initialState : (Model, Cmd Msg )
+initialState =
+    ( List.repeat gridSize.w Empty
+        |> List.repeat gridSize.h
+        |> Model
+    , Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
