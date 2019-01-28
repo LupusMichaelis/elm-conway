@@ -69,7 +69,7 @@ getStateOfCellTests =
                 in
                     Grid.getStateBetween
                         (dim)
-                        (Grid.makeGrid dim (\_ -> Grid.Empty))
+                        (Grid.make dim (\_ -> Grid.Empty))
                         (Grid.makePosition 0 0)
                     |> Expect.equal Grid.Empty
             )
@@ -81,7 +81,7 @@ getStateOfCellTests =
                 in
                     Grid.getStateBetween
                         (dim)
-                        (Grid.makeGrid dim (\_ -> Grid.Live))
+                        (Grid.make dim (\_ -> Grid.Live))
                         (Grid.makePosition 0 0)
                     |> Expect.equal Grid.Live
             )
@@ -93,7 +93,7 @@ getStateOfCellTests =
                 in
                     Grid.getStateBetween
                         (dim)
-                        (Grid.makeGrid dim (\_ -> Grid.Live))
+                        (Grid.make dim (\_ -> Grid.Live))
                         (Grid.makePosition 10 10)
                     |> Expect.equal Grid.Empty
             )
