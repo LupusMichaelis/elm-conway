@@ -4,7 +4,7 @@ module Grid exposing
     , Grid
 
     , isWithinDimension
-    , getStateBetween
+    , getStateAt
     , make
     , makeDimension
     , makeFromList
@@ -62,8 +62,8 @@ isWithinDimension d p =
         && d.h > p.t
         && d.w > p.l
 
-getStateBetween: Dimension -> Grid -> Position -> CellState
-getStateBetween dim grid position =
+getStateAt: Dimension -> Grid -> Position -> CellState
+getStateAt dim grid position =
     let
         maybePositon: Maybe CellState
         maybePositon =
