@@ -16,11 +16,11 @@ viewState : Model -> Html Msg
 viewState model =
     Html.text <| "Placeholder"
 
-gridSize = Grid.makeGridDimension 10 10
+gridSize = Grid.makeDimension 10 10
 
 initialState : (Model, Cmd Msg )
 initialState =
-    ( Grid.makeGrid gridSize Grid.Empty
+    ( Grid.make gridSize Grid.Empty
         |> Model
     , Cmd.none
     )

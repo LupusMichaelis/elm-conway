@@ -2,8 +2,8 @@ module Grid exposing
     ( CellState(..)
     , Dimension
     , Grid
-    , makeGrid
-    , makeGridDimension
+    , make
+    , makeDimension
     )
 
 import Array exposing (Array)
@@ -21,10 +21,10 @@ type alias Dimension =
 type alias Grid =
     Array CellState
 
-makeGridDimension: Int -> Int -> Dimension
-makeGridDimension width height =
+makeDimension: Int -> Int -> Dimension
+makeDimension width height =
     Dimension width height
 
-makeGrid: Dimension -> CellState -> Grid
-makeGrid d e =
+make: Dimension -> CellState -> Grid
+make d e =
      Array.repeat (d.w * d.h) e
