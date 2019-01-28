@@ -6,6 +6,8 @@ module Grid exposing
     , makeGridDimension
     )
 
+import Array exposing (Array)
+
 type CellState =
     Live            -- happy cell shanting around
     | Deceased      -- a corpse's lying there
@@ -17,7 +19,7 @@ type alias Dimension =
     }
 
 type alias Grid =
-    List CellState
+    Array CellState
 
 makeGridDimension: Int -> Int -> Dimension
 makeGridDimension width height =
@@ -25,4 +27,4 @@ makeGridDimension width height =
 
 makeGrid: Dimension -> CellState -> Grid
 makeGrid d e =
-     List.repeat (d.w * d.h) e
+     Array.repeat (d.w * d.h) e
