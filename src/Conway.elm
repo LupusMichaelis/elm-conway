@@ -5,6 +5,12 @@ import Html exposing (Html)
 
 type Msg = Nothing
 
+type CellState =
+    Live            -- happy cell shanting around
+    | Deceased      -- a corpse's lying there
+    | Empty         -- no live cell's present
+
+
 type alias Model =
     {
     }
