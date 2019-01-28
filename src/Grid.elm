@@ -4,8 +4,10 @@ module Grid exposing
     , Grid
 
     , isWithinDimension
+    , getStateBetween
     , make
     , makeDimension
+    , makeGrid
     , makePosition
     )
 
@@ -28,6 +30,11 @@ type alias Position =
 
 type alias Grid =
     Array CellState
+
+makeGrid: Dimension -> (Int -> CellState) -> Grid
+makeGrid dim =
+    Array.initialize
+        ( dim.w * dim.h)
 
 makeDimension: Int -> Int -> Dimension
 makeDimension height width =
