@@ -7,6 +7,7 @@ module Grid exposing
     , getStateBetween
     , make
     , makeDimension
+    , makeFromList
     , makePosition
     )
 
@@ -34,6 +35,17 @@ make: Dimension -> (Int -> CellState) -> Grid
 make dim =
     Array.initialize
         ( dim.w * dim.h)
+
+sizeOfDim: Dimension -> Int
+sizeOfDim dim =
+    dim.w * dim.h
+
+makeFromList: Dimension -> List CellState -> Maybe Grid
+makeFromList dim list =
+    if sizeOfDim dim /= List.length list then
+        Nothing
+    else
+        Just <| Array.fromList list
 
 makeDimension: Int -> Int -> Dimension
 makeDimension =

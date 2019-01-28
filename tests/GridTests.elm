@@ -1,6 +1,7 @@
 module GridTests exposing
     ( isWithinDimensionTests
     , getStateOfCellTests
+    , testMakeGridFromStates
     )
 
 import Grid
@@ -96,5 +97,38 @@ getStateOfCellTests =
                         (Grid.make dim (\_ -> Grid.Live))
                         (Grid.makePosition 10 10)
                     |> Expect.equal Grid.Empty
+            )
+        ]
+
+testMakeGridFromStates : Test
+testMakeGridFromStates =
+    describe "Test grid making from a list of states"
+        [ test "Test same size"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 1 1
+
+                    list: List Grid.CellState
+                    list =
+                        [ Grid.Empty ]
+                in
+                    Grid.makeFromList dim list
+                        |> Expect.notEqual Nothing
+            )
+        , test "Test different size"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 1 2
+
+                    list: List Grid.CellState
+                    list =
+                        [ Grid.Empty ]
+                in
+                    Grid.makeFromList dim list
+                        |> Expect.equal Nothing
             )
         ]
