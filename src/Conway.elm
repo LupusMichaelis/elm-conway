@@ -10,20 +10,23 @@ type Msg = Nothing
 
 type alias Model =
     { grid : Grid.Grid
+    , dimension : Grid.Dimension
     }
 
 viewState : Model -> Html Msg
 viewState model =
     Html.text <| "Placeholder"
 
-gridSize = Grid.makeDimension 10 10
-
 initialState : (Model, Cmd Msg )
 initialState =
-    ( Grid.make gridSize Grid.Empty
-        |> Model
-    , Cmd.none
-    )
+    let
+        gridSize = Grid.makeDimension 10 10
+    in
+        ( Model
+            (Grid.make gridSize Grid.Empty)
+            (gridSize)
+        , Cmd.none
+        )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
