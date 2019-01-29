@@ -3,7 +3,8 @@ module GridTests exposing
     , getStateOfCellTests
     , testMakeGridFromStates
     , testNeighbourhood
-    , testCoordinateTranslation
+    , testCoordinateFlattening
+    , testCoordinateWidening
     )
 
 import Grid
@@ -242,9 +243,9 @@ testNeighbourhood =
             )
         ]
 
-testCoordinateTranslation : Test
-testCoordinateTranslation =
-    describe "Test coordinate system"
+testCoordinateFlattening : Test
+testCoordinateFlattening =
+    describe "Test coordinate system flattening"
         [ test "Test unicellular actual flatten position"
             (\_ ->
                 let
@@ -288,5 +289,101 @@ testCoordinateTranslation =
                     Grid.positionToFlat dim
                         (Grid.makePosition 2 4)
                         |> Expect.equal Nothing
+            )
+        ]
+
+testCoordinateWidening : Test
+testCoordinateWidening =
+    describe "Test coordinate system widening"
+        [ test "Test unicellular actual position"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 1 1
+                in
+                    Grid.positionFromFlat dim 0
+                        |> Expect.equal
+                            (Just (Grid.makePosition 0 0))
+            )
+        , test "Test unicellular when requesting outrange coordinates"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 1 1
+                in
+                    Grid.positionFromFlat dim 10
+                        |> Expect.equal Nothing
+            )
+        , test "Test multicellular inrange flatten position"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 3 3
+                in
+                    Grid.positionFromFlat dim 8
+                        |> Expect.equal (Just (Grid.makePosition 2 2))
+            )
+        , test "Test multicellular when requiring outrange coordinates"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 3 3
+                in
+                    Grid.positionFromFlat dim 15
+                        |> Expect.equal Nothing
+            )
+        , test "Test multicellular in grid (100 50) coordinates (2 55) from flatten (255)"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 100 50
+                in
+                    Grid.positionFromFlat dim 255
+                        |> Expect.equal (Just (Grid.makePosition 2 55))
+            )
+        , test "Test multicellular in grid (100 50) coordinates (2 0) from flatten (200)"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 100 50
+                in
+                    Grid.positionFromFlat dim 200
+                        |> Expect.equal (Just (Grid.makePosition 2 0))
+            )
+        , test "Test multicellular in grid (100 50) coordinates (1 99) from flatten (199)"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 100 50
+                in
+                    Grid.positionFromFlat dim 199
+                        |> Expect.equal (Just (Grid.makePosition 1 99))
+            )
+        , test "Test multicellular in grid (100 50) coordinates (2 1) from flatten (201)"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 100 50
+                in
+                    Grid.positionFromFlat dim 201
+                        |> Expect.equal (Just (Grid.makePosition 2 1))
+            )
+        , test "Test multicellular in grid (100 50) coordinates (1 98) from flatten (198)"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 100 50
+                in
+                    Grid.positionFromFlat dim 198
+                        |> Expect.equal (Just (Grid.makePosition 1 98))
             )
         ]

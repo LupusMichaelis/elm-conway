@@ -12,6 +12,7 @@ module Grid exposing
     , makeFromList
     , makePosition
     , positionToFlat
+    , positionFromFlat
     )
 
 import Array exposing (Array)
@@ -111,3 +112,12 @@ positionToFlat dim pos =
         Nothing
     else
         Just (pos.t * dim.h + pos.l)
+
+positionFromFlat: Dimension -> Int -> Maybe Position
+positionFromFlat dim flat =
+    if flat < getArea dim then
+        Just (Position
+                (flat // dim.h)
+                (flat % dim.h))
+    else
+        Nothing
