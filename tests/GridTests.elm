@@ -3,6 +3,7 @@ module GridTests exposing
     , getStateOfCellTests
     , testMakeGridFromStates
     , testNeighbourhood
+    , testCoordinateTranslation
     )
 
 import Grid
@@ -238,5 +239,54 @@ testNeighbourhood =
                 in
                     neighbours
                         |> Expect.equal expected
+            )
+        ]
+
+testCoordinateTranslation : Test
+testCoordinateTranslation =
+    describe "Test coordinate system"
+        [ test "Test unicellular actual flatten position"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 1 1
+                in
+                    Grid.positionToFlat dim
+                        (Grid.makePosition 0 0)
+                        |> Expect.equal (Just 0)
+            )
+        , test "Test unicellular when requesting outrange coordinates"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 1 1
+                in
+                    Grid.positionToFlat dim
+                        (Grid.makePosition 1 0)
+                        |> Expect.equal Nothing
+            )
+        , test "Test multicellular inrange flatten position"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 3 3
+                in
+                    Grid.positionToFlat dim
+                        (Grid.makePosition 2 2)
+                        |> Expect.equal (Just 8)
+            )
+        , test "Test multicellular when requiring outrange coordinates"
+            (\_ ->
+                let
+                    dim: Grid.Dimension
+                    dim =
+                        Grid.makeDimension 3 3
+                in
+                    Grid.positionToFlat dim
+                        (Grid.makePosition 2 4)
+                        |> Expect.equal Nothing
             )
         ]

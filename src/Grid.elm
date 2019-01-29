@@ -11,6 +11,7 @@ module Grid exposing
     , makeDimension
     , makeFromList
     , makePosition
+    , positionToFlat
     )
 
 import Array exposing (Array)
@@ -71,20 +72,21 @@ isWithinDimension d p =
 getStateAt: Grid -> Position -> CellState
 getStateAt grid position =
     let
-        maybePositon: Maybe CellState
-        maybePositon =
+        maybePosition: Maybe Position
+        maybePosition =
             if isWithinDimension grid.dimension position then
-                Array.get
-                    (positionToFlat grid.dimension position)
-                    (grid.flatten)
+                Just position
             else
                 Nothing
+
     in
-        case maybePositon of
-            Nothing ->
-                Empty
-            Just state ->
-                state
+        positionToFlat grid.dimension position
+            |> Maybe.andThen
+                (\pos -> Array.get
+                    pos
+                    grid.flatten
+                )
+            |> Maybe.withDefault Empty
 
 -- that's BS, should be able to make that with a turtle and distance mesurement
 getNeighbourPositions: Dimension -> Position -> Array Position
@@ -103,6 +105,9 @@ getNeighbourPositions dim p =
         |> List.filter (isWithinDimension dim)
         |> Array.fromList
 
-positionToFlat: Dimension -> Position -> Int
+positionToFlat: Dimension -> Position -> Maybe Int
 positionToFlat dim pos =
-    pos.t * dim.h + pos.l
+    if pos.t >= dim.h || pos.l >= dim.w then
+        Nothing
+    else
+        Just (pos.t * dim.h + pos.l)
