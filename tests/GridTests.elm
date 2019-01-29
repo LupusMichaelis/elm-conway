@@ -8,6 +8,8 @@ module GridTests exposing
     )
 
 import Grid
+import Grid.Cell
+
 import Array
 
 import Expect exposing (Expectation)
@@ -73,9 +75,9 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (Grid.make dim (\_ -> Grid.Empty))
+                        (Grid.make dim (\_ -> Grid.Cell.Empty))
                         (Grid.makePosition 0 0)
-                    |> Expect.equal Grid.Empty
+                    |> Expect.equal Grid.Cell.Empty
             )
         , test "Test the unique cell is alive!"
             (\_ ->
@@ -84,9 +86,9 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (Grid.make dim (\_ -> Grid.Live))
+                        (Grid.make dim (\_ -> Grid.Cell.Live))
                         (Grid.makePosition 0 0)
-                    |> Expect.equal Grid.Live
+                    |> Expect.equal Grid.Cell.Live
             )
         , test "Test the outer cell is empty!"
             (\_ ->
@@ -95,9 +97,9 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (Grid.make dim (\_ -> Grid.Live))
+                        (Grid.make dim (\_ -> Grid.Cell.Live))
                         (Grid.makePosition 10 10)
-                    |> Expect.equal Grid.Empty
+                    |> Expect.equal Grid.Cell.Empty
             )
         ]
 
@@ -113,7 +115,7 @@ testMakeGridFromStates =
 
                     list: List Grid.CellState
                     list =
-                        [ Grid.Empty ]
+                        [ Grid.Cell.Empty ]
                 in
                     Grid.makeFromList dim list
                         |> Expect.notEqual Nothing
@@ -127,7 +129,7 @@ testMakeGridFromStates =
 
                     list: List Grid.CellState
                     list =
-                        [ Grid.Empty ]
+                        [ Grid.Cell.Empty ]
                 in
                     Grid.makeFromList dim list
                         |> Expect.equal Nothing
@@ -144,7 +146,7 @@ testNeighbourhood =
                     grid =
                         Grid.make
                             (Grid.makeDimension 1 1)
-                            (\_ -> Grid.Empty)
+                            (\_ -> Grid.Cell.Empty)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -162,7 +164,7 @@ testNeighbourhood =
                     grid =
                         Grid.make
                             (Grid.makeDimension 10 10)
-                            (\_ -> Grid.Empty)
+                            (\_ -> Grid.Cell.Empty)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -188,7 +190,7 @@ testNeighbourhood =
                     grid =
                         Grid.make
                             (Grid.makeDimension 10 10)
-                            (\_ -> Grid.Empty)
+                            (\_ -> Grid.Cell.Empty)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -219,7 +221,7 @@ testNeighbourhood =
                     grid =
                         Grid.make
                             (Grid.makeDimension 10 10)
-                            (\_ -> Grid.Empty)
+                            (\_ -> Grid.Cell.Empty)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -383,7 +385,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 100 50
                 in
-                    Grid.positionFromFlat dim 198
+                    Grid.convertPositionFromFlat dim 198
                         |> Expect.equal (Just (Grid.makePosition 1 98))
             )
         ]

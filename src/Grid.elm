@@ -1,6 +1,6 @@
 module Grid exposing
     -- types defined in this module
-    ( CellState(..)
+    ( CellState
     , Grid
 
     -- exposing imported types
@@ -19,16 +19,13 @@ module Grid exposing
     , makePosition
     )
 
+import Grid.Cell exposing (State(..))
 import Grid.Dimension exposing (Dimension)
 import Grid.Position exposing (Position)
 
 import Array exposing (Array)
 
-type CellState =
-    Live            -- happy cell shanting around
-    | Deceased      -- a corpse's lying there
-    | Empty         -- no live cell's present
-
+type alias CellState = Grid.Cell.State
 type alias Dimension = Grid.Dimension.Dimension
 type alias Position = Grid.Position.Position
 
