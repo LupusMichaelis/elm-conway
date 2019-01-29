@@ -174,3 +174,26 @@ getStatesFromPositions grid positions =
 getStatesFromFlattenPositions: Grid -> Array Int -> Array CellState
 getStatesFromFlattenPositions grid positions =
     Array.map (getStateAtFlat grid) positions
+
+fateOf: Grid -> Int -> CellState -> CellState
+fateOf grid pos currentCellState =
+    let
+        neighbourStates: Array CellState
+        neighbourStates =
+            getNeighbourStatesFromFlattenPosition grid pos
+    in
+        Grid.Cell.fateOf currentCellState neighbourStates
+
+
+-- RUN FORREST! RUUUUUUN!
+
+run: Grid -> Grid
+run currentGrid =
+    let
+        fateAt: Int -> CellState -> CellState
+        fateAt =
+            fateOf currentGrid
+    in
+        Grid
+            currentGrid.dimension
+            (Array.indexedMap fateAt currentGrid.flatten)
