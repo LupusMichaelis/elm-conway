@@ -2,9 +2,11 @@ module Grid exposing
     ( CellState(..)
     , Dimension
     , Grid
+    , Position
 
     , isWithinDimension
     , getStateAt
+    , getNeighbourPositions
     , make
     , makeDimension
     , makeFromList
@@ -83,3 +85,20 @@ getStateAt grid position =
                 Empty
             Just state ->
                 state
+
+-- that's BS, should be able to make that with a turtle and distance mesurement
+getNeighbourPositions: Dimension -> Position -> Array Position
+getNeighbourPositions dim p =
+    [ { p | t = p.t - 1, l = p.l - 1 }
+    , { p | t = p.t - 1 }
+    , { p | t = p.t - 1, l = p.l + 1 }
+
+    , { p | t = p.t, l = p.l - 1 }
+    , { p | t = p.t, l = p.l + 1 }
+
+    , { p | t = p.t + 1, l = p.l - 1 }
+    , { p | t = p.t + 1 }
+    , { p | t = p.t + 1, l = p.l + 1 }
+    ]
+        |> List.filter (isWithinDimension dim)
+        |> Array.fromList

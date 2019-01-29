@@ -2,9 +2,11 @@ module GridTests exposing
     ( isWithinDimensionTests
     , getStateOfCellTests
     , testMakeGridFromStates
+    , testNeighbourhood
     )
 
 import Grid
+import Array
 
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
@@ -127,5 +129,114 @@ testMakeGridFromStates =
                 in
                     Grid.makeFromList dim list
                         |> Expect.equal Nothing
+            )
+        ]
+
+testNeighbourhood : Test
+testNeighbourhood =
+    describe "Test neighbourhood"
+        [ test "Test unicellular"
+            (\_ ->
+                let
+                    grid: Grid.Grid
+                    grid =
+                        Grid.make
+                            (Grid.makeDimension 1 1)
+                            (\_ -> Grid.Empty)
+
+                    neighbours: Array.Array Grid.Position
+                    neighbours =
+                        Grid.getNeighbourPositions
+                            (grid.dimension)
+                            (Grid.makePosition 0 0)
+                in
+                    neighbours
+                        |> Expect.equal (Array.fromList [])
+            )
+        , test "Test multicellular at origin"
+            (\_ ->
+                let
+                    grid: Grid.Grid
+                    grid =
+                        Grid.make
+                            (Grid.makeDimension 10 10)
+                            (\_ -> Grid.Empty)
+
+                    neighbours: Array.Array Grid.Position
+                    neighbours =
+                        Grid.getNeighbourPositions
+                            (grid.dimension)
+                            (Grid.makePosition 0 0)
+
+                    expected: Array.Array Grid.Position
+                    expected =
+                        []  -- order matters
+                            |> (::) (Grid.makePosition 1 1) -- third
+                            |> (::) (Grid.makePosition 1 0) -- second
+                            |> (::) (Grid.makePosition 0 1) -- first
+                            |> Array.fromList
+                in
+                    neighbours
+                        |> Expect.equal expected
+            )
+        , test "Test multicellular in middle-ish"
+            (\_ ->
+                let
+                    grid: Grid.Grid
+                    grid =
+                        Grid.make
+                            (Grid.makeDimension 10 10)
+                            (\_ -> Grid.Empty)
+
+                    neighbours: Array.Array Grid.Position
+                    neighbours =
+                        Grid.getNeighbourPositions
+                            (grid.dimension)
+                            (Grid.makePosition 5 5)
+
+                    expected: Array.Array Grid.Position
+                    expected =
+                        []  -- order matters
+                            |> (::) (Grid.makePosition 6 6)
+                            |> (::) (Grid.makePosition 6 5)
+                            |> (::) (Grid.makePosition 6 4)
+                            |> (::) (Grid.makePosition 5 6)
+                            |> (::) (Grid.makePosition 5 4)
+                            |> (::) (Grid.makePosition 4 6)
+                            |> (::) (Grid.makePosition 4 5)
+                            |> (::) (Grid.makePosition 4 4)
+                            |> Array.fromList
+                in
+                    neighbours
+                        |> Expect.equal expected
+            )
+        , test "Test multicellular at end of space"
+            (\_ ->
+                let
+                    grid: Grid.Grid
+                    grid =
+                        Grid.make
+                            (Grid.makeDimension 10 10)
+                            (\_ -> Grid.Empty)
+
+                    neighbours: Array.Array Grid.Position
+                    neighbours =
+                        Grid.getNeighbourPositions
+                            (grid.dimension)
+                            (Grid.makePosition
+                                (grid.dimension.w - 1)
+                                (grid.dimension.h - 1)
+                            )
+
+                    expected: Array.Array Grid.Position
+                    expected =
+                        []  -- order matters
+                            |> (::) (Grid.makePosition 9 8) -- third
+                            |> (::) (Grid.makePosition 8 9) -- second
+                            |> (::) (Grid.makePosition 8 8) -- first
+                            |> Array.fromList
+                in
+                    neighbours
+                        |> Expect.equal expected
             )
         ]
