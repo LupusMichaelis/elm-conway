@@ -75,7 +75,7 @@ getStateAt grid position =
         maybePositon =
             if isWithinDimension grid.dimension position then
                 Array.get
-                    (position.t * grid.dimension.h + position.l)
+                    (positionToFlat grid.dimension position)
                     (grid.flatten)
             else
                 Nothing
@@ -102,3 +102,7 @@ getNeighbourPositions dim p =
     ]
         |> List.filter (isWithinDimension dim)
         |> Array.fromList
+
+positionToFlat: Dimension -> Position -> Int
+positionToFlat dim pos =
+    pos.t * dim.h + pos.l
