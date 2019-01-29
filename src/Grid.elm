@@ -29,12 +29,16 @@ type alias Position =
     }
 
 type alias Grid =
-    Array CellState
+    { dimension: Dimension
+    , flatten: Array CellState
+    }
 
 make: Dimension -> (Int -> CellState) -> Grid
-make dim =
-    Array.initialize
-        ( dim.w * dim.h)
+make dim gen =
+    Grid
+        (dim)
+        (Array.initialize
+            ( dim.w * dim.h) gen)
 
 getArea: Dimension -> Int
 getArea dim =
@@ -45,7 +49,7 @@ makeFromList dim list =
     if getArea dim /= List.length list then
         Nothing
     else
-        Just <| Array.fromList list
+        Just <| Grid dim <| Array.fromList list
 
 makeDimension: Int -> Int -> Dimension
 makeDimension =
@@ -62,15 +66,15 @@ isWithinDimension d p =
         && d.h > p.t
         && d.w > p.l
 
-getStateAt: Dimension -> Grid -> Position -> CellState
-getStateAt dim grid position =
+getStateAt: Grid -> Position -> CellState
+getStateAt grid position =
     let
         maybePositon: Maybe CellState
         maybePositon =
-            if isWithinDimension dim position then
+            if isWithinDimension grid.dimension position then
                 Array.get
-                    (position.t * dim.h + position.l)
-                    (grid)
+                    (position.t * grid.dimension.h + position.l)
+                    (grid.flatten)
             else
                 Nothing
     in

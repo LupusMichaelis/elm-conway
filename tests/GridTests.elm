@@ -69,7 +69,6 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (dim)
                         (Grid.make dim (\_ -> Grid.Empty))
                         (Grid.makePosition 0 0)
                     |> Expect.equal Grid.Empty
@@ -81,7 +80,6 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (dim)
                         (Grid.make dim (\_ -> Grid.Live))
                         (Grid.makePosition 0 0)
                     |> Expect.equal Grid.Live
@@ -93,7 +91,6 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (dim)
                         (Grid.make dim (\_ -> Grid.Live))
                         (Grid.makePosition 10 10)
                     |> Expect.equal Grid.Empty
