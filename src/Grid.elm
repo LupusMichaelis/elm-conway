@@ -8,6 +8,8 @@ module Grid exposing
     , Position
 
     -- functions defined here
+    , convertPositionToFlat
+    , convertPositionFromFlat
     , isWithinDimension
     , getStateAt
     , getNeighbourPositions
@@ -15,8 +17,6 @@ module Grid exposing
     , makeDimension
     , makeFromList
     , makePosition
-    , positionToFlat
-    , positionFromFlat
     )
 
 import Grid.Dimension exposing (Dimension)
@@ -75,7 +75,7 @@ getStateAt grid position =
                 Nothing
 
     in
-        positionToFlat grid.dimension position
+        convertPositionToFlat grid.dimension position
             |> Maybe.andThen
                 (\pos -> Array.get
                     pos
@@ -100,15 +100,15 @@ getNeighbourPositions dim p =
         |> List.filter (isWithinDimension dim)
         |> Array.fromList
 
-positionToFlat: Dimension -> Position -> Maybe Int
-positionToFlat dim pos =
+convertPositionToFlat: Dimension -> Position -> Maybe Int
+convertPositionToFlat dim pos =
     if pos.t >= dim.h || pos.l >= dim.w then
         Nothing
     else
         Just (pos.t * dim.h + pos.l)
 
-positionFromFlat: Dimension -> Int -> Maybe Position
-positionFromFlat dim flat =
+convertPositionFromFlat: Dimension -> Int -> Maybe Position
+convertPositionFromFlat dim flat =
     if flat < Grid.Dimension.getArea dim then
         Just (Position
                 (flat // dim.h)

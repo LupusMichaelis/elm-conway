@@ -253,7 +253,7 @@ testCoordinateFlattening =
                     dim =
                         Grid.makeDimension 1 1
                 in
-                    Grid.positionToFlat dim
+                    Grid.convertPositionToFlat dim
                         (Grid.makePosition 0 0)
                         |> Expect.equal (Just 0)
             )
@@ -264,7 +264,7 @@ testCoordinateFlattening =
                     dim =
                         Grid.makeDimension 1 1
                 in
-                    Grid.positionToFlat dim
+                    Grid.convertPositionToFlat dim
                         (Grid.makePosition 1 0)
                         |> Expect.equal Nothing
             )
@@ -275,7 +275,7 @@ testCoordinateFlattening =
                     dim =
                         Grid.makeDimension 3 3
                 in
-                    Grid.positionToFlat dim
+                    Grid.convertPositionToFlat dim
                         (Grid.makePosition 2 2)
                         |> Expect.equal (Just 8)
             )
@@ -286,7 +286,7 @@ testCoordinateFlattening =
                     dim =
                         Grid.makeDimension 3 3
                 in
-                    Grid.positionToFlat dim
+                    Grid.convertPositionToFlat dim
                         (Grid.makePosition 2 4)
                         |> Expect.equal Nothing
             )
@@ -302,7 +302,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 1 1
                 in
-                    Grid.positionFromFlat dim 0
+                    Grid.convertPositionFromFlat dim 0
                         |> Expect.equal
                             (Just (Grid.makePosition 0 0))
             )
@@ -313,7 +313,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 1 1
                 in
-                    Grid.positionFromFlat dim 10
+                    Grid.convertPositionFromFlat dim 10
                         |> Expect.equal Nothing
             )
         , test "Test multicellular inrange flatten position"
@@ -323,7 +323,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 3 3
                 in
-                    Grid.positionFromFlat dim 8
+                    Grid.convertPositionFromFlat dim 8
                         |> Expect.equal (Just (Grid.makePosition 2 2))
             )
         , test "Test multicellular when requiring outrange coordinates"
@@ -333,7 +333,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 3 3
                 in
-                    Grid.positionFromFlat dim 15
+                    Grid.convertPositionFromFlat dim 15
                         |> Expect.equal Nothing
             )
         , test "Test multicellular in grid (100 50) coordinates (2 55) from flatten (255)"
@@ -343,7 +343,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 100 50
                 in
-                    Grid.positionFromFlat dim 255
+                    Grid.convertPositionFromFlat dim 255
                         |> Expect.equal (Just (Grid.makePosition 2 55))
             )
         , test "Test multicellular in grid (100 50) coordinates (2 0) from flatten (200)"
@@ -353,7 +353,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 100 50
                 in
-                    Grid.positionFromFlat dim 200
+                    Grid.convertPositionFromFlat dim 200
                         |> Expect.equal (Just (Grid.makePosition 2 0))
             )
         , test "Test multicellular in grid (100 50) coordinates (1 99) from flatten (199)"
@@ -363,7 +363,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 100 50
                 in
-                    Grid.positionFromFlat dim 199
+                    Grid.convertPositionFromFlat dim 199
                         |> Expect.equal (Just (Grid.makePosition 1 99))
             )
         , test "Test multicellular in grid (100 50) coordinates (2 1) from flatten (201)"
@@ -373,7 +373,7 @@ testCoordinateWidening =
                     dim =
                         Grid.makeDimension 100 50
                 in
-                    Grid.positionFromFlat dim 201
+                    Grid.convertPositionFromFlat dim 201
                         |> Expect.equal (Just (Grid.makePosition 2 1))
             )
         , test "Test multicellular in grid (100 50) coordinates (1 98) from flatten (198)"
