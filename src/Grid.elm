@@ -66,6 +66,10 @@ isWithinDimension d p =
         && d.h > p.t
         && d.w > p.l
 
+isWithinFlattenDimension: Dimension -> Int -> Bool
+isWithinFlattenDimension d p =
+    p < Grid.Dimension.getArea d
+
 -- that's BS, should be able to make that with a turtle and distance mesurement
 {-| Given a Dimension and a Position, returns an Array of neighbouring positions within
     the borders.
@@ -86,6 +90,19 @@ getNeighbourPositions dim p =
         |> List.filter (isWithinDimension dim)
         |> Array.fromList
 
+getNeighbourFlattenPositions: Dimension -> Int -> Array Int
+getNeighbourFlattenPositions dim p =
+    [ p - dim.w - 1
+    , p - dim.w
+    , p - dim.w + 1
+    , p - 1
+    , p + 1
+    , p + dim.w - 1
+    , p + dim.w
+    , p + dim.w + 1
+    ]
+        |> List.filter (isWithinFlattenDimension dim)
+        |> Array.fromList
 
 -- Conversion helpers
 
@@ -98,7 +115,7 @@ convertPositionToFlat dim pos =
 
 convertPositionFromFlat: Dimension -> Int -> Maybe Position
 convertPositionFromFlat dim flat =
-    if flat < Grid.Dimension.getArea dim then
+    if isWithinFlattenDimension dim flat then
         Just (Position
                 (flat // dim.h)
                 (flat % dim.h))
@@ -107,6 +124,13 @@ convertPositionFromFlat dim flat =
 
 
 -- Inspect grid
+
+getStateAtFlat: Grid -> Int -> CellState
+getStateAtFlat grid flattenPosition =
+    Array.get
+        flattenPosition
+        grid.flatten
+    |> Maybe.withDefault Empty
 
 getStateAt: Grid -> Position -> CellState
 getStateAt grid position =
@@ -120,9 +144,33 @@ getStateAt grid position =
 
     in
         convertPositionToFlat grid.dimension position
-            |> Maybe.andThen
-                (\pos -> Array.get
-                    pos
-                    grid.flatten
-                )
+            |> Maybe.map (getStateAtFlat grid)
             |> Maybe.withDefault Empty
+
+getNeighbourStatesFromFlattenPosition: Grid -> Int -> Array CellState
+getNeighbourStatesFromFlattenPosition grid pos =
+    let
+        neighbours: Array Int
+        neighbours =
+            getNeighbourFlattenPositions grid.dimension pos
+
+    in
+        getStatesFromFlattenPositions grid neighbours
+
+getNeighbourStatesFromPosition: Grid -> Position -> Array CellState
+getNeighbourStatesFromPosition grid pos =
+    let
+        neighbours: Array Position
+        neighbours =
+            getNeighbourPositions grid.dimension pos
+
+    in
+        getStatesFromPositions grid neighbours
+
+getStatesFromPositions: Grid -> Array Position -> Array CellState
+getStatesFromPositions grid positions =
+    Array.map (getStateAt grid) positions
+
+getStatesFromFlattenPositions: Grid -> Array Int -> Array CellState
+getStatesFromFlattenPositions grid positions =
+    Array.map (getStateAtFlat grid) positions
