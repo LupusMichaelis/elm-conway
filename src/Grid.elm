@@ -1,13 +1,13 @@
 module Grid exposing
-    -- types defined here
+    -- types defined in this module
     ( CellState(..)
     , Grid
 
-    -- types imported exposed
+    -- exposing imported types
     , Dimension
     , Position
 
-    -- functions defined here
+    -- functions defined in this module
     , convertPositionToFlat
     , convertPositionFromFlat
     , isWithinDimension
@@ -37,6 +37,8 @@ type alias Grid =
     , flatten: Array CellState
     }
 
+-- Factories
+
 makeDimension: Int -> Int -> Dimension
 makeDimension = Grid.Dimension.make
 
@@ -57,12 +59,57 @@ makeFromList dim list =
     else
         Just <| Grid dim <| Array.fromList list
 
+
+-- Manipulating positions within dimensions
+
 isWithinDimension: Dimension -> Position -> Bool
 isWithinDimension d p =
     p.t >= 0
         && p.l >= 0
         && d.h > p.t
         && d.w > p.l
+
+-- that's BS, should be able to make that with a turtle and distance mesurement
+{-| Given a Dimension and a Position, returns an Array of neighbouring positions within
+    the borders.
+--}
+getNeighbourPositions: Dimension -> Position -> Array Position
+getNeighbourPositions dim p =
+    [ { p | t = p.t - 1, l = p.l - 1 }
+    , { p | t = p.t - 1 }
+    , { p | t = p.t - 1, l = p.l + 1 }
+
+    , { p | t = p.t, l = p.l - 1 }
+    , { p | t = p.t, l = p.l + 1 }
+
+    , { p | t = p.t + 1, l = p.l - 1 }
+    , { p | t = p.t + 1 }
+    , { p | t = p.t + 1, l = p.l + 1 }
+    ]
+        |> List.filter (isWithinDimension dim)
+        |> Array.fromList
+
+
+-- Conversion helpers
+
+convertPositionToFlat: Dimension -> Position -> Maybe Int
+convertPositionToFlat dim pos =
+    if pos.t >= dim.h || pos.l >= dim.w then
+        Nothing
+    else
+        Just (pos.t * dim.h + pos.l)
+
+convertPositionFromFlat: Dimension -> Int -> Maybe Position
+convertPositionFromFlat dim flat =
+    if flat < Grid.Dimension.getArea dim then
+        Just (Position
+                (flat // dim.h)
+                (flat % dim.h))
+    else
+        Nothing
+
+
+-- Inspect grid
 
 getStateAt: Grid -> Position -> CellState
 getStateAt grid position =
@@ -82,36 +129,3 @@ getStateAt grid position =
                     grid.flatten
                 )
             |> Maybe.withDefault Empty
-
--- that's BS, should be able to make that with a turtle and distance mesurement
-getNeighbourPositions: Dimension -> Position -> Array Position
-getNeighbourPositions dim p =
-    [ { p | t = p.t - 1, l = p.l - 1 }
-    , { p | t = p.t - 1 }
-    , { p | t = p.t - 1, l = p.l + 1 }
-
-    , { p | t = p.t, l = p.l - 1 }
-    , { p | t = p.t, l = p.l + 1 }
-
-    , { p | t = p.t + 1, l = p.l - 1 }
-    , { p | t = p.t + 1 }
-    , { p | t = p.t + 1, l = p.l + 1 }
-    ]
-        |> List.filter (isWithinDimension dim)
-        |> Array.fromList
-
-convertPositionToFlat: Dimension -> Position -> Maybe Int
-convertPositionToFlat dim pos =
-    if pos.t >= dim.h || pos.l >= dim.w then
-        Nothing
-    else
-        Just (pos.t * dim.h + pos.l)
-
-convertPositionFromFlat: Dimension -> Int -> Maybe Position
-convertPositionFromFlat dim flat =
-    if flat < Grid.Dimension.getArea dim then
-        Just (Position
-                (flat // dim.h)
-                (flat % dim.h))
-    else
-        Nothing
