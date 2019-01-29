@@ -1,9 +1,13 @@
 module Grid exposing
+    -- types defined here
     ( CellState(..)
-    , Dimension
     , Grid
+
+    -- types imported exposed
+    , Dimension
     , Position
 
+    -- functions defined here
     , isWithinDimension
     , getStateAt
     , getNeighbourPositions
@@ -15,6 +19,9 @@ module Grid exposing
     , positionFromFlat
     )
 
+import Grid.Dimension exposing (Dimension)
+import Grid.Position exposing (Position)
+
 import Array exposing (Array)
 
 type CellState =
@@ -22,20 +29,19 @@ type CellState =
     | Deceased      -- a corpse's lying there
     | Empty         -- no live cell's present
 
-type alias Dimension =
-    { h: Int    -- height
-    , w: Int    -- width
-    }
-
-type alias Position =
-    { t: Int    -- from top
-    , l: Int    -- from left
-    }
+type alias Dimension = Grid.Dimension.Dimension
+type alias Position = Grid.Position.Position
 
 type alias Grid =
     { dimension: Dimension
     , flatten: Array CellState
     }
+
+makeDimension: Int -> Int -> Dimension
+makeDimension = Grid.Dimension.make
+
+makePosition: Int -> Int -> Position
+makePosition = Grid.Position.make
 
 make: Dimension -> (Int -> CellState) -> Grid
 make dim gen =
@@ -44,24 +50,12 @@ make dim gen =
         (Array.initialize
             ( dim.w * dim.h) gen)
 
-getArea: Dimension -> Int
-getArea dim =
-    dim.w * dim.h
-
 makeFromList: Dimension -> List CellState -> Maybe Grid
 makeFromList dim list =
-    if getArea dim /= List.length list then
+    if Grid.Dimension.getArea dim /= List.length list then
         Nothing
     else
         Just <| Grid dim <| Array.fromList list
-
-makeDimension: Int -> Int -> Dimension
-makeDimension =
-    Dimension
-
-makePosition: Int -> Int -> Position
-makePosition =
-    Position
 
 isWithinDimension: Dimension -> Position -> Bool
 isWithinDimension d p =
@@ -115,7 +109,7 @@ positionToFlat dim pos =
 
 positionFromFlat: Dimension -> Int -> Maybe Position
 positionFromFlat dim flat =
-    if flat < getArea dim then
+    if flat < Grid.Dimension.getArea dim then
         Just (Position
                 (flat // dim.h)
                 (flat % dim.h))
