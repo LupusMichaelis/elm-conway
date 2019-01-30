@@ -12,20 +12,9 @@ import Grid.Cell
 
 import Array exposing (Array)
 
-import Html exposing
-    ( Html
-    , button
-    , div
-    , input
-    , text
-    , label
-    , li
-    , ul
-    )
+import Html as H exposing (Html)
+import Html.Attributes as HA
 
-import Html.Attributes exposing
-    ( value
-    )
 
 import Tuple
 
@@ -39,26 +28,26 @@ type Msg
 
 numberController: String -> number -> Html Msg
 numberController l n =
-    label []
-        [ text l
-        , input [value <| toString n] []
-        , button [] [ text "↑" ]
-        , button [] [ text "↓" ]
+    H.label []
+        [ H.text l
+        , H.input [HA.value <| toString n] []
+        , H.button [] [ H.text "↑" ]
+        , H.button [] [ H.text "↓" ]
         ]
 
 gridDimensioner: Grid.Dimension -> Html Msg
 gridDimensioner dim =
-    div []
+    H.div []
         [ numberController "Height:" dim.h
         , numberController "Width:" dim.w
         ]
 
 gridSeeders: Int -> Array (String, Int -> Grid.Cell.State) -> Html Msg
 gridSeeders current seeders =
-    div []
-        [ ul []
+    H.div []
+        [ H.ul []
             (Array.map Tuple.first seeders
-                |> Array.map (\t -> li [] [text t])
+                |> Array.map (\t -> H.li [] [H.text t])
                 |> Array.toList)
         ]
 
@@ -68,4 +57,4 @@ gridRenderer grid =
 
 gridReseter: Html Msg
 gridReseter =
-    div [] [text "Reseter"]
+    H.div [] [H.text "Reseter"]
