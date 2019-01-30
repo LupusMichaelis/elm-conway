@@ -13,7 +13,7 @@ import Array exposing (Array)
 type alias Model =
     { grid: Grid.Grid
     , dimension: Grid.Dimension
-    , currentSeed: Int
+    , currentSeeder: Int
     , seeders: Array (String, Int -> Grid.Cell.State)
     }
 
@@ -22,7 +22,7 @@ viewState model =
     Html.div []
         [ Controls.gridRenderer model.grid
         , Controls.gridDimensioner model.dimension
-        , Controls.gridSeeder
+        , Controls.gridSeeders model.currentSeeder model.seeders
         , Controls.gridReseter
         ]
 

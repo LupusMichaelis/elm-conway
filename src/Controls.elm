@@ -2,12 +2,15 @@ module Controls exposing
     ( Msg
 
     , gridDimensioner
-    , gridSeeder
+    , gridSeeders
     , gridRenderer
     , gridReseter
     )
 
 import Grid exposing (Grid)
+import Grid.Cell
+
+import Array exposing (Array)
 
 import Html exposing
     ( Html
@@ -16,11 +19,15 @@ import Html exposing
     , input
     , text
     , label
+    , li
+    , ul
     )
 
 import Html.Attributes exposing
     ( value
     )
+
+import Tuple
 
 type Msg
     = ReduceHeight
@@ -46,9 +53,14 @@ gridDimensioner dim =
         , numberController "Width:" dim.w
         ]
 
-gridSeeder: Html Msg
-gridSeeder =
-    div [] [text "Seeder"]
+gridSeeders: Int -> Array (String, Int -> Grid.Cell.State) -> Html Msg
+gridSeeders current seeders =
+    div []
+        [ ul []
+            (Array.map Tuple.first seeders
+                |> Array.map (\t -> li [] [text t])
+                |> Array.toList)
+        ]
 
 gridRenderer: Grid.Grid -> Html Msg
 gridRenderer grid =
