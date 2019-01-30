@@ -13,7 +13,7 @@ module Grid exposing
     , isWithinDimension
     , getStateAt
     , getNeighbourPositions
-    , make
+    , generate
     , makeDimension
     , makeFromList
     , makePosition
@@ -42,8 +42,8 @@ makeDimension = Grid.Dimension.make
 makePosition: Int -> Int -> Position
 makePosition = Grid.Position.make
 
-make: Dimension -> (Int -> CellState) -> Grid
-make dim gen =
+generate: Dimension -> (Int -> CellState) -> Grid
+generate dim gen =
     Grid
         (dim)
         (Array.initialize

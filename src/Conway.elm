@@ -3,42 +3,47 @@ module Conway exposing (main)
 import Grid
 import Grid.Cell
 
+import Controls
+
 import Debug
 import Html exposing (Html)
 import List
-
-type Msg = Nothing
 
 type alias Model =
     { grid : Grid.Grid
     , dimension : Grid.Dimension
     }
 
-viewState : Model -> Html Msg
+viewState : Model -> Html Controls.Msg
 viewState model =
-    Html.text <| "Placeholder"
+    Html.div []
+        [ Controls.gridRenderer
+        , Controls.gridDimensioner
+        , Controls.gridSeeder
+        , Controls.gridReseter
+        ]
 
-initialState : (Model, Cmd Msg )
+initialState : (Model, Cmd Controls.Msg)
 initialState =
     let
         gridSize = Grid.makeDimension 10 10
     in
         ( Model
-            (Grid.make gridSize (\_ -> Grid.Cell.Empty))
+            (Grid.generate gridSize (\_ -> Grid.Cell.Empty))
             (gridSize)
         , Cmd.none
         )
 
-subscriptions : Model -> Sub Msg
+subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
     Sub.none
 
-updateState : Msg -> Model -> (Model, Cmd Msg)
+updateState : Controls.Msg -> Model -> (Model, Cmd Controls.Msg)
 updateState msg model =
     case msg of
         _ -> Debug.log "Implement me!" (model, Cmd.none)
 
-main: Program Never Model Msg
+main: Program Never Model Controls.Msg
 main =
     Html.program
         { init = initialState

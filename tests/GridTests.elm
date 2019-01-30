@@ -75,7 +75,7 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (Grid.make dim (\_ -> Grid.Cell.Empty))
+                        (Grid.generate dim (\_ -> Grid.Cell.Empty))
                         (Grid.makePosition 0 0)
                     |> Expect.equal Grid.Cell.Empty
             )
@@ -86,7 +86,7 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (Grid.make dim (\_ -> Grid.Cell.Live))
+                        (Grid.generate dim (\_ -> Grid.Cell.Live))
                         (Grid.makePosition 0 0)
                     |> Expect.equal Grid.Cell.Live
             )
@@ -97,7 +97,7 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (Grid.make dim (\_ -> Grid.Cell.Live))
+                        (Grid.generate dim (\_ -> Grid.Cell.Live))
                         (Grid.makePosition 10 10)
                     |> Expect.equal Grid.Cell.Empty
             )
@@ -144,7 +144,7 @@ testNeighbourhood =
                 let
                     grid: Grid.Grid
                     grid =
-                        Grid.make
+                        Grid.generate
                             (Grid.makeDimension 1 1)
                             (\_ -> Grid.Cell.Empty)
 
@@ -162,7 +162,7 @@ testNeighbourhood =
                 let
                     grid: Grid.Grid
                     grid =
-                        Grid.make
+                        Grid.generate
                             (Grid.makeDimension 10 10)
                             (\_ -> Grid.Cell.Empty)
 
@@ -188,7 +188,7 @@ testNeighbourhood =
                 let
                     grid: Grid.Grid
                     grid =
-                        Grid.make
+                        Grid.generate
                             (Grid.makeDimension 10 10)
                             (\_ -> Grid.Cell.Empty)
 
@@ -219,7 +219,7 @@ testNeighbourhood =
                 let
                     grid: Grid.Grid
                     grid =
-                        Grid.make
+                        Grid.generate
                             (Grid.makeDimension 10 10)
                             (\_ -> Grid.Cell.Empty)
 
