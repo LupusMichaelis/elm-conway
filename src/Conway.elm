@@ -1,6 +1,7 @@
 module Conway exposing (main)
 
 import Grid
+import Grid.Cell
 
 import Debug
 import Html exposing (Html)
@@ -23,7 +24,7 @@ initialState =
         gridSize = Grid.makeDimension 10 10
     in
         ( Model
-            (Grid.make gridSize Grid.Empty)
+            (Grid.make gridSize (\_ -> Grid.Cell.Empty))
             (gridSize)
         , Cmd.none
         )
@@ -45,4 +46,3 @@ main =
         , subscriptions = subscriptions
         , view = viewState
         }
-
