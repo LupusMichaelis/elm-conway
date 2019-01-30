@@ -32,9 +32,9 @@ initialState =
         gridSize = Grid.makeDimension 10 10
     in
         ( Model
-            (Grid.generate gridSize Seeder.allEmpty)
+            (Grid.generate gridSize Seeder.battlefield)
             (gridSize)
-            0
+            5
             (Seeder.getCatalog)
         , Cmd.none
         )
