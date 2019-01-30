@@ -2,16 +2,19 @@ module Conway exposing (main)
 
 import Grid
 import Grid.Cell
+import Seeder
 
 import Controls
 
 import Debug
 import Html exposing (Html)
-import List
+import Array exposing (Array)
 
 type alias Model =
-    { grid : Grid.Grid
-    , dimension : Grid.Dimension
+    { grid: Grid.Grid
+    , dimension: Grid.Dimension
+    , currentSeed: Int
+    , seeders: Array (String, Int -> Grid.Cell.State)
     }
 
 viewState : Model -> Html Controls.Msg
@@ -29,8 +32,10 @@ initialState =
         gridSize = Grid.makeDimension 10 10
     in
         ( Model
-            (Grid.generate gridSize (\_ -> Grid.Cell.Empty))
+            (Grid.generate gridSize Seeder.allEmpty)
             (gridSize)
+            0
+            (Seeder.getCatalog)
         , Cmd.none
         )
 
