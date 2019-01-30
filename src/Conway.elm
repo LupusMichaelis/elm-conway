@@ -6,9 +6,10 @@ import Seeder
 
 import Controls
 
+import Array exposing (Array)
 import Debug
 import Html exposing (Html)
-import Array exposing (Array)
+import Time
 
 type alias Model =
     { grid: Grid.Grid
@@ -42,12 +43,15 @@ initialState =
 
 subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
-    Sub.none
+    Time.every Time.second Controls.Tick
 
 updateState : Controls.Msg -> Model -> (Model, Cmd Controls.Msg)
 updateState msg model =
     case msg of
-        _ -> Debug.log "Implement me!" (model, Cmd.none)
+        Controls.Tick now ->
+            ({model|grid = Grid.run model.grid}, Cmd.none)
+        _ ->
+            Debug.log "Implement me!" (model, Cmd.none)
 
 main: Program Never Model Controls.Msg
 main =

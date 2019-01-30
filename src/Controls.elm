@@ -1,5 +1,6 @@
 module Controls exposing
     ( Msg
+    , Msg(..)
 
     , decorate
 
@@ -13,13 +14,11 @@ import Grid exposing (Grid)
 import Grid.Cell
 
 import Array exposing (Array)
-
 import Html as H exposing (Html)
 import Html.Attributes as HA
-
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
-
+import Time
 import Tuple
 
 type Msg
@@ -29,6 +28,7 @@ type Msg
     | RaiseWidth
     | SelectSeed
     | ResetSandbox
+    | Tick Time.Time -- XXX separate concerns
 
 -- hack to load CSS
 decorate: Html Msg

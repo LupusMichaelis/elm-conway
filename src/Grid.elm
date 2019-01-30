@@ -18,6 +18,7 @@ module Grid exposing
     , makeDimension
     , makeFromList
     , makePosition
+    , run
     )
 
 import Grid.Cell exposing (State(..))
