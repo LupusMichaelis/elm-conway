@@ -11,6 +11,7 @@ module Grid exposing
     , convertPositionToFlat
     , convertPositionFromFlat
     , isWithinDimension
+    , iterate
     , getStateAt
     , getNeighbourPositions
     , generate
@@ -197,3 +198,15 @@ run currentGrid =
         Grid
             currentGrid.dimension
             (Array.indexedMap fateAt currentGrid.flatten)
+
+packPositionState: Dimension -> Int -> CellState -> (Position, CellState)
+packPositionState dim flattenPosition state =
+    ( convertPositionFromFlat dim flattenPosition
+        |> Maybe.withDefault (Position 0 0)         -- XXX such ugliness
+    , state)
+
+iterate: Grid -> Array (Position, CellState)
+iterate grid =
+    Array.indexedMap
+        (packPositionState grid.dimension)
+        (grid.flatten)
