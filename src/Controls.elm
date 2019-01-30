@@ -3,7 +3,7 @@ module Controls exposing
 
     , gridDimensioner
     , gridSeeders
-    , gridRenderer
+    , gridCanvas
     , gridReseter
     )
 
@@ -15,6 +15,8 @@ import Array exposing (Array)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 
+import Svg as S exposing (Svg)
+import Svg.Attributes as SA
 
 import Tuple
 
@@ -51,9 +53,66 @@ gridSeeders current seeders =
                 |> Array.toList)
         ]
 
-gridRenderer: Grid.Grid -> Html Msg
-gridRenderer grid =
-    div [] [text "Renderer"]
+gridCanvas: Grid.Grid -> Html Msg
+gridCanvas grid =
+    let
+        -- XXX rendering logic should be done somewhere else and tested
+        heightPx: String
+        heightPx =
+            (grid.dimension.h * ( 1 + 10 ) + 1
+                |> toString) ++ "px"
+
+        widthPx: String
+        widthPx =
+            (grid.dimension.w * ( 1 + 10 ) + 1
+                |> toString) ++ "px"
+
+        topPx: Grid.Position -> String
+        topPx position =
+            (position.t
+                |> (*) 10
+                |> toString) ++ "px"
+
+        leftPx: Grid.Position -> String
+        leftPx position =
+            (position.l
+                |> (*) 10
+                |> toString) ++ "px"
+
+        statusToClass: Grid.Cell.State -> String
+        statusToClass state =
+            case state of
+                Grid.Cell.Empty ->
+                    "empty"
+                Grid.Cell.Live ->
+                    "live"
+                Grid.Cell.Deceased ->
+                    "deceased"
+
+        renderPixel: (Grid.Position, Grid.Cell.State) -> Svg Msg
+        renderPixel (position, state) =
+            S.rect
+                [ SA.x (topPx position)
+                , SA.y (leftPx position)
+                , SA.height "10px"
+                , SA.width "10px"
+                , SA.class (statusToClass state)
+                ]
+                [ ]
+
+    in
+        H.div []
+            [ S.svg
+                [ SA.height heightPx
+                , SA.width widthPx
+                , SA.fill "black"
+                , SA.stroke "white"
+                , SA.strokeWidth "1px"
+                ]
+                (Grid.iterate grid
+                    |> Array.map renderPixel
+                    |> Array.toList)
+            ]
 
 gridReseter: Html Msg
 gridReseter =

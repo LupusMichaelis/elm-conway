@@ -20,7 +20,7 @@ type alias Model =
 viewState : Model -> Html Controls.Msg
 viewState model =
     Html.div []
-        [ Controls.gridRenderer model.grid
+        [ Controls.gridCanvas model.grid
         , Controls.gridDimensioner model.dimension
         , Controls.gridSeeders model.currentSeeder model.seeders
         , Controls.gridReseter
