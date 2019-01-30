@@ -1,6 +1,8 @@
 module Controls exposing
     ( Msg
 
+    , decorate
+
     , gridDimensioner
     , gridSeeders
     , gridCanvas
@@ -27,6 +29,17 @@ type Msg
     | RaiseWidth
     | SelectSeed
     | ResetSandbox
+
+-- hack to load CSS
+decorate: Html Msg
+decorate =
+    H.node
+        "link"
+        [ HA.href   "/assets/grid.css"
+        , HA.rel    "stylesheet"
+        , HA.type_  "text/css"
+        ]
+        []
 
 numberController: String -> number -> Html Msg
 numberController l n =

@@ -24,6 +24,7 @@ viewState model =
         , Controls.gridDimensioner model.dimension
         , Controls.gridSeeders model.currentSeeder model.seeders
         , Controls.gridReseter
+        , Controls.decorate
         ]
 
 initialState : (Model, Cmd Controls.Msg)

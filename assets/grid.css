@@ -1,0 +1,15 @@
+rect.live
+{
+    fill: blue;
+}
+
+rect.deceased
+{
+    fill: red;
+}
+
+rect.empty
+{
+    fill: white;
+}
+
