@@ -21,6 +21,7 @@ module Grid exposing
     , makePosition
     , makeFromGridAndSliceColumn
     , makeFromGridAndSliceRow
+    , makeFromGridAndStickColumn
     , run
     )
 
@@ -118,6 +119,52 @@ isInThisColumn dim column flatten =
 isInThisRow: Dimension -> Int -> Int -> Bool
 isInThisRow dim row flatten =
     flatten % dim.w /= row
+
+makeFromGridAndStickColumn: Grid -> CellSeeder -> Grid
+makeFromGridAndStickColumn grid seeder =
+    let
+        dimension: Dimension
+        dimension =
+            grid.dimension
+
+        newDimension: Dimension
+        newDimension =
+            { dimension | w = grid.dimension.w + 1 }
+
+        rows: Array (Array ())
+        rows =
+            Array.repeat
+                (newDimension.h)
+                (Array.repeat
+                    newDimension.w ())
+
+        rowsWithState: Array (Array State)
+        rowsWithState =
+            rows
+            |> Array.indexedMap
+                ( \row lines ->
+                    lines |>
+                        Array.indexedMap
+                            ( \column _ ->
+                                if column < newDimension.w then
+                                    getStateAtFlat
+                                        grid
+                                        -- we have to use the original dim as we're querying
+                                        -- the original grid
+                                        (grid.dimension.w * row + column)
+                                else
+                                    seeder (newDimension.w * row + column)
+                            )
+                )
+    in
+        rowsWithState
+            |> Array.map Array.toList
+            |> Array.toList
+            |> List.concat
+            |> Array.fromList
+            |> Grid newDimension
+
+
 
 -- Manipulating positions within dimensions
 
