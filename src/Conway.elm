@@ -68,6 +68,24 @@ updateState msg model =
                     }
                 , Cmd.none
                 )
+        Controls.DecreaseHeight ->
+            let
+                current: Grid.Dimension
+                current =
+                    model.dimension
+
+                new: Grid.Dimension
+                new =
+                    { current | h = current.h - 1}
+            in
+                (
+                    { model
+                    | dimension = new
+                    , grid = Grid.makeFromGridAndSliceRow model.grid new.h
+                        |> Maybe.withDefault model.grid -- don't change the grid :-/
+                    }
+                , Cmd.none
+                )
         Controls.ResetSandbox ->
             initialState
         _ ->

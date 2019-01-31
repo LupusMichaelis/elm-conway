@@ -19,6 +19,7 @@ module Grid exposing
     , makeFromList
     , makePosition
     , makeFromGridAndSliceColumn
+    , makeFromGridAndSliceRow
     , run
     )
 
@@ -64,31 +65,47 @@ makeFromList dim list =
     makeFromArray dim
         (Array.fromList list)
 
-makeFromGridAndChipCells: Grid -> (Int -> CellState -> (Bool, CellState)) -> Maybe Grid
-makeFromGridAndChipCells grid chipper =
+makeFromGridAndChipCells: Grid -> Dimension -> (Int -> CellState -> (Bool, CellState)) -> Maybe Grid
+makeFromGridAndChipCells grid dimension chipper =
+    Just
+        ( Grid
+            dimension
+            ( grid.flatten
+                |> Array.indexedMap chipper
+                |> Array.filter Tuple.first
+                |> Array.map Tuple.second
+            )
+        )
+
+makeFromGridAndSliceColumn: Grid -> Int -> Maybe Grid
+makeFromGridAndSliceColumn grid col =
     let
         dimension: Dimension
         dimension =
             grid.dimension
     in
-        Just
-            ( Grid
-                { dimension | w = dimension.w }
-                ( grid.flatten
-                    |> Array.indexedMap chipper
-                    |> Array.filter Tuple.first
-                    |> Array.map Tuple.second
-                )
-            )
+        if col >= grid.dimension.w then
+            Nothing
+        else
+            makeFromGridAndChipCells
+                grid
+                { dimension | w = dimension.w - 1 }
+                (\idx state -> (idx % (col + 1) /= 0, state))
 
-makeFromGridAndSliceColumn: Grid -> Int -> Maybe Grid
-makeFromGridAndSliceColumn grid col =
-    if col >= grid.dimension.w then
-        Nothing
-    else
-        makeFromGridAndChipCells
-            grid
-            (\idx state -> (idx % (col + 1) /= 0, state))
+makeFromGridAndSliceRow: Grid -> Int -> Maybe Grid
+makeFromGridAndSliceRow grid row =
+    let
+        dimension: Dimension
+        dimension =
+            grid.dimension
+    in
+        if row >= grid.dimension.h then
+            Nothing
+        else
+            makeFromGridAndChipCells
+                grid
+                { dimension | h = dimension.h - 1 }
+                (\idx state -> (idx % grid.dimension.w /= row, state))
 
 -- Manipulating positions within dimensions
 
