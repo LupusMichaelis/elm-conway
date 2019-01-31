@@ -16,17 +16,20 @@ import Grid.Cell
 import Array exposing (Array)
 import Html as H exposing (Html)
 import Html.Attributes as HA
+import Html.Events as HE
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
 import Time
 import Tuple
 
 type Msg
-    = ReduceHeight
-    | RaiseHeight
-    | ReduceWidth
-    | RaiseWidth
-    | SelectSeed
+    = DecreaseHeight
+    | IncreaseHeight
+    | ChangeHeight String
+    | DecreaseWidth
+    | IncreaseWidth
+    | ChangeWidth String
+    | SelectSeed -- element idx??? XXX
     | ResetSandbox
     | Tick Time.Time -- XXX separate concerns
 
@@ -41,20 +44,42 @@ decorate =
         ]
         []
 
-numberController: String -> number -> Html Msg
-numberController l n =
-    H.label []
-        [ H.text l
-        , H.input [HA.value <| toString n] []
-        , H.button [] [ H.text "↑" ]
-        , H.button [] [ H.text "↓" ]
-        ]
 
 gridDimensioner: Grid.Dimension -> Html Msg
 gridDimensioner dim =
     H.div []
-        [ numberController "Height:" dim.h
-        , numberController "Width:" dim.w
+        [ H.label []
+            [ H.text "Height:"
+            , H.input
+                [ HA.value <| toString dim.h
+                , HE.onInput ChangeHeight
+                ]
+                []
+            , H.button
+                [ HE.onClick IncreaseHeight
+                ]
+                [ H.text "↑" ]
+            , H.button
+                [ HE.onClick DecreaseHeight
+                ]
+                [ H.text "↓" ]
+            ]
+            , H.label []
+                [ H.text "Width:"
+                , H.input
+                    [ HA.value <| toString dim.w
+                    , HE.onInput ChangeWidth
+                    ]
+                    []
+                , H.button
+                    [ HE.onClick IncreaseWidth
+                    ]
+                    [ H.text "↑" ]
+                , H.button
+                    [ HE.onClick DecreaseWidth
+                    ]
+                    [ H.text "↓" ]
+                ]
         ]
 
 gridSeeders: Int -> Array (String, Int -> Grid.Cell.State) -> Html Msg
