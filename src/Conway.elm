@@ -50,6 +50,8 @@ updateState msg model =
     case msg of
         Controls.Tick now ->
             ({model|grid = Grid.run model.grid}, Cmd.none)
+        Controls.ResetSandbox ->
+            initialState
         _ ->
             Debug.log "Implement me!" (model, Cmd.none)
 

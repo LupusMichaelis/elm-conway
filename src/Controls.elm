@@ -154,4 +154,8 @@ gridCanvas grid =
 
 gridReseter: Html Msg
 gridReseter =
-    H.div [] [H.text "Reseter"]
+    H.button
+        [ HE.onClick ResetSandbox
+        ]
+        [ H.text "Reseter"
+        ]
