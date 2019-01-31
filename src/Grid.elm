@@ -93,7 +93,7 @@ makeFromGridAndSliceColumn grid col =
             makeFromGridAndChipCells
                 grid
                 { dimension | w = dimension.w - 1 }
-                (\idx state -> (idx % (col + 1) /= 0, state))
+                (\idx state -> (isInThisColumn dimension col idx, state))
 
 makeFromGridAndSliceRow: Grid -> Int -> Maybe Grid
 makeFromGridAndSliceRow grid row =
@@ -108,7 +108,16 @@ makeFromGridAndSliceRow grid row =
             makeFromGridAndChipCells
                 grid
                 { dimension | h = dimension.h - 1 }
-                (\idx state -> (idx % grid.dimension.w /= row, state))
+                (\idx state -> (isInThisRow dimension row idx, state))
+
+isInThisColumn: Dimension -> Int -> Int -> Bool
+isInThisColumn dim column flatten =
+    -- XXX something fishy, I ignore dimension and tell the column…
+    flatten % (column + 1) /= 0
+
+isInThisRow: Dimension -> Int -> Int -> Bool
+isInThisRow dim row flatten =
+    flatten % dim.w /= row
 
 -- Manipulating positions within dimensions
 
