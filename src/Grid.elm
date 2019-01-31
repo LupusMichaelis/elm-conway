@@ -18,6 +18,7 @@ module Grid exposing
     , makeDimension
     , makeFromList
     , makePosition
+    , makeFromGridAndSliceColumn
     , run
     )
 
@@ -51,13 +52,43 @@ generate dim gen =
         (Array.initialize
             ( dim.w * dim.h) gen)
 
-makeFromList: Dimension -> List CellState -> Maybe Grid
-makeFromList dim list =
-    if Grid.Dimension.getArea dim /= List.length list then
+makeFromArray: Dimension -> Array CellState -> Maybe Grid
+makeFromArray dim array =
+    if Grid.Dimension.getArea dim /= Array.length array then
         Nothing
     else
-        Just <| Grid dim <| Array.fromList list
+        Just <| Grid dim <| array
 
+makeFromList: Dimension -> List CellState -> Maybe Grid
+makeFromList dim list =
+    makeFromArray dim
+        (Array.fromList list)
+
+makeFromGridAndChipCells: Grid -> (Int -> CellState -> (Bool, CellState)) -> Maybe Grid
+makeFromGridAndChipCells grid chipper =
+    let
+        dimension: Dimension
+        dimension =
+            grid.dimension
+    in
+        Just
+            ( Grid
+                { dimension | w = dimension.w }
+                ( grid.flatten
+                    |> Array.indexedMap chipper
+                    |> Array.filter Tuple.first
+                    |> Array.map Tuple.second
+                )
+            )
+
+makeFromGridAndSliceColumn: Grid -> Int -> Maybe Grid
+makeFromGridAndSliceColumn grid col =
+    if col >= grid.dimension.w then
+        Nothing
+    else
+        makeFromGridAndChipCells
+            grid
+            (\idx state -> (idx % (col + 1) /= 0, state))
 
 -- Manipulating positions within dimensions
 

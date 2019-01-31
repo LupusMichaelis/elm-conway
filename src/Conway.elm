@@ -50,6 +50,24 @@ updateState msg model =
     case msg of
         Controls.Tick now ->
             ({model|grid = Grid.run model.grid}, Cmd.none)
+        Controls.DecreaseWidth ->
+            let
+                current: Grid.Dimension
+                current =
+                    model.dimension
+
+                new: Grid.Dimension
+                new =
+                    { current | w = current.w - 1}
+            in
+                (
+                    { model
+                    | dimension = new
+                    , grid = Grid.makeFromGridAndSliceColumn model.grid new.w
+                        |> Maybe.withDefault model.grid -- don't change the grid :-/
+                    }
+                , Cmd.none
+                )
         Controls.ResetSandbox ->
             initialState
         _ ->
