@@ -50,6 +50,33 @@ updateState msg model =
     case msg of
         Controls.Tick now ->
             ({model|grid = Grid.run model.grid}, Cmd.none)
+        Controls.IncreaseWidth ->
+            let
+                current: Grid.Dimension
+                current =
+                    model.dimension
+
+                new: Grid.Dimension
+                new =
+                    { current | w = current.w + 1}
+
+                seeder: Seeder.Seeder
+                seeder =
+                    Array.get
+                        model.currentSeeder
+                        model.seeders
+                        |> Maybe.map Tuple.second
+                        |> Maybe.withDefault Seeder.allLive
+            in
+                (
+                    { model
+                    | dimension = new
+                    , grid = Grid.makeFromGridAndStickColumn
+                        model.grid
+                        seeder
+                    }
+                , Cmd.none
+                )
         Controls.DecreaseWidth ->
             let
                 current: Grid.Dimension

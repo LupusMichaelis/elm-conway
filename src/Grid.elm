@@ -165,7 +165,6 @@ makeFromGridAndStickColumn grid seeder =
             |> Grid newDimension
 
 
-
 -- Manipulating positions within dimensions
 
 isWithinDimension: Dimension -> Position -> Bool
