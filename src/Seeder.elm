@@ -6,6 +6,8 @@ module Seeder exposing
     , evenAreLive
     , getCatalog
     , oddAreLive
+
+    , blinker
     )
 
 import Grid.Cell as Cell
@@ -55,5 +57,16 @@ battlefield idx =
         Cell.Live
     else if idx % 11 == 0 then
         Cell.Deceased
+    else
+        Cell.Empty
+
+blinker: Int -> Cell.State
+blinker idx =
+    if idx == 15 + 0 then
+        Cell.Live
+    else if idx == 15 + 1 then
+        Cell.Live
+    else if idx == 15 + 2 then
+        Cell.Live
     else
         Cell.Empty
