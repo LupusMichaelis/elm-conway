@@ -1,6 +1,7 @@
 module Grid exposing
     -- types defined in this module
     ( CellState
+    , CellSeeder
     , Grid
 
     -- exposing imported types
@@ -26,10 +27,12 @@ module Grid exposing
 import Grid.Cell exposing (State(..))
 import Grid.Dimension exposing (Dimension)
 import Grid.Position exposing (Position)
+import Seeder
 
 import Array exposing (Array)
 
 type alias CellState = Grid.Cell.State
+type alias CellSeeder = Seeder.Seeder
 type alias Dimension = Grid.Dimension.Dimension
 type alias Position = Grid.Position.Position
 
@@ -46,7 +49,7 @@ makeDimension = Grid.Dimension.make
 makePosition: Int -> Int -> Position
 makePosition = Grid.Position.make
 
-generate: Dimension -> (Int -> CellState) -> Grid
+generate: Dimension -> CellSeeder -> Grid
 generate dim gen =
     Grid
         (dim)
@@ -175,7 +178,7 @@ convertPositionFromFlat dim flat =
 
 -- Inspect grid
 
-getStateAtFlat: Grid -> Int -> CellState
+getStateAtFlat: Grid -> CellSeeder
 getStateAtFlat grid flattenPosition =
     Array.get
         flattenPosition

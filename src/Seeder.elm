@@ -1,5 +1,7 @@
 module Seeder exposing
-    ( allDeceased
+    ( Seeder
+
+    , allDeceased
     , allEmpty
     , allLive
     , battlefield
@@ -14,7 +16,9 @@ import Grid.Cell as Cell
 
 import Array exposing (Array)
 
-getCatalog: Array (String, Int -> Cell.State)
+type alias Seeder = Int -> Cell.State
+
+getCatalog: Array (String, Seeder)
 getCatalog =
     [ ("All empty cells", allEmpty)
     , ("All live cells", allLive)
@@ -25,33 +29,33 @@ getCatalog =
     ]
         |> Array.fromList
 
-allEmpty: Int -> Cell.State
+allEmpty: Seeder
 allEmpty _ =
     Cell.Empty
 
-allLive: Int -> Cell.State
+allLive: Seeder
 allLive _ =
     Cell.Live
 
-allDeceased: Int -> Cell.State
+allDeceased: Seeder
 allDeceased _ =
     Cell.Deceased
 
-oddAreLive: Int -> Cell.State
+oddAreLive: Seeder
 oddAreLive idx =
     if idx % 2 == 0 then
         Cell.Live
     else
         Cell.Empty
 
-evenAreLive: Int -> Cell.State
+evenAreLive: Seeder
 evenAreLive idx =
     if idx % 2 == 0 then
         Cell.Empty
     else
         Cell.Live
 
-battlefield: Int -> Cell.State
+battlefield: Seeder
 battlefield idx =
     if idx % 3 == 0 then
         Cell.Live
@@ -60,7 +64,7 @@ battlefield idx =
     else
         Cell.Empty
 
-blinker: Int -> Cell.State
+blinker: Seeder
 blinker idx =
     if idx == 15 + 0 then
         Cell.Live
