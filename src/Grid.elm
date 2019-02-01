@@ -179,14 +179,16 @@ convertPositionToFlat dim pos =
     if pos.t >= dim.h || pos.l >= dim.w then
         Nothing
     else
-        Just (pos.t * dim.h + pos.l)
+        Just (pos.t * dim.w + pos.l)
 
 convertPositionFromFlat: Dimension -> Int -> Maybe Position
 convertPositionFromFlat dim flat =
     if isWithinFlattenDimension dim flat then
-        Just (Position
-                (flat // dim.h)
-                (flat % dim.h))
+        Just
+            ( Position
+                (flat // dim.w)
+                (flat - (flat // dim.w) * dim.w)
+            )
     else
         Nothing
 
