@@ -111,8 +111,10 @@ updateState msg model =
                 (
                     { model
                     | dimension = new
-                    , grid = Grid.makeFromGridAndSliceColumn model.grid new.w
-                        |> Maybe.withDefault model.grid -- don't change the grid :-/
+                    , grid = Grid.makeFromGridAndResize
+                        model.grid
+                        new
+                        (getCurrentSeeder model)
                     }
                 , Cmd.none
                 )
@@ -129,8 +131,10 @@ updateState msg model =
                 (
                     { model
                     | dimension = new
-                    , grid = Grid.makeFromGridAndSliceRow model.grid new.h
-                        |> Maybe.withDefault model.grid -- don't change the grid :-/
+                    , grid = Grid.makeFromGridAndResize
+                        model.grid
+                        new
+                        (getCurrentSeeder model)
                     }
                 , Cmd.none
                 )

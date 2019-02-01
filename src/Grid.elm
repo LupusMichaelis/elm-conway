@@ -123,13 +123,9 @@ isInThisRow dim row flatten =
 makeFromGridAndResize: Grid -> Dimension -> CellSeeder -> Grid
 makeFromGridAndResize grid newDimension seeder =
     let
-        dimension: Dimension
-        dimension =
-            grid.dimension
-
         generateGrid: Dimension -> List (Int, Int)
         generateGrid dim =
-            List.range 0 (dim.w - 1)
+            List.range 0 (dim.h - 1)
                 |> List.map (generateRow dim.w)
                 |> List.concat
 
@@ -138,7 +134,7 @@ makeFromGridAndResize grid newDimension seeder =
             List.map2
                 (,)
                 (List.repeat size line)
-                (List.range 0 size)
+                (List.range 0 (size - 1))
 
         fetchStateOrGenerate: Grid -> Seeder.Seeder -> List Position -> Array CellState
         fetchStateOrGenerate grid seeder positions =
