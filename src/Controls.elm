@@ -8,6 +8,7 @@ module Controls exposing
     , gridSeeders
     , gridCanvas
     , gridReseter
+    , gridRecycler
     )
 
 import Grid exposing (Grid)
@@ -30,7 +31,8 @@ type Msg
     | IncreaseWidth
     | ChangeWidth String
     | SelectSeed Int
-    | ResetSandbox
+    | RecycleSandbox
+    | Reset
     | Tick Time.Time -- XXX separate concerns
 
 -- hack to load CSS
@@ -159,7 +161,15 @@ gridCanvas grid =
 gridReseter: Html Msg
 gridReseter =
     H.button
-        [ HE.onClick ResetSandbox
+        [ HE.onClick Reset
         ]
         [ H.text "Reseter"
+        ]
+
+gridRecycler: Html Msg
+gridRecycler =
+    H.button
+        [ HE.onClick RecycleSandbox
+        ]
+        [ H.text "Recycle"
         ]

@@ -25,6 +25,7 @@ viewState model =
         [ Controls.gridCanvas model.grid
         , Controls.gridDimensioner model.dimension
         , Controls.gridSeeders model.currentSeederIndex model.seeders
+        , Controls.gridRecycler
         , Controls.gridReseter
         , Controls.decorate
         ]
@@ -151,7 +152,13 @@ updateState msg model =
                         )
                     Nothing ->
                         ( model, Cmd.none )
-        Controls.ResetSandbox ->
+        Controls.RecycleSandbox ->
+            ( { model
+              | grid = Grid.generate model.dimension model.currentSeeder
+              }
+            , Cmd.none
+            )
+        Controls.Reset ->
             initialState
         _ ->
             Debug.log "Implement me!" (model, Cmd.none)
