@@ -41,6 +41,14 @@ initialState =
         , Cmd.none
         )
 
+getCurrentSeeder: Model -> Seeder.Seeder
+getCurrentSeeder model =
+    Array.get
+        model.currentSeeder
+        model.seeders
+        |> Maybe.map Tuple.second
+        |> Maybe.withDefault Seeder.allLive -- TODO a better default
+
 subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
     Time.every Time.second Controls.Tick
@@ -59,21 +67,13 @@ updateState msg model =
                 new: Grid.Dimension
                 new =
                     { current | w = current.w + 1}
-
-                seeder: Seeder.Seeder
-                seeder =
-                    Array.get
-                        model.currentSeeder
-                        model.seeders
-                        |> Maybe.map Tuple.second
-                        |> Maybe.withDefault Seeder.allLive
             in
                 (
                     { model
                     | dimension = new
                     , grid = Grid.makeFromGridAndStickColumn
                         model.grid
-                        seeder
+                        (getCurrentSeeder model)
                     }
                 , Cmd.none
                 )
