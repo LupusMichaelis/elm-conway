@@ -21,7 +21,7 @@ module Grid exposing
     , makePosition
     , makeFromGridAndSliceColumn
     , makeFromGridAndSliceRow
-    , makeFromGridAndStickColumn
+    , makeFromGridAndResize
     , run
     )
 
@@ -120,16 +120,12 @@ isInThisRow: Dimension -> Int -> Int -> Bool
 isInThisRow dim row flatten =
     flatten % dim.w /= row
 
-makeFromGridAndStickColumn: Grid -> CellSeeder -> Grid
-makeFromGridAndStickColumn grid seeder =
+makeFromGridAndResize: Grid -> Dimension -> CellSeeder -> Grid
+makeFromGridAndResize grid newDimension seeder =
     let
         dimension: Dimension
         dimension =
             grid.dimension
-
-        newDimension: Dimension
-        newDimension =
-            { dimension | w = grid.dimension.w + 1 }
 
         generateGrid: Dimension -> List (Int, Int)
         generateGrid dim =
@@ -141,7 +137,7 @@ makeFromGridAndStickColumn grid seeder =
         generateRow size line =
             List.map2
                 (,)
-                (List.repeat size (line - 1))
+                (List.repeat size line)
                 (List.range 0 size)
 
         fetchStateOrGenerate: Grid -> Seeder.Seeder -> List Position -> Array CellState

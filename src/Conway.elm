@@ -71,8 +71,9 @@ updateState msg model =
                 (
                     { model
                     | dimension = new
-                    , grid = Grid.makeFromGridAndStickColumn
+                    , grid = Grid.makeFromGridAndResize
                         model.grid
+                        new
                         (getCurrentSeeder model)
                     }
                 , Cmd.none
