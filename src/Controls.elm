@@ -136,8 +136,6 @@ gridCanvas grid =
         statusToClass: Grid.Cell.State -> String
         statusToClass state =
             case state of
-                Grid.Cell.Empty ->
-                    "empty"
                 Grid.Cell.Live ->
                     "live"
                 Grid.Cell.Deceased ->

@@ -2,7 +2,6 @@ module Grid.Cell exposing
     ( State(..)
 
     , fateOf
-    , shouldACellBirth
     , shouldACellDie
     , shouldACellResurrect
     )
@@ -12,11 +11,6 @@ import Array exposing (Array)
 type State =
     Live            -- happy cell shanting around
     | Deceased      -- a corpse's lying there
-    | Empty         -- no live cell's present
-
-shouldACellBirth: Array State -> Bool
-shouldACellBirth =
-    shouldACellResurrect
 
 shouldACellDie: Array State -> Bool
 shouldACellDie neighbours =
@@ -45,12 +39,6 @@ fateOf cellState neighbourStates =
                     cellState
         Deceased ->
             case shouldACellResurrect neighbourStates of
-                True ->
-                    Live
-                False ->
-                    cellState
-        Empty ->
-            case shouldACellBirth neighbourStates of
                 True ->
                     Live
                 False ->

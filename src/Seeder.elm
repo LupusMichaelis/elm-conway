@@ -2,7 +2,6 @@ module Seeder exposing
     ( Seeder
 
     , allDeceased
-    , allEmpty
     , allLive
     , battlefield
     , evenAreLive
@@ -22,12 +21,11 @@ type alias Seeder = Int -> Cell.State
 
 getCatalog: Array (String, Seeder)
 getCatalog =
-    [ ("All empty cells", allEmpty)
-    , ("All live cells", allLive)
+    [ ("All live cells", allLive)
     , ("All deceased cells", allDeceased)
     , ("Odd cells are live, other empty", oddAreLive)
     , ("Even cells are live, other empty", evenAreLive)
-    , ("A battlefield with a living cell every 3 cell, a deceased every 11, rest empty", battlefield)
+    , ("A battlefield with a living cell every 3 and 5 cell", battlefield)
     ]
         |> Array.fromList
 
@@ -40,10 +38,6 @@ getDefaultSeeder =
 getDefaultSeederIndex: Int
 getDefaultSeederIndex =
     1
-
-allEmpty: Seeder
-allEmpty _ =
-    Cell.Empty
 
 allLive: Seeder
 allLive _ =
@@ -58,23 +52,22 @@ oddAreLive idx =
     if idx % 2 == 0 then
         Cell.Live
     else
-        Cell.Empty
+        Cell.Deceased
 
 evenAreLive: Seeder
 evenAreLive idx =
     if idx % 2 == 0 then
-        Cell.Empty
+        Cell.Deceased
     else
         Cell.Live
 
 battlefield: Seeder
 battlefield idx =
-    if idx % 3 == 0 then
+    if idx % 3 == 0
+        || idx % 5 == 0 then
         Cell.Live
-    else if idx % 11 == 0 then
-        Cell.Deceased
     else
-        Cell.Empty
+        Cell.Deceased
 
 blinker: Seeder
 blinker idx =
@@ -85,4 +78,4 @@ blinker idx =
     else if idx == 15 + 2 then
         Cell.Live
     else
-        Cell.Empty
+        Cell.Deceased

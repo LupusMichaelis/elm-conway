@@ -59,8 +59,8 @@ cellFateTests =
     describe "Determine fate depending on cell's neighbourhood."
         [ test "Emptiness remains empty"
             (\_ ->
-                Grid.Cell.fateOf Grid.Cell.Empty Array.empty
-                    |> Expect.equal Grid.Cell.Empty
+                Grid.Cell.fateOf Grid.Cell.Deceased Array.empty
+                    |> Expect.equal Grid.Cell.Deceased
             )
         , test "Alone in the void"
             (\_ ->

@@ -198,7 +198,7 @@ getStateAtFlat grid flattenPosition =
     Array.get
         flattenPosition
         grid.flatten
-    |> Maybe.withDefault Empty
+    |> Maybe.withDefault Deceased
 
 getStateAt: Grid -> Position -> CellState
 getStateAt grid position =
@@ -213,7 +213,7 @@ getStateAt grid position =
     in
         convertPositionToFlat grid.dimension position
             |> Maybe.map (getStateAtFlat grid)
-            |> Maybe.withDefault Empty
+            |> Maybe.withDefault Deceased
 
 getNeighbourStatesFromFlattenPosition: Grid -> Int -> Array CellState
 getNeighbourStatesFromFlattenPosition grid pos =

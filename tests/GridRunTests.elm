@@ -17,7 +17,6 @@ cellForetoldFateTests =
     let
         l = Grid.Cell.Live
         d = Grid.Cell.Deceased
-        e = Grid.Cell.Empty
     in
         describe
             """
@@ -29,10 +28,10 @@ cellForetoldFateTests =
                     let
                         block: List Grid.Cell.State
                         block =
-                            [ e, e, e, e
-                            , e, l, l, e
-                            , e, l, l, e
-                            , e, e, e, e
+                            [ d, d, d, d
+                            , d, l, l, d
+                            , d, l, l, d
+                            , d, d, d, d
                             ]
 
                         grid: Maybe Grid.Grid
@@ -50,11 +49,11 @@ cellForetoldFateTests =
                     let
                         block: List Grid.Cell.State
                         block =
-                            [ e, e, e, e, e
-                            , e, e, e, e, e
-                            , e, l, l, l, e
-                            , e, e, e, e, e
-                            , e, e, e, e, e
+                            [ d, d, d, d, d
+                            , d, d, d, d, d
+                            , d, l, l, l, d
+                            , d, d, d, d, d
+                            , d, d, d, d, d
                             ]
 
                         origin: Maybe Grid.Grid
@@ -65,22 +64,22 @@ cellForetoldFateTests =
 
                         intermediate:  Maybe Grid.Grid
                         intermediate =
-                            [ e, e, e, e, e
-                            , e, e, l, e, e
-                            , e, d, l, d, e
-                            , e, e, l, e, e
-                            , e, e, e, e, e
+                            [ d, d, d, d, d
+                            , d, d, l, d, d
+                            , d, d, l, d, d
+                            , d, d, l, d, d
+                            , d, d, d, d, d
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
 
                         target:  Maybe Grid.Grid
                         target =
-                            [ e, e, e, e, e
-                            , e, e, d, e, e
-                            , e, l, l, l, e
-                            , e, e, d, e, e
-                            , e, e, e, e, e
+                            [ d, d, d, d, d
+                            , d, d, d, d, d
+                            , d, l, l, l, d
+                            , d, d, d, d, d
+                            , d, d, d, d, d
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
@@ -98,12 +97,12 @@ cellForetoldFateTests =
                     let
                         block: List Grid.Cell.State
                         block =
-                            [ e, e, e, e, e, e
-                            , e, l, l, e, e, e
-                            , e, l, l, e, e, e
-                            , e, e, e, l, l, e
-                            , e, e, e, l, l, e
-                            , e, e, e, e, e, e
+                            [ d, d, d, d, d, d
+                            , d, l, l, d, d, d
+                            , d, l, l, d, d, d
+                            , d, d, d, l, l, d
+                            , d, d, d, l, l, d
+                            , d, d, d, d, d, d
                             ]
 
                         origin: Maybe Grid.Grid
@@ -114,12 +113,12 @@ cellForetoldFateTests =
 
                         intermediate:  Maybe Grid.Grid
                         intermediate =
-                            [ e, e, e, e, e, e
-                            , e, l, l, e, e, e
-                            , e, l, d, e, e, e
-                            , e, e, e, d, l, e
-                            , e, e, e, l, l, e
-                            , e, e, e, e, e, e
+                            [ d, d, d, d, d, d
+                            , d, l, l, d, d, d
+                            , d, l, d, d, d, d
+                            , d, d, d, d, l, d
+                            , d, d, d, l, l, d
+                            , d, d, d, d, d, d
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
@@ -143,7 +142,6 @@ cellInRectangularSandbox =
     let
         l = Grid.Cell.Live
         d = Grid.Cell.Deceased
-        e = Grid.Cell.Empty
     in
         describe
             """
@@ -154,10 +152,10 @@ cellInRectangularSandbox =
                     let
                         block: List Grid.Cell.State
                         block =
-                            [ e, e, e, e, e, e, e
-                            , e, l, l, e, e, e, e
-                            , e, l, l, e, e, e, e
-                            , e, e, e, e, e, e, e
+                            [ d, d, d, d, d, d, d
+                            , d, l, l, d, d, d, d
+                            , d, l, l, d, d, d, d
+                            , d, d, d, d, d, d, d
                             ]
 
                         grid: Maybe Grid.Grid
@@ -175,9 +173,9 @@ cellInRectangularSandbox =
                     let
                         block: List Grid.Cell.State
                         block =
-                            [ e, e, e, e, e
-                            , e, l, l, l, e
-                            , e, e, e, e, e
+                            [ d, d, d, d, d
+                            , d, l, l, l, d
+                            , d, d, d, d, d
                             ]
 
                         origin: Maybe Grid.Grid
@@ -188,18 +186,18 @@ cellInRectangularSandbox =
 
                         intermediate:  Maybe Grid.Grid
                         intermediate =
-                            [ e, e, l, e, e
-                            , e, d, l, d, e
-                            , e, e, l, e, e
+                            [ d, d, l, d, d
+                            , d, d, l, d, d
+                            , d, d, l, d, d
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
 
                         target:  Maybe Grid.Grid
                         target =
-                            [ e, e, d, e, e
-                            , e, l, l, l, e
-                            , e, e, d, e, e
+                            [ d, d, d, d, d
+                            , d, l, l, l, d
+                            , d, d, d, d, d
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
@@ -217,11 +215,11 @@ cellInRectangularSandbox =
                     let
                         block: List Grid.Cell.State
                         block =
-                            [ e, e, e, e
-                            , l, l, e, e
-                            , l, l, e, e
-                            , e, e, l, l
-                            , e, e, l, l
+                            [ d, d, d, d
+                            , l, l, d, d
+                            , l, l, d, d
+                            , d, d, l, l
+                            , d, d, l, l
                             ]
 
                         origin: Maybe Grid.Grid
@@ -232,11 +230,11 @@ cellInRectangularSandbox =
 
                         intermediate:  Maybe Grid.Grid
                         intermediate =
-                            [ e, e, e, e
-                            , l, l, e, e
-                            , l, d, e, e
-                            , e, e, d, l
-                            , e, e, l, l
+                            [ d, d, d, d
+                            , l, l, d, d
+                            , l, d, d, d
+                            , d, d, d, l
+                            , d, d, l, l
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)

@@ -76,9 +76,9 @@ getStateOfCellTests =
                         Grid.makeDimension 1 1
                 in
                     Grid.getStateAt
-                        (Grid.generate dim (\_ -> Grid.Cell.Empty))
+                        (Grid.generate dim (\_ -> Grid.Cell.Deceased))
                         (Grid.makePosition 0 0)
-                    |> Expect.equal Grid.Cell.Empty
+                    |> Expect.equal Grid.Cell.Deceased
             )
         , test "Test the unique cell is alive!"
             (\_ ->
@@ -100,7 +100,7 @@ getStateOfCellTests =
                     Grid.getStateAt
                         (Grid.generate dim (\_ -> Grid.Cell.Live))
                         (Grid.makePosition 10 10)
-                    |> Expect.equal Grid.Cell.Empty
+                    |> Expect.equal Grid.Cell.Deceased
             )
         ]
 
@@ -116,7 +116,7 @@ makeGridFromStatesTests =
 
                     list: List Grid.CellState
                     list =
-                        [ Grid.Cell.Empty ]
+                        [ Grid.Cell.Deceased ]
                 in
                     Grid.makeFromList dim list
                         |> Expect.notEqual Nothing
@@ -130,7 +130,7 @@ makeGridFromStatesTests =
 
                     list: List Grid.CellState
                     list =
-                        [ Grid.Cell.Empty ]
+                        [ Grid.Cell.Deceased ]
                 in
                     Grid.makeFromList dim list
                         |> Expect.equal Nothing
@@ -147,7 +147,7 @@ neighbourhoodTests =
                     grid =
                         Grid.generate
                             (Grid.makeDimension 1 1)
-                            (\_ -> Grid.Cell.Empty)
+                            (\_ -> Grid.Cell.Deceased)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -165,7 +165,7 @@ neighbourhoodTests =
                     grid =
                         Grid.generate
                             (Grid.makeDimension 10 10)
-                            (\_ -> Grid.Cell.Empty)
+                            (\_ -> Grid.Cell.Deceased)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -191,7 +191,7 @@ neighbourhoodTests =
                     grid =
                         Grid.generate
                             (Grid.makeDimension 10 10)
-                            (\_ -> Grid.Cell.Empty)
+                            (\_ -> Grid.Cell.Deceased)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -222,7 +222,7 @@ neighbourhoodTests =
                     grid =
                         Grid.generate
                             (Grid.makeDimension 10 10)
-                            (\_ -> Grid.Cell.Empty)
+                            (\_ -> Grid.Cell.Deceased)
 
                     neighbours: Array.Array Grid.Position
                     neighbours =
@@ -396,7 +396,6 @@ resizeTests =
     let
         l = Grid.Cell.Live
         d = Grid.Cell.Deceased
-        e = Grid.Cell.Empty
     in
         describe "Test resizing grid"
             [ test "Test resizing empty grid's width"
@@ -404,8 +403,8 @@ resizeTests =
                     let
                         original: Maybe Grid.Grid
                         original =
-                            [ e, e
-                            , e, e
+                            [ d, d
+                            , d, d
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 2 2)
@@ -416,8 +415,8 @@ resizeTests =
 
                         enlarged: Maybe Grid.Grid
                         enlarged =
-                            [ e, e, e
-                            , e, e, e
+                            [ d, d, d
+                            , d, d, d
                             ]
                             |> Grid.makeFromList
                                 enlargedSize
@@ -428,7 +427,7 @@ resizeTests =
                                      Grid.makeFromGridAndResize
                                          g
                                          enlargedSize
-                                         (\_ -> Grid.Cell.Empty)
+                                         (\_ -> Grid.Cell.Deceased)
                                 )
                             |> Expect.equal enlarged
                 )
@@ -437,8 +436,8 @@ resizeTests =
                     let
                         original: Maybe Grid.Grid
                         original =
-                            [ e, e
-                            , e, e
+                            [ d, d
+                            , d, d
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 2 2)
@@ -449,9 +448,9 @@ resizeTests =
 
                         enlarged: Maybe Grid.Grid
                         enlarged =
-                            [ e, e
-                            , e, e
-                            , e, e
+                            [ d, d
+                            , d, d
+                            , d, d
                             ]
                             |> Grid.makeFromList
                                 enlargedSize
@@ -462,7 +461,7 @@ resizeTests =
                                      Grid.makeFromGridAndResize
                                          g
                                          enlargedSize
-                                         (\_ -> Grid.Cell.Empty)
+                                         (\_ -> Grid.Cell.Deceased)
                                 )
                             |> Expect.equal enlarged
                 )
@@ -471,8 +470,8 @@ resizeTests =
                     let
                         original: Maybe Grid.Grid
                         original =
-                            [ e, e
-                            , e, l
+                            [ d, d
+                            , d, l
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 2 2)
@@ -483,8 +482,8 @@ resizeTests =
 
                         enlarged: Maybe Grid.Grid
                         enlarged =
-                            [ e, e, e
-                            , e, l, e
+                            [ d, d, d
+                            , d, l, d
                             ]
                             |> Grid.makeFromList
                                 enlargedSize
@@ -495,7 +494,7 @@ resizeTests =
                                      Grid.makeFromGridAndResize
                                          g
                                          enlargedSize
-                                         (\_ -> Grid.Cell.Empty)
+                                         (\_ -> Grid.Cell.Deceased)
                                 )
                             |> Expect.equal enlarged
                 )
@@ -504,8 +503,8 @@ resizeTests =
                     let
                         original: Maybe Grid.Grid
                         original =
-                            [ e, e
-                            , e, l
+                            [ d, d
+                            , d, l
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 2 2)
@@ -516,9 +515,9 @@ resizeTests =
 
                         enlarged: Maybe Grid.Grid
                         enlarged =
-                            [ e, e
-                            , e, l
-                            , e, e
+                            [ d, d
+                            , d, l
+                            , d, d
                             ]
                             |> Grid.makeFromList
                                 enlargedSize
@@ -529,7 +528,7 @@ resizeTests =
                                      Grid.makeFromGridAndResize
                                          g
                                          enlargedSize
-                                         (\_ -> Grid.Cell.Empty)
+                                         (\_ -> Grid.Cell.Deceased)
                                 )
                             |> Expect.equal enlarged
                 )
@@ -538,8 +537,8 @@ resizeTests =
                     let
                         original: Maybe Grid.Grid
                         original =
-                            [ d, e
-                            , e, l
+                            [ d, d
+                            , d, l
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 2 2)
@@ -550,8 +549,8 @@ resizeTests =
 
                         enlarged: Maybe Grid.Grid
                         enlarged =
-                            [ d, e, e
-                            , e, l, e
+                            [ d, d, d
+                            , d, l, d
                             ]
                             |> Grid.makeFromList
                                 enlargedSize
@@ -562,7 +561,7 @@ resizeTests =
                                      Grid.makeFromGridAndResize
                                          g
                                          enlargedSize
-                                         (\_ -> Grid.Cell.Empty)
+                                         (\_ -> Grid.Cell.Deceased)
                                 )
                             |> Expect.equal enlarged
                 )
@@ -571,8 +570,8 @@ resizeTests =
                     let
                         original: Maybe Grid.Grid
                         original =
-                            [ d, e
-                            , e, l
+                            [ d, d
+                            , d, l
                             ]
                             |> Grid.makeFromList
                                 (Grid.makeDimension 2 2)
@@ -583,9 +582,9 @@ resizeTests =
 
                         enlarged: Maybe Grid.Grid
                         enlarged =
-                            [ d, e
-                            , e, l
-                            , e, e
+                            [ d, d
+                            , d, l
+                            , d, d
                             ]
                             |> Grid.makeFromList
                                 enlargedSize
@@ -596,7 +595,7 @@ resizeTests =
                                      Grid.makeFromGridAndResize
                                          g
                                          enlargedSize
-                                         (\_ -> Grid.Cell.Empty)
+                                         (\_ -> Grid.Cell.Deceased)
                                 )
                             |> Expect.equal enlarged
                 )
