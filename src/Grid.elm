@@ -19,8 +19,6 @@ module Grid exposing
     , makeDimension
     , makeFromList
     , makePosition
-    , makeFromGridAndSliceColumn
-    , makeFromGridAndSliceRow
     , makeFromGridAndResize
     , run
     )
@@ -80,36 +78,6 @@ makeFromGridAndChipCells grid dimension chipper =
                 |> Array.map Tuple.second
             )
         )
-
-makeFromGridAndSliceColumn: Grid -> Int -> Maybe Grid
-makeFromGridAndSliceColumn grid col =
-    let
-        dimension: Dimension
-        dimension =
-            grid.dimension
-    in
-        if col >= grid.dimension.w then
-            Nothing
-        else
-            makeFromGridAndChipCells
-                grid
-                { dimension | w = dimension.w - 1 }
-                (\idx state -> (isInThisColumn dimension col idx, state))
-
-makeFromGridAndSliceRow: Grid -> Int -> Maybe Grid
-makeFromGridAndSliceRow grid row =
-    let
-        dimension: Dimension
-        dimension =
-            grid.dimension
-    in
-        if row >= grid.dimension.h then
-            Nothing
-        else
-            makeFromGridAndChipCells
-                grid
-                { dimension | h = dimension.h - 1 }
-                (\idx state -> (isInThisRow dimension row idx, state))
 
 isInThisColumn: Dimension -> Int -> Int -> Bool
 isInThisColumn dim column flatten =
