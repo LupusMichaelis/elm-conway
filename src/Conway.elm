@@ -78,6 +78,26 @@ updateState msg model =
                     }
                 , Cmd.none
                 )
+        Controls.IncreaseHeight ->
+            let
+                current: Grid.Dimension
+                current =
+                    model.dimension
+
+                new: Grid.Dimension
+                new =
+                    { current | h = current.h + 1}
+            in
+                (
+                    { model
+                    | dimension = new
+                    , grid = Grid.makeFromGridAndResize
+                        model.grid
+                        new
+                        (getCurrentSeeder model)
+                    }
+                , Cmd.none
+                )
         Controls.DecreaseWidth ->
             let
                 current: Grid.Dimension
