@@ -390,3 +390,46 @@ coordinateWideningTests =
                         |> Expect.equal (Just (Grid.makePosition 1 98))
             )
         ]
+
+resizeTests: Test
+resizeTests =
+    let
+        l = Grid.Cell.Live
+        d = Grid.Cell.Deceased
+        e = Grid.Cell.Empty
+    in
+        describe "Test resizing empty grid's width"
+            [ test "Test "
+                (\_ ->
+                    let
+                        original: Maybe Grid.Grid
+                        original =
+                            [ e, e
+                            , e, e
+                            ]
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 2 2)
+
+                        enlargedSize: Grid.Dimension
+                        enlargedSize =
+                            Grid.makeDimension 2 3
+
+                        enlarged: Maybe Grid.Grid
+                        enlarged =
+                            [ e, e, e
+                            , e, e, e
+                            ]
+                            |> Grid.makeFromList
+                                enlargedSize
+                    in
+                        original
+                            |> Maybe.map
+                                (\g ->
+                                     Grid.makeFromGridAndResize
+                                         g
+                                         enlargedSize
+                                         (\_ -> Grid.Cell.Empty)
+                                )
+                            |> Expect.equal enlarged
+                )
+            ]
