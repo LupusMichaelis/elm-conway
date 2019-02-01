@@ -398,8 +398,8 @@ resizeTests =
         d = Grid.Cell.Deceased
         e = Grid.Cell.Empty
     in
-        describe "Test resizing empty grid's width"
-            [ test "Test "
+        describe "Test resizing grid"
+            [ test "Test resizing empty grid's width"
                 (\_ ->
                     let
                         original: Maybe Grid.Grid
@@ -451,6 +451,140 @@ resizeTests =
                         enlarged =
                             [ e, e
                             , e, e
+                            , e, e
+                            ]
+                            |> Grid.makeFromList
+                                enlargedSize
+                    in
+                        original
+                            |> Maybe.map
+                                (\g ->
+                                     Grid.makeFromGridAndResize
+                                         g
+                                         enlargedSize
+                                         (\_ -> Grid.Cell.Empty)
+                                )
+                            |> Expect.equal enlarged
+                )
+            , test "Test resizing inhabited grid's width"
+                (\_ ->
+                    let
+                        original: Maybe Grid.Grid
+                        original =
+                            [ e, e
+                            , e, l
+                            ]
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 2 2)
+
+                        enlargedSize: Grid.Dimension
+                        enlargedSize =
+                            Grid.makeDimension 2 3
+
+                        enlarged: Maybe Grid.Grid
+                        enlarged =
+                            [ e, e, e
+                            , e, l, e
+                            ]
+                            |> Grid.makeFromList
+                                enlargedSize
+                    in
+                        original
+                            |> Maybe.map
+                                (\g ->
+                                     Grid.makeFromGridAndResize
+                                         g
+                                         enlargedSize
+                                         (\_ -> Grid.Cell.Empty)
+                                )
+                            |> Expect.equal enlarged
+                )
+            , test "Test resizing inhabited grid's height"
+                (\_ ->
+                    let
+                        original: Maybe Grid.Grid
+                        original =
+                            [ e, e
+                            , e, l
+                            ]
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 2 2)
+
+                        enlargedSize: Grid.Dimension
+                        enlargedSize =
+                            Grid.makeDimension 3 2
+
+                        enlarged: Maybe Grid.Grid
+                        enlarged =
+                            [ e, e
+                            , e, l
+                            , e, e
+                            ]
+                            |> Grid.makeFromList
+                                enlargedSize
+                    in
+                        original
+                            |> Maybe.map
+                                (\g ->
+                                     Grid.makeFromGridAndResize
+                                         g
+                                         enlargedSize
+                                         (\_ -> Grid.Cell.Empty)
+                                )
+                            |> Expect.equal enlarged
+                )
+            , test "Test resizing inhabited grid's width with dead people"
+                (\_ ->
+                    let
+                        original: Maybe Grid.Grid
+                        original =
+                            [ d, e
+                            , e, l
+                            ]
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 2 2)
+
+                        enlargedSize: Grid.Dimension
+                        enlargedSize =
+                            Grid.makeDimension 2 3
+
+                        enlarged: Maybe Grid.Grid
+                        enlarged =
+                            [ d, e, e
+                            , e, l, e
+                            ]
+                            |> Grid.makeFromList
+                                enlargedSize
+                    in
+                        original
+                            |> Maybe.map
+                                (\g ->
+                                     Grid.makeFromGridAndResize
+                                         g
+                                         enlargedSize
+                                         (\_ -> Grid.Cell.Empty)
+                                )
+                            |> Expect.equal enlarged
+                )
+            , test "Test resizing inhabited grid's height with dead people"
+                (\_ ->
+                    let
+                        original: Maybe Grid.Grid
+                        original =
+                            [ d, e
+                            , e, l
+                            ]
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 2 2)
+
+                        enlargedSize: Grid.Dimension
+                        enlargedSize =
+                            Grid.makeDimension 3 2
+
+                        enlarged: Maybe Grid.Grid
+                        enlarged =
+                            [ d, e
+                            , e, l
                             , e, e
                             ]
                             |> Grid.makeFromList
