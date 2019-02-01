@@ -86,16 +86,26 @@ gridDimensioner dim =
 
 gridSeeders: Int -> Array (String, Int -> Grid.Cell.State) -> Html Msg
 gridSeeders current seeders =
-    H.div []
-        [ H.ul []
-            (Array.map Tuple.first seeders
-                |> Array.indexedMap
-                    (\i t -> H.li
-                         [ HE.onClick (SelectSeed i) ]
-                         [ H.text t]
-                         )
-                |> Array.toList)
-        ]
+    let
+        liClass: Int -> String
+        liClass idx =
+            if idx == current then
+                "selected"
+            else
+                ""
+    in
+        H.div []
+            [ H.ul []
+                (Array.map Tuple.first seeders
+                    |> Array.indexedMap
+                        (\i t -> H.li
+                             [ HE.onClick (SelectSeed i)
+                             , HA.class (liClass i)
+                             ]
+                             [ H.text t]
+                             )
+                    |> Array.toList)
+            ]
 
 gridCanvas: Grid.Grid -> Html Msg
 gridCanvas grid =

@@ -13,3 +13,7 @@ rect.empty
     fill: white;
 }
 
+li.selected
+{
+    color: green;
+}
