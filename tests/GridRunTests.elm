@@ -92,5 +92,47 @@ cellForetoldFateTests =
                                     |> Expect.equal target) -- this lambda's quite retard, is there a better syntax?
                                 ]
                 )
-            ]
+            , test "Oscillator: beacon"
+                (\_ ->
+                    let
+                        block: List Grid.Cell.State
+                        block =
+                            [ e, e, e, e, e, e
+                            , e, l, l, e, e, e
+                            , e, l, l, e, e, e
+                            , e, e, e, l, l, e
+                            , e, e, e, l, l, e
+                            , e, e, e, e, e, e
+                            ]
 
+                        origin: Maybe Grid.Grid
+                        origin =
+                            Grid.makeFromList
+                                (Grid.makeDimension 5 5)
+                                block
+
+                        intermediate:  Maybe Grid.Grid
+                        intermediate =
+                            [ e, e, e, e, e, e
+                            , e, l, l, e, e, e
+                            , e, l, d, e, e, e
+                            , e, e, e, d, l, e
+                            , e, e, e, l, l, e
+                            , e, e, e, e, e, e
+                            ]
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 5 5)
+
+                        target:  Maybe Grid.Grid
+                        target =
+                            origin
+
+                    in
+                        Maybe.map Grid.run origin
+                            |> Expect.all
+                                [ Expect.equal intermediate
+                                , (\asset -> Maybe.map Grid.run asset
+                                    |> Expect.equal target) -- this lambda's quite retard, is there a better syntax?
+                                ]
+                )
+            ]
