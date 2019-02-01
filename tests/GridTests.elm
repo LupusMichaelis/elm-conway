@@ -1,10 +1,11 @@
 module GridTests exposing
     ( isWithinDimensionTests
     , getStateOfCellTests
-    , testMakeGridFromStates
-    , testNeighbourhood
-    , testCoordinateFlattening
-    , testCoordinateWidening
+    , makeGridFromStatesTests
+    , neighbourhoodTests
+    , coordinateFlatteningTests
+    , coordinateWideningTests
+    , resizeTests
     )
 
 import Grid
@@ -16,7 +17,7 @@ import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Test exposing (..)
 
-isWithinDimensionTests : Test
+isWithinDimensionTests: Test
 isWithinDimensionTests =
     describe "Given a grid dimensions, find out whether a point's within boundaries"
         [ test "Test (1,1) is inside boundaries (1,1)"
@@ -65,7 +66,7 @@ isWithinDimensionTests =
             )
         ]
 
-getStateOfCellTests : Test
+getStateOfCellTests: Test
 getStateOfCellTests =
     describe "Given a grid, a position, find out cell's state"
         [ test "Test the unique cell is empty"
@@ -103,8 +104,8 @@ getStateOfCellTests =
             )
         ]
 
-testMakeGridFromStates : Test
-testMakeGridFromStates =
+makeGridFromStatesTests: Test
+makeGridFromStatesTests =
     describe "Test grid making from a list of states"
         [ test "Test same size"
             (\_ ->
@@ -136,8 +137,8 @@ testMakeGridFromStates =
             )
         ]
 
-testNeighbourhood : Test
-testNeighbourhood =
+neighbourhoodTests: Test
+neighbourhoodTests =
     describe "Test neighbourhood"
         [ test "Test unicellular"
             (\_ ->
@@ -245,8 +246,8 @@ testNeighbourhood =
             )
         ]
 
-testCoordinateFlattening : Test
-testCoordinateFlattening =
+coordinateFlatteningTests: Test
+coordinateFlatteningTests =
     describe "Test coordinate system flattening"
         [ test "Test unicellular actual flatten position"
             (\_ ->
@@ -294,8 +295,8 @@ testCoordinateFlattening =
             )
         ]
 
-testCoordinateWidening : Test
-testCoordinateWidening =
+coordinateWideningTests: Test
+coordinateWideningTests =
     describe "Test coordinate system widening"
         [ test "Test unicellular actual position"
             (\_ ->
