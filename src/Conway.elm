@@ -14,7 +14,8 @@ import Time
 type alias Model =
     { grid: Grid.Grid
     , dimension: Grid.Dimension
-    , currentSeeder: Int
+    , currentSeederIndex: Int
+    , currentSeeder: Seeder.Seeder
     , seeders: Array (String, Int -> Grid.Cell.State)
     }
 
@@ -23,7 +24,7 @@ viewState model =
     Html.div []
         [ Controls.gridCanvas model.grid
         , Controls.gridDimensioner model.dimension
-        , Controls.gridSeeders model.currentSeeder model.seeders
+        , Controls.gridSeeders model.currentSeederIndex model.seeders
         , Controls.gridReseter
         , Controls.decorate
         ]
@@ -36,18 +37,11 @@ initialState =
         ( Model
             (Grid.generate gridSize Seeder.battlefield)
             (gridSize)
-            5
+            (Seeder.getDefaultSeederIndex)
+            (Seeder.getDefaultSeeder)
             (Seeder.getCatalog)
         , Cmd.none
         )
-
-getCurrentSeeder: Model -> Seeder.Seeder
-getCurrentSeeder model =
-    Array.get
-        model.currentSeeder
-        model.seeders
-        |> Maybe.map Tuple.second
-        |> Maybe.withDefault Seeder.allLive -- TODO a better default
 
 subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
@@ -74,7 +68,7 @@ updateState msg model =
                     , grid = Grid.makeFromGridAndResize
                         model.grid
                         new
-                        (getCurrentSeeder model)
+                        model.currentSeeder
                     }
                 , Cmd.none
                 )
@@ -94,7 +88,7 @@ updateState msg model =
                     , grid = Grid.makeFromGridAndResize
                         model.grid
                         new
-                        (getCurrentSeeder model)
+                        model.currentSeeder
                     }
                 , Cmd.none
                 )
@@ -114,7 +108,7 @@ updateState msg model =
                     , grid = Grid.makeFromGridAndResize
                         model.grid
                         new
-                        (getCurrentSeeder model)
+                        model.currentSeeder
                     }
                 , Cmd.none
                 )
@@ -134,10 +128,29 @@ updateState msg model =
                     , grid = Grid.makeFromGridAndResize
                         model.grid
                         new
-                        (getCurrentSeeder model)
+                        model.currentSeeder
                     }
                 , Cmd.none
                 )
+        Controls.SelectSeed idx ->
+            let
+                seeder: Maybe Seeder.Seeder
+                seeder =
+                    model.seeders
+                        |> Array.get idx
+                        |> Maybe.map Tuple.second
+            in
+                case seeder of
+                    Just seeder ->
+                        (
+                            { model
+                            | currentSeeder = seeder
+                            , currentSeederIndex = idx
+                            }
+                        , Cmd.none
+                        )
+                    Nothing ->
+                        ( model, Cmd.none )
         Controls.ResetSandbox ->
             initialState
         _ ->

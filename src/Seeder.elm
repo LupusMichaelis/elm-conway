@@ -7,6 +7,8 @@ module Seeder exposing
     , battlefield
     , evenAreLive
     , getCatalog
+    , getDefaultSeeder
+    , getDefaultSeederIndex
     , oddAreLive
 
     , blinker
@@ -28,6 +30,16 @@ getCatalog =
     , ("A battlefield with a living cell every 3 cell, a deceased every 11, rest empty", battlefield)
     ]
         |> Array.fromList
+
+-- TODO a better default
+getDefaultSeeder: Seeder
+getDefaultSeeder =
+    allLive
+
+-- TODO a better default
+getDefaultSeederIndex: Int
+getDefaultSeederIndex =
+    1
 
 allEmpty: Seeder
 allEmpty _ =

@@ -29,7 +29,7 @@ type Msg
     | DecreaseWidth
     | IncreaseWidth
     | ChangeWidth String
-    | SelectSeed -- element idx??? XXX
+    | SelectSeed Int
     | ResetSandbox
     | Tick Time.Time -- XXX separate concerns
 
@@ -87,7 +87,11 @@ gridSeeders current seeders =
     H.div []
         [ H.ul []
             (Array.map Tuple.first seeders
-                |> Array.map (\t -> H.li [] [H.text t])
+                |> Array.indexedMap
+                    (\i t -> H.li
+                         [ HE.onClick (SelectSeed i) ]
+                         [ H.text t]
+                         )
                 |> Array.toList)
         ]
 
