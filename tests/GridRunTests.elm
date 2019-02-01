@@ -44,7 +44,7 @@ cellForetoldFateTests =
                         Maybe.map Grid.run grid
                             |> Expect.equal grid
                 )
-            , test "Oscillator life: blinker"
+            , test "Oscillator: blinker"
                 (\_ ->
                     let
                         block: List Grid.Cell.State
