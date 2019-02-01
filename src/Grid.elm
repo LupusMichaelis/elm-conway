@@ -131,37 +131,37 @@ makeFromGridAndStickColumn grid seeder =
         newDimension =
             { dimension | w = grid.dimension.w + 1 }
 
-        rows: Array (Array ())
-        rows =
-            Array.repeat
-                (newDimension.h)
-                (Array.repeat
-                    newDimension.w ())
+        generateGrid: Dimension -> List (Int, Int)
+        generateGrid dim =
+            List.range 0 (dim.w - 1)
+                |> List.map (generateRow dim.w)
+                |> List.concat
 
-        rowsWithState: Array (Array State)
-        rowsWithState =
-            rows
-            |> Array.indexedMap
-                ( \row lines ->
-                    lines |>
-                        Array.indexedMap
-                            ( \column _ ->
-                                if column < newDimension.w then
-                                    getStateAtFlat
-                                        grid
-                                        -- we have to use the original dim as we're querying
-                                        -- the original grid
-                                        (grid.dimension.w * row + column)
-                                else
-                                    seeder (newDimension.w * row + column)
-                            )
-                )
+        generateRow: Int -> Int -> List (Int, Int) -- row, col
+        generateRow size line =
+            List.map2
+                (,)
+                (List.repeat size (line - 1))
+                (List.range 0 size)
+
+        fetchStateOrGenerate: Grid -> Seeder.Seeder -> List Position -> Array CellState
+        fetchStateOrGenerate grid seeder positions =
+            positions
+                |> List.map (\position ->
+                        if isWithinDimension grid.dimension position then
+                            getStateAt grid position
+                        else
+                            position
+                                |> convertPositionToFlat grid.dimension
+                                |> Maybe.withDefault 0
+                                |> seeder
+                    )
+                |> Array.fromList
+
     in
-        rowsWithState
-            |> Array.map Array.toList
-            |> Array.toList
-            |> List.concat
-            |> Array.fromList
+        generateGrid newDimension
+            |> List.map (\t -> Position (Tuple.first t) (Tuple.second t))
+            |> fetchStateOrGenerate grid seeder
             |> Grid newDimension
 
 
