@@ -432,4 +432,38 @@ resizeTests =
                                 )
                             |> Expect.equal enlarged
                 )
+            , test "Test resizing empty grid's height"
+                (\_ ->
+                    let
+                        original: Maybe Grid.Grid
+                        original =
+                            [ e, e
+                            , e, e
+                            ]
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 2 2)
+
+                        enlargedSize: Grid.Dimension
+                        enlargedSize =
+                            Grid.makeDimension 3 2
+
+                        enlarged: Maybe Grid.Grid
+                        enlarged =
+                            [ e, e
+                            , e, e
+                            , e, e
+                            ]
+                            |> Grid.makeFromList
+                                enlargedSize
+                    in
+                        original
+                            |> Maybe.map
+                                (\g ->
+                                     Grid.makeFromGridAndResize
+                                         g
+                                         enlargedSize
+                                         (\_ -> Grid.Cell.Empty)
+                                )
+                            |> Expect.equal enlarged
+                )
             ]
