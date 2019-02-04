@@ -83,6 +83,19 @@ resizingTests =
                                         |> Just
                                         |> Expect.equal stepZero
                                   )
+                                , (\asset ->
+                                    asset
+                                        |> Grid.run
+                                        |> Just
+                                        |> Expect.equal stepOne
+                                  )
+                                , (\asset ->
+                                    asset
+                                        |> Grid.run
+                                        |> Grid.run
+                                        |> Just
+                                        |> Expect.equal stepTwo
+                                  )
                                 ]
                 )
             ]
