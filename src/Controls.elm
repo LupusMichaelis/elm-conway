@@ -11,6 +11,8 @@ module Controls exposing
 import Array exposing (Array)
 import Grid exposing (Grid)
 import Grid.Cell
+import Controls.Button as CoBu
+import Controls.Number as CoNu
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -48,53 +50,21 @@ decorate =
         []
 
 
-integerInput :
-    (String -> msg)
-    -> msg
-    -> msg
-    -> String
-    -> Int
-    -> Html msg
-integerInput change decrease increase label value =
-    H.label []
-        [ H.text label
-        , H.input
-            [ HA.value <| toString value
-            , HE.onInput change
-            ]
-            []
-        , button increase "↑"
-        , button decrease "↓"
-        ]
-
-
-button :
-    msg
-    -> String
-    -> Html msg
-button msg caption =
-    H.button
-        [ HE.onClick msg
-        ]
-        [ H.text caption
-        ]
-
-
 gridDimensioner : Grid.Dimension -> Html Msg
 gridDimensioner dim =
     H.div []
-        [ integerInput
+        [ CoNu.ctrl
             ChangeHeight
             IncreaseHeight
             DecreaseHeight
             "Height:"
-            dim.h
-        , integerInput
+            { value = dim.h }
+        , CoNu.ctrl
             ChangeWidth
             IncreaseWidth
             DecreaseWidth
             "Width:"
-            dim.w
+            { value = dim.w }
         ]
 
 
@@ -200,9 +170,9 @@ gridCanvas grid =
 
 gridReseter : Html Msg
 gridReseter =
-    button Reset "Reseter"
+    CoBu.button Reset "Reseter"
 
 
 gridRecycler : Html Msg
 gridRecycler =
-    button RecycleSandbox "Recycle"
+    CoBu.button RecycleSandbox "Recycle"
