@@ -62,14 +62,20 @@ integerInput change decrease increase label value =
             , HE.onInput change
             ]
             []
-        , H.button
-            [ HE.onClick increase
-            ]
-            [ H.text "↑" ]
-        , H.button
-            [ HE.onClick decrease
-            ]
-            [ H.text "↓" ]
+        , button increase "↑"
+        , button decrease "↓"
+        ]
+
+
+button :
+    msg
+    -> String
+    -> Html msg
+button msg caption =
+    H.button
+        [ HE.onClick msg
+        ]
+        [ H.text caption
         ]
 
 
