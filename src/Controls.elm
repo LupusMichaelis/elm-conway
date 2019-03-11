@@ -47,42 +47,49 @@ decorate =
         []
 
 
+integerInput :
+    (String -> msg)
+    -> msg
+    -> msg
+    -> String
+    -> Int
+    -> Html msg
+integerInput change decrease increase label value =
+    H.label []
+        [ H.text label
+        , H.input
+            [ HA.value <| toString value
+            , HE.onInput change
+            ]
+            []
+        , H.button
+            [ HE.onClick increase
+            ]
+            [ H.text "↑" ]
+        , H.button
+            [ HE.onClick decrease
+            ]
+            [ H.text "↓" ]
+        ]
+
+
 gridDimensioner: Grid.Dimension -> Html Msg
 gridDimensioner dim =
     H.div []
-        [ H.label []
-            [ H.text "Height:"
-            , H.input
-                [ HA.value <| toString dim.h
-                , HE.onInput ChangeHeight
-                ]
-                []
-            , H.button
-                [ HE.onClick IncreaseHeight
-                ]
-                [ H.text "↑" ]
-            , H.button
-                [ HE.onClick DecreaseHeight
-                ]
-                [ H.text "↓" ]
-            ]
-            , H.label []
-                [ H.text "Width:"
-                , H.input
-                    [ HA.value <| toString dim.w
-                    , HE.onInput ChangeWidth
-                    ]
-                    []
-                , H.button
-                    [ HE.onClick IncreaseWidth
-                    ]
-                    [ H.text "↑" ]
-                , H.button
-                    [ HE.onClick DecreaseWidth
-                    ]
-                    [ H.text "↓" ]
-                ]
+        [ integerInput
+            ChangeHeight
+            IncreaseHeight
+            DecreaseHeight
+            "Height:"
+            dim.h
+        , integerInput
+            ChangeWidth
+            IncreaseWidth
+            DecreaseWidth
+            "Width:"
+            dim.w
         ]
+
 
 gridSeeders: Int -> Array (String, Int -> Grid.Cell.State) -> Html Msg
 gridSeeders current seeders =
