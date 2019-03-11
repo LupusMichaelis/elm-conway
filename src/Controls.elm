@@ -1,20 +1,16 @@
 module Controls exposing
-    ( Msg
-    , Msg(..)
-
+    ( Msg(..)
     , decorate
-
-    , gridDimensioner
-    , gridSeeders
     , gridCanvas
-    , gridReseter
+    , gridDimensioner
     , gridRecycler
+    , gridReseter
+    , gridSeeders
     )
 
+import Array exposing (Array)
 import Grid exposing (Grid)
 import Grid.Cell
-
-import Array exposing (Array)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -22,6 +18,7 @@ import Svg as S exposing (Svg)
 import Svg.Attributes as SA
 import Time
 import Tuple
+
 
 type Msg
     = DecreaseHeight
@@ -35,14 +32,18 @@ type Msg
     | Reset
     | Tick Time.Time -- XXX separate concerns
 
+
+
 -- hack to load CSS
-decorate: Html Msg
+
+
+decorate : Html Msg
 decorate =
     H.node
         "link"
-        [ HA.href   "/assets/grid.css"
-        , HA.rel    "stylesheet"
-        , HA.type_  "text/css"
+        [ HA.href "/assets/grid.css"
+        , HA.rel "stylesheet"
+        , HA.type_ "text/css"
         ]
         []
 
@@ -79,7 +80,7 @@ button msg caption =
         ]
 
 
-gridDimensioner: Grid.Dimension -> Html Msg
+gridDimensioner : Grid.Dimension -> Html Msg
 gridDimensioner dim =
     H.div []
         [ integerInput
@@ -97,65 +98,82 @@ gridDimensioner dim =
         ]
 
 
-gridSeeders: Int -> Array (String, Int -> Grid.Cell.State) -> Html Msg
+gridSeeders : Int -> Array ( String, Int -> Grid.Cell.State ) -> Html Msg
 gridSeeders current seeders =
     let
-        liClass: Int -> String
+        liClass : Int -> String
         liClass idx =
             if idx == current then
                 "selected"
+
             else
                 ""
     in
-        H.div []
-            [ H.ul []
-                (Array.map Tuple.first seeders
-                    |> Array.indexedMap
-                        (\i t -> H.li
-                             [ HE.onClick (SelectSeed i)
-                             , HA.class (liClass i)
-                             ]
-                             [ H.text t]
-                             )
-                    |> Array.toList)
-            ]
+    H.div []
+        [ H.ul []
+            (Array.map Tuple.first seeders
+                |> Array.indexedMap
+                    (\i t ->
+                        H.li
+                            [ HE.onClick (SelectSeed i)
+                            , HA.class (liClass i)
+                            ]
+                            [ H.text t ]
+                    )
+                |> Array.toList
+            )
+        ]
 
-gridCanvas: Grid.Grid -> Html Msg
+
+gridCanvas : Grid.Grid -> Html Msg
 gridCanvas grid =
     let
         -- XXX rendering logic should be done somewhere else and tested
-        heightPx: String
+        heightPx : String
         heightPx =
-            (grid.dimension.h * ( 1 + 10 ) + 1
-                |> toString) ++ "px"
+            (grid.dimension.h
+                * (1 + 10)
+                + 1
+                |> toString
+            )
+                ++ "px"
 
-        widthPx: String
+        widthPx : String
         widthPx =
-            (grid.dimension.w * ( 1 + 10 ) + 1
-                |> toString) ++ "px"
+            (grid.dimension.w
+                * (1 + 10)
+                + 1
+                |> toString
+            )
+                ++ "px"
 
-        topPx: Grid.Position -> String
+        topPx : Grid.Position -> String
         topPx position =
             (position.t
                 |> (*) 10
-                |> toString) ++ "px"
+                |> toString
+            )
+                ++ "px"
 
-        leftPx: Grid.Position -> String
+        leftPx : Grid.Position -> String
         leftPx position =
             (position.l
                 |> (*) 10
-                |> toString) ++ "px"
+                |> toString
+            )
+                ++ "px"
 
-        statusToClass: Grid.Cell.State -> String
+        statusToClass : Grid.Cell.State -> String
         statusToClass state =
             case state of
                 Grid.Cell.Live ->
                     "live"
+
                 Grid.Cell.Deceased ->
                     "deceased"
 
-        renderPixel: (Grid.Position, Grid.Cell.State) -> Svg Msg
-        renderPixel (position, state) =
+        renderPixel : ( Grid.Position, Grid.Cell.State ) -> Svg Msg
+        renderPixel ( position, state ) =
             S.rect
                 [ SA.x (topPx position)
                 , SA.y (leftPx position)
@@ -163,34 +181,28 @@ gridCanvas grid =
                 , SA.width "10px"
                 , SA.class (statusToClass state)
                 ]
-                [ ]
-
+                []
     in
-        H.div []
-            [ S.svg
-                [ SA.height heightPx
-                , SA.width widthPx
-                , SA.fill "black"
-                , SA.stroke "white"
-                , SA.strokeWidth "1px"
-                ]
-                (Grid.iterate grid
-                    |> Array.map renderPixel
-                    |> Array.toList)
+    H.div []
+        [ S.svg
+            [ SA.height heightPx
+            , SA.width widthPx
+            , SA.fill "black"
+            , SA.stroke "white"
+            , SA.strokeWidth "1px"
             ]
+            (Grid.iterate grid
+                |> Array.map renderPixel
+                |> Array.toList
+            )
+        ]
 
-gridReseter: Html Msg
+
+gridReseter : Html Msg
 gridReseter =
-    H.button
-        [ HE.onClick Reset
-        ]
-        [ H.text "Reseter"
-        ]
+    button Reset "Reseter"
 
-gridRecycler: Html Msg
+
+gridRecycler : Html Msg
 gridRecycler =
-    H.button
-        [ HE.onClick RecycleSandbox
-        ]
-        [ H.text "Recycle"
-        ]
+    button RecycleSandbox "Recycle"
