@@ -1,23 +1,23 @@
 module Conway exposing (main)
 
+import Array exposing (Array)
+import Controls
+import Debug
 import Grid
 import Grid.Cell
-import Seeder
-
-import Controls
-
-import Array exposing (Array)
-import Debug
 import Html exposing (Html)
+import Seeder
 import Time
 
+
 type alias Model =
-    { grid: Grid.Grid
-    , dimension: Grid.Dimension
-    , currentSeederIndex: Int
-    , currentSeeder: Seeder.Seeder
-    , seeders: Array (String, Int -> Grid.Cell.State)
+    { grid : Grid.Grid
+    , dimension : Grid.Dimension
+    , currentSeederIndex : Int
+    , currentSeeder : Seeder.Seeder
+    , seeders : Array ( String, Int -> Grid.Cell.State )
     }
+
 
 viewState : Model -> Html Controls.Msg
 viewState model =
@@ -30,140 +30,153 @@ viewState model =
         , Controls.decorate
         ]
 
-initialState : (Model, Cmd Controls.Msg)
+
+initialState : ( Model, Cmd Controls.Msg )
 initialState =
     let
-        gridSize = Grid.makeDimension 10 10
+        gridSize =
+            Grid.makeDimension 10 10
     in
-        ( Model
-            (Grid.generate gridSize Seeder.battlefield)
-            (gridSize)
-            (Seeder.getDefaultSeederIndex)
-            (Seeder.getDefaultSeeder)
-            (Seeder.getCatalog)
-        , Cmd.none
-        )
+    ( Model
+        (Grid.generate gridSize Seeder.battlefield)
+        gridSize
+        Seeder.getDefaultSeederIndex
+        Seeder.getDefaultSeeder
+        Seeder.getCatalog
+    , Cmd.none
+    )
+
 
 subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
     Time.every Time.second Controls.Tick
 
-updateState : Controls.Msg -> Model -> (Model, Cmd Controls.Msg)
+
+updateState : Controls.Msg -> Model -> ( Model, Cmd Controls.Msg )
 updateState msg model =
     case msg of
         Controls.Tick now ->
-            ({model|grid = Grid.run model.grid}, Cmd.none)
+            ( { model | grid = Grid.run model.grid }, Cmd.none )
+
         Controls.IncreaseWidth ->
             let
-                current: Grid.Dimension
+                current : Grid.Dimension
                 current =
                     model.dimension
 
-                new: Grid.Dimension
+                new : Grid.Dimension
                 new =
-                    { current | w = current.w + 1}
+                    { current | w = current.w + 1 }
             in
-                (
-                    { model
-                    | dimension = new
-                    , grid = Grid.makeFromGridAndResize
+            ( { model
+                | dimension = new
+                , grid =
+                    Grid.makeFromGridAndResize
                         model.grid
                         new
                         model.currentSeeder
-                    }
-                , Cmd.none
-                )
+              }
+            , Cmd.none
+            )
+
         Controls.IncreaseHeight ->
             let
-                current: Grid.Dimension
+                current : Grid.Dimension
                 current =
                     model.dimension
 
-                new: Grid.Dimension
+                new : Grid.Dimension
                 new =
-                    { current | h = current.h + 1}
+                    { current | h = current.h + 1 }
             in
-                (
-                    { model
-                    | dimension = new
-                    , grid = Grid.makeFromGridAndResize
+            ( { model
+                | dimension = new
+                , grid =
+                    Grid.makeFromGridAndResize
                         model.grid
                         new
                         model.currentSeeder
-                    }
-                , Cmd.none
-                )
+              }
+            , Cmd.none
+            )
+
         Controls.DecreaseWidth ->
             let
-                current: Grid.Dimension
+                current : Grid.Dimension
                 current =
                     model.dimension
 
-                new: Grid.Dimension
+                new : Grid.Dimension
                 new =
-                    { current | w = current.w - 1}
+                    { current | w = current.w - 1 }
             in
-                (
-                    { model
-                    | dimension = new
-                    , grid = Grid.makeFromGridAndResize
+            ( { model
+                | dimension = new
+                , grid =
+                    Grid.makeFromGridAndResize
                         model.grid
                         new
                         model.currentSeeder
-                    }
-                , Cmd.none
-                )
+              }
+            , Cmd.none
+            )
+
         Controls.DecreaseHeight ->
             let
-                current: Grid.Dimension
+                current : Grid.Dimension
                 current =
                     model.dimension
 
-                new: Grid.Dimension
+                new : Grid.Dimension
                 new =
-                    { current | h = current.h - 1}
+                    { current | h = current.h - 1 }
             in
-                (
-                    { model
-                    | dimension = new
-                    , grid = Grid.makeFromGridAndResize
+            ( { model
+                | dimension = new
+                , grid =
+                    Grid.makeFromGridAndResize
                         model.grid
                         new
                         model.currentSeeder
-                    }
-                , Cmd.none
-                )
+              }
+            , Cmd.none
+            )
+
         Controls.SelectSeed idx ->
             let
-                seeder: Maybe Seeder.Seeder
+                seeder : Maybe Seeder.Seeder
                 seeder =
                     model.seeders
                         |> Array.get idx
                         |> Maybe.map Tuple.second
             in
-                case seeder of
-                    Just seeder ->
-                        (
-                            { model
-                            | currentSeeder = seeder
-                            , currentSeederIndex = idx
-                            }
-                        , Cmd.none
-                        )
-                    Nothing ->
-                        ( model, Cmd.none )
+            case seeder of
+                Just seeder ->
+                    ( { model
+                        | currentSeeder = seeder
+                        , currentSeederIndex = idx
+                      }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
         Controls.RecycleSandbox ->
             ( { model
-              | grid = Grid.generate model.dimension model.currentSeeder
+                | grid = Grid.generate model.dimension model.currentSeeder
               }
             , Cmd.none
             )
+
         Controls.Reset ->
             initialState
-        _ ->
-            Debug.log "Implement me!" (model, Cmd.none)
 
-main: Program Never Model Controls.Msg
+        _ ->
+            Debug.log "Implement me!" ( model, Cmd.none )
+
+
+main : Program Never Model Controls.Msg
 main =
     Html.program
         { init = initialState

@@ -3,11 +3,13 @@ module Grid.Position exposing
     , make
     )
 
+
 type alias Position =
-    { t: Int    -- from top
-    , l: Int    -- from left
+    { t : Int -- from top
+    , l : Int -- from left
     }
 
-make: Int -> Int -> Position
+
+make : Int -> Int -> Position
 make =
     Position
