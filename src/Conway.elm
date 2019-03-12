@@ -58,7 +58,7 @@ updateState msg model =
         Controls.Tick now ->
             ( { model | grid = Grid.run model.grid }, Cmd.none )
 
-        Controls.IncreaseWidth ->
+        Controls.Resize dm n ->
             let
                 current : Grid.Dimension
                 current =
@@ -66,70 +66,12 @@ updateState msg model =
 
                 new : Grid.Dimension
                 new =
-                    { current | w = current.w + 1 }
-            in
-            ( { model
-                | dimension = new
-                , grid =
-                    Grid.makeFromGridAndResize
-                        model.grid
-                        new
-                        model.currentSeeder
-              }
-            , Cmd.none
-            )
+                    case dm of
+                        Controls.Width ->
+                            { current | w = n }
 
-        Controls.IncreaseHeight ->
-            let
-                current : Grid.Dimension
-                current =
-                    model.dimension
-
-                new : Grid.Dimension
-                new =
-                    { current | h = current.h + 1 }
-            in
-            ( { model
-                | dimension = new
-                , grid =
-                    Grid.makeFromGridAndResize
-                        model.grid
-                        new
-                        model.currentSeeder
-              }
-            , Cmd.none
-            )
-
-        Controls.DecreaseWidth ->
-            let
-                current : Grid.Dimension
-                current =
-                    model.dimension
-
-                new : Grid.Dimension
-                new =
-                    { current | w = current.w - 1 }
-            in
-            ( { model
-                | dimension = new
-                , grid =
-                    Grid.makeFromGridAndResize
-                        model.grid
-                        new
-                        model.currentSeeder
-              }
-            , Cmd.none
-            )
-
-        Controls.DecreaseHeight ->
-            let
-                current : Grid.Dimension
-                current =
-                    model.dimension
-
-                new : Grid.Dimension
-                new =
-                    { current | h = current.h - 1 }
+                        Controls.Height ->
+                            { current | h = n }
             in
             ( { model
                 | dimension = new
@@ -171,9 +113,6 @@ updateState msg model =
 
         Controls.Reset ->
             initialState
-
-        _ ->
-            Debug.log "Implement me!" ( model, Cmd.none )
 
 
 main : Program Never Model Controls.Msg

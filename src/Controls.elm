@@ -1,5 +1,6 @@
 module Controls exposing
-    ( Msg(..)
+    ( DimensionMsg(..)
+    , Msg(..)
     , decorate
     , gridCanvas
     , gridDimensioner
@@ -9,10 +10,10 @@ module Controls exposing
     )
 
 import Array exposing (Array)
-import Grid exposing (Grid)
-import Grid.Cell
 import Controls.Button as CoBu
 import Controls.Number as CoNu
+import Grid exposing (Grid)
+import Grid.Cell
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -22,13 +23,13 @@ import Time
 import Tuple
 
 
+type DimensionMsg
+    = Height
+    | Width
+
+
 type Msg
-    = DecreaseHeight
-    | IncreaseHeight
-    | ChangeHeight String
-    | DecreaseWidth
-    | IncreaseWidth
-    | ChangeWidth String
+    = Resize DimensionMsg Int
     | SelectSeed Int
     | RecycleSandbox
     | Reset
@@ -52,19 +53,41 @@ decorate =
 
 gridDimensioner : Grid.Dimension -> Html Msg
 gridDimensioner dim =
+    let
+        dimMsgToInt : DimensionMsg -> Int
+        dimMsgToInt dimMsg =
+            case dimMsg of
+                Width ->
+                    dim.w
+
+                Height ->
+                    dim.h
+
+        toMsg : DimensionMsg -> CoNu.Msg -> Msg
+        toMsg dimMsg msg =
+            case msg of
+                CoNu.Increase ->
+                    Resize dimMsg (dimMsgToInt dimMsg + 1)
+
+                CoNu.Decrease ->
+                    Resize dimMsg (dimMsgToInt dimMsg - 1)
+
+                CoNu.Change n ->
+                    Resize dimMsg (String.toInt n |> Result.withDefault 0)
+    in
     H.div []
         [ CoNu.ctrl
-            ChangeHeight
-            IncreaseHeight
-            DecreaseHeight
+            (toMsg Height << CoNu.Change)
+            (toMsg Height CoNu.Increase)
+            (toMsg Height CoNu.Decrease)
             "Height:"
-            { value = dim.h }
+            (CoNu.init dim.h)
         , CoNu.ctrl
-            ChangeWidth
-            IncreaseWidth
-            DecreaseWidth
+            (toMsg Width << CoNu.Change)
+            (toMsg Width CoNu.Increase)
+            (toMsg Width CoNu.Decrease)
             "Width:"
-            { value = dim.w }
+            (CoNu.init dim.w)
         ]
 
 

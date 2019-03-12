@@ -1,5 +1,8 @@
 module Controls.Number exposing
-    ( ctrl
+    ( Msg(..)
+    , State
+    , ctrl
+    , init
     )
 
 import Controls.Button as CoBu
@@ -8,8 +11,19 @@ import Html.Attributes as HA
 import Html.Events as HE
 
 
-type alias Model =
+type Msg
+    = Decrease
+    | Increase
+    | Change String
+
+
+type alias State =
     { value : Int }
+
+
+init : Int -> State
+init v =
+    { value = v }
 
 
 ctrl :
@@ -17,9 +31,9 @@ ctrl :
     -> msg
     -> msg
     -> String
-    -> Model
+    -> State
     -> Html msg
-ctrl change decrease increase label model =
+ctrl change increase decrease label model =
     H.label []
         [ H.text label
         , H.input
