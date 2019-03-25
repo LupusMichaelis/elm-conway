@@ -12,6 +12,7 @@ module Controls exposing
 import Array exposing (Array)
 import Controls.Button as CoBu
 import Controls.Number as CoNu
+import Controls.Selection as CoSe
 import Grid exposing (Grid)
 import Grid.Cell
 import Html as H exposing (Html)
@@ -90,32 +91,9 @@ gridDimensioner dim =
             (CoNu.init dim.w)
         ]
 
-
-gridSeeders : Int -> Array ( String, Int -> Grid.Cell.State ) -> Html Msg
-gridSeeders current seeders =
-    let
-        liClass : Int -> String
-        liClass idx =
-            if idx == current then
-                "selected"
-
-            else
-                ""
-    in
-    H.div []
-        [ H.ul []
-            (Array.map Tuple.first seeders
-                |> Array.indexedMap
-                    (\i t ->
-                        H.li
-                            [ HE.onClick (SelectSeed i)
-                            , HA.class (liClass i)
-                            ]
-                            [ H.text t ]
-                    )
-                |> Array.toList
-            )
-        ]
+gridSeeders : Int -> ( String, Int -> Grid.Cell.State ) -> Html Msg
+gridSeeders =
+    CoSe.view Generator >> (\(CoSe i) -> i)
 
 
 gridCanvas : Grid.Grid -> Html Msg

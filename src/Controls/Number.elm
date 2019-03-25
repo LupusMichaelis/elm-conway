@@ -3,6 +3,7 @@ module Controls.Number exposing
     , State
     , ctrl
     , init
+    , update
     )
 
 import Controls.Button as CoBu
@@ -24,6 +25,19 @@ type alias State =
 init : Int -> State
 init v =
     { value = v }
+
+
+update : Msg -> State -> State
+update msg model =
+    case msg of
+        Decrease ->
+            { model | value = model.value - 1 }
+
+        Increase ->
+            { model | value = model.value + 1 }
+
+        Change s ->
+            { model | value = String.toInt s |> Result.withDefault 0 }
 
 
 ctrl :

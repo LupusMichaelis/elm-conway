@@ -9,13 +9,14 @@ import Html exposing (Html)
 import Seeder
 import Time
 
+import Controls.Selection
+
+type alias SeederSelectionState = Controls.Selection.State Seeder.Seeder
 
 type alias Model =
     { grid : Grid.Grid
     , dimension : Grid.Dimension
-    , currentSeederIndex : Int
-    , currentSeeder : Seeder.Seeder
-    , seeders : Array ( String, Int -> Grid.Cell.State )
+    , seederSelection : SeederSelectionState
     }
 
 
@@ -24,7 +25,7 @@ viewState model =
     Html.div []
         [ Controls.gridCanvas model.grid
         , Controls.gridDimensioner model.dimension
-        , Controls.gridSeeders model.currentSeederIndex model.seeders
+        , Controls.Selection model.seederSelection
         , Controls.gridRecycler
         , Controls.gridReseter
         , Controls.decorate
@@ -40,9 +41,12 @@ initialState =
     ( Model
         (Grid.generate gridSize Seeder.battlefield)
         gridSize
+
+        Seeder
         Seeder.getDefaultSeederIndex
         Seeder.getDefaultSeeder
         Seeder.getCatalog
+
     , Cmd.none
     )
 
@@ -79,7 +83,7 @@ updateState msg model =
                     Grid.makeFromGridAndResize
                         model.grid
                         new
-                        model.currentSeeder
+                        model.seederSelection.current
               }
             , Cmd.none
             )
@@ -88,15 +92,17 @@ updateState msg model =
             let
                 seeder : Maybe Seeder.Seeder
                 seeder =
-                    model.seeders
+                    model.seederSelection.current
                         |> Array.get idx
                         |> Maybe.map Tuple.second
             in
             case seeder of
                 Just seeder ->
                     ( { model
-                        | currentSeeder = seeder
-                        , currentSeederIndex = idx
+                        | seederSelection
+                            = { current = seeder
+                              , index = idx
+                              }
                       }
                     , Cmd.none
                     )
@@ -106,7 +112,7 @@ updateState msg model =
 
         Controls.RecycleSandbox ->
             ( { model
-                | grid = Grid.generate model.dimension model.currentSeeder
+                | grid = Grid.generate model.dimension model.seederSelection.current
               }
             , Cmd.none
             )
