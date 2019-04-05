@@ -5,35 +5,33 @@ module Grid.Cell exposing
     , shouldACellResurrect
     )
 
-import Array exposing (Array)
-
 
 type State
     = Live -- happy cell shanting around
     | Deceased -- a corpse's lying there
 
 
-shouldACellDie : Array State -> Bool
+shouldACellDie : List State -> Bool
 shouldACellDie neighbours =
     let
         living =
-            Array.filter (\state -> Live == state) neighbours
-                |> Array.length
+            List.filter (\state -> Live == state) neighbours
+                |> List.length
     in
     living < 2 || living > 3
 
 
-shouldACellResurrect : Array State -> Bool
+shouldACellResurrect : List State -> Bool
 shouldACellResurrect neighbours =
     let
         living =
-            Array.filter (\state -> Live == state) neighbours
-                |> Array.length
+            List.filter (\state -> Live == state) neighbours
+                |> List.length
     in
     living == 3
 
 
-fateOf : State -> Array State -> State
+fateOf : State -> List State -> State
 fateOf cellState neighbourStates =
     case cellState of
         Live ->

@@ -1,15 +1,9 @@
-module Grid
-    exposing
-    -- types defined in this module
+module Grid exposing
     ( CellSeeder
     , CellState
     , Dimension
-    ,  Grid
-       -- exposing imported types
-
-    ,  Position
-       -- functions defined in this module
-
+    , Grid
+    , Position
     , convertPositionFromFlat
     , convertPositionToFlat
     , generate
@@ -24,10 +18,10 @@ module Grid
     , run
     )
 
-import Array exposing (Array)
 import Grid.Cell exposing (State(..))
 import Grid.Dimension exposing (Dimension)
 import Grid.Position exposing (Position)
+import List.Extra
 import Seeder
 
 
@@ -49,7 +43,7 @@ type alias Position =
 
 type alias Grid =
     { dimension : Dimension
-    , flatten : Array CellState
+    , flatten : List CellState
     }
 
 
@@ -71,25 +65,19 @@ generate : Dimension -> CellSeeder -> Grid
 generate dim gen =
     Grid
         dim
-        (Array.initialize
+        (List.Extra.initialize
             (dim.w * dim.h)
             gen
         )
 
 
-makeFromArray : Dimension -> Array CellState -> Maybe Grid
-makeFromArray dim array =
-    if Grid.Dimension.getArea dim /= Array.length array then
+makeFromList : Dimension -> List CellState -> Maybe Grid
+makeFromList dim copied =
+    if Grid.Dimension.getArea dim /= List.length copied then
         Nothing
 
     else
-        Just <| Grid dim <| array
-
-
-makeFromList : Dimension -> List CellState -> Maybe Grid
-makeFromList dim list =
-    makeFromArray dim
-        (Array.fromList list)
+        Just <| Grid dim <| copied
 
 
 makeFromGridAndChipCells : Grid -> Dimension -> (Int -> CellState -> ( Bool, CellState )) -> Maybe Grid
@@ -98,9 +86,9 @@ makeFromGridAndChipCells grid dimension chipper =
         (Grid
             dimension
             (grid.flatten
-                |> Array.indexedMap chipper
-                |> Array.filter Tuple.first
-                |> Array.map Tuple.second
+                |> List.indexedMap chipper
+                |> List.filter Tuple.first
+                |> List.map Tuple.second
             )
         )
 
@@ -135,7 +123,7 @@ makeFromGridAndResize grid newDimension seeder =
                 (List.repeat size line)
                 (List.range 0 (size - 1))
 
-        fetchStateOrGenerate : Grid -> Seeder.Seeder -> List Position -> Array CellState
+        fetchStateOrGenerate : Grid -> Seeder.Seeder -> List Position -> List CellState
         fetchStateOrGenerate grid seeder positions =
             positions
                 |> List.map
@@ -149,7 +137,6 @@ makeFromGridAndResize grid newDimension seeder =
                                 |> Maybe.withDefault 0
                                 |> seeder
                     )
-                |> Array.fromList
     in
     generateGrid newDimension
         |> List.map (\t -> Position (Tuple.first t) (Tuple.second t))
@@ -182,10 +169,10 @@ isWithinFlattenDimension d p =
 -- that's BS, should be able to make that with a turtle and distance mesurement
 
 
-{-| Given a Dimension and a Position, returns an Array of neighbouring positions within
+{-| Given a Dimension and a Position, returns a List of neighbouring positions within
 the borders.
 -}
-getNeighbourPositions : Dimension -> Position -> Array Position
+getNeighbourPositions : Dimension -> Position -> List Position
 getNeighbourPositions dim p =
     [ { p | t = p.t - 1, l = p.l - 1 }
     , { p | t = p.t - 1 }
@@ -197,10 +184,9 @@ getNeighbourPositions dim p =
     , { p | t = p.t + 1, l = p.l + 1 }
     ]
         |> List.filter (isWithinDimension dim)
-        |> Array.fromList
 
 
-getNeighbourFlattenPositions : Dimension -> Int -> Array Int
+getNeighbourFlattenPositions : Dimension -> Int -> List Int
 getNeighbourFlattenPositions dim p =
     [ p - dim.w - 1
     , p - dim.w
@@ -212,7 +198,6 @@ getNeighbourFlattenPositions dim p =
     , p + dim.w + 1
     ]
         |> List.filter (isWithinFlattenDimension dim)
-        |> Array.fromList
 
 
 
@@ -247,7 +232,7 @@ convertPositionFromFlat dim flat =
 
 getStateAtFlat : Grid -> CellSeeder
 getStateAtFlat grid flattenPosition =
-    Array.get
+    List.Extra.getAt
         flattenPosition
         grid.flatten
         |> Maybe.withDefault Deceased
@@ -269,40 +254,40 @@ getStateAt grid position =
         |> Maybe.withDefault Deceased
 
 
-getNeighbourStatesFromFlattenPosition : Grid -> Int -> Array CellState
+getNeighbourStatesFromFlattenPosition : Grid -> Int -> List CellState
 getNeighbourStatesFromFlattenPosition grid pos =
     let
-        neighbours : Array Int
+        neighbours : List Int
         neighbours =
             getNeighbourFlattenPositions grid.dimension pos
     in
     getStatesFromFlattenPositions grid neighbours
 
 
-getNeighbourStatesFromPosition : Grid -> Position -> Array CellState
+getNeighbourStatesFromPosition : Grid -> Position -> List CellState
 getNeighbourStatesFromPosition grid pos =
     let
-        neighbours : Array Position
+        neighbours : List Position
         neighbours =
             getNeighbourPositions grid.dimension pos
     in
     getStatesFromPositions grid neighbours
 
 
-getStatesFromPositions : Grid -> Array Position -> Array CellState
+getStatesFromPositions : Grid -> List Position -> List CellState
 getStatesFromPositions grid positions =
-    Array.map (getStateAt grid) positions
+    List.map (getStateAt grid) positions
 
 
-getStatesFromFlattenPositions : Grid -> Array Int -> Array CellState
+getStatesFromFlattenPositions : Grid -> List Int -> List CellState
 getStatesFromFlattenPositions grid positions =
-    Array.map (getStateAtFlat grid) positions
+    List.map (getStateAtFlat grid) positions
 
 
 fateOf : Grid -> Int -> CellState -> CellState
 fateOf grid pos currentCellState =
     let
-        neighbourStates : Array CellState
+        neighbourStates : List CellState
         neighbourStates =
             getNeighbourStatesFromFlattenPosition grid pos
     in
@@ -322,7 +307,7 @@ run currentGrid =
     in
     Grid
         currentGrid.dimension
-        (Array.indexedMap fateAt currentGrid.flatten)
+        (List.indexedMap fateAt currentGrid.flatten)
 
 
 packPositionState : Dimension -> Int -> CellState -> ( Position, CellState )
@@ -334,8 +319,8 @@ packPositionState dim flattenPosition state =
     )
 
 
-iterate : Grid -> Array ( Position, CellState )
+iterate : Grid -> List ( Position, CellState )
 iterate grid =
-    Array.indexedMap
+    List.indexedMap
         (packPositionState grid.dimension)
         grid.flatten

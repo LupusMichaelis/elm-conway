@@ -1,22 +1,20 @@
 module Conway exposing (main)
 
-import Array exposing (Array)
 import Controls
+import Controls.Selection
 import Debug
 import Grid
 import Grid.Cell
 import Html exposing (Html)
+import List.Extra
 import Seeder
 import Time
 
-import Controls.Selection
-
-type alias SeederSelectionState = Controls.Selection.State Seeder.Seeder
 
 type alias Model =
     { grid : Grid.Grid
     , dimension : Grid.Dimension
-    , seederSelection : SeederSelectionState
+    , seederSelection : Controls.Selection.State Controls.Msg Seeder.Seeder
     }
 
 
@@ -25,7 +23,7 @@ viewState model =
     Html.div []
         [ Controls.gridCanvas model.grid
         , Controls.gridDimensioner model.dimension
-        , Controls.Selection model.seederSelection
+        , Controls.gridSeeders model.seederSelection
         , Controls.gridRecycler
         , Controls.gridReseter
         , Controls.decorate
@@ -41,12 +39,15 @@ initialState =
     ( Model
         (Grid.generate gridSize Seeder.battlefield)
         gridSize
-
-        Seeder
-        Seeder.getDefaultSeederIndex
-        Seeder.getDefaultSeeder
-        Seeder.getCatalog
-
+        (Controls.Selection.State
+            (Seeder.getCatalog
+                |> List.map Tuple.second
+                |> List.head
+            )
+            (Seeder.getCatalog
+                |> List.map Tuple.second
+            )
+        )
     , Cmd.none
     )
 
@@ -83,36 +84,36 @@ updateState msg model =
                     Grid.makeFromGridAndResize
                         model.grid
                         new
-                        model.seederSelection.current
+                        (case model.seederSelection of
+                            Controls.Selection.State (Just seeder) _ ->
+                                seeder
+
+                            Controls.Selection.State Nothing _ ->
+                                Seeder.allDeceased
+                        )
               }
             , Cmd.none
             )
 
-        Controls.SelectSeed idx ->
+        Controls.SelectSeed seed ->
             let
-                seeder : Maybe Seeder.Seeder
-                seeder =
-                    model.seederSelection.current
-                        |> Array.get idx
-                        |> Maybe.map Tuple.second
+                ( selectionModel, cmds ) =
+                    Controls.Selection.updateSelected model.seederSelection seed
             in
-            case seeder of
-                Just seeder ->
-                    ( { model
-                        | seederSelection
-                            = { current = seeder
-                              , index = idx
-                              }
-                      }
-                    , Cmd.none
-                    )
-
-                Nothing ->
-                    ( model, Cmd.none )
+            ( { model | seederSelection = selectionModel }, cmds )
 
         Controls.RecycleSandbox ->
             ( { model
-                | grid = Grid.generate model.dimension model.seederSelection.current
+                | grid =
+                    Grid.generate
+                        model.dimension
+                        (case model.seederSelection of
+                            Controls.Selection.State (Just seeder) _ ->
+                                seeder
+
+                            Controls.Selection.State Nothing _ ->
+                                Seeder.allDeceased
+                        )
               }
             , Cmd.none
             )

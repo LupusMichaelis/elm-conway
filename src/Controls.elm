@@ -9,15 +9,15 @@ module Controls exposing
     , gridSeeders
     )
 
-import Array exposing (Array)
 import Controls.Button as CoBu
 import Controls.Number as CoNu
-import Controls.Selection as CoSe
+import Controls.Selection
 import Grid exposing (Grid)
 import Grid.Cell
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
+import Seeder
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
 import Time
@@ -31,7 +31,7 @@ type DimensionMsg
 
 type Msg
     = Resize DimensionMsg Int
-    | SelectSeed Int
+    | SelectSeed Seeder.Seeder
     | RecycleSandbox
     | Reset
     | Tick Time.Time -- XXX separate concerns
@@ -91,9 +91,14 @@ gridDimensioner dim =
             (CoNu.init dim.w)
         ]
 
-gridSeeders : Int -> ( String, Int -> Grid.Cell.State ) -> Html Msg
+
+gridSeeders :
+    Controls.Selection.State Msg Seeder.Seeder
+    -> Html Msg
 gridSeeders =
-    CoSe.view Generator >> (\(CoSe i) -> i)
+    Controls.Selection.render
+        (Controls.Selection.renderElementFromCatalog Seeder.getCatalog (H.text "No name"))
+        SelectSeed
 
 
 gridCanvas : Grid.Grid -> Html Msg
@@ -163,8 +168,7 @@ gridCanvas grid =
             , SA.strokeWidth "1px"
             ]
             (Grid.iterate grid
-                |> Array.map renderPixel
-                |> Array.toList
+                |> List.map renderPixel
             )
         ]
 

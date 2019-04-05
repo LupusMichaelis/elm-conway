@@ -1,53 +1,82 @@
-module Controls.Selection
-    exposing
-        ( State
-        , view
-        )
+module Controls.Selection exposing
+    ( State(..)
+    , render
+    , renderElementFromCatalog
+    , updateSelected
+    )
 
-import Dict exposing (Dict)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 
-type Msg = Select Int
 
-type NamedElement element = Dict String element
-
-type alias State element =
-    { current : Maybe String
-    , all : NamedElement element
-    }
+type State msg element
+    = State (Maybe element) (List element)
 
 
-view : State element -> Html Msg
-view current =
+updateSelected : State msg element -> element -> ( State msg element, Cmd msg )
+updateSelected (State maybeSelected list) selected =
+    ( State (Just selected) list, Cmd.none )
+
+
+renderElementFromCatalog :
+    List ( String, element )
+    -> Html msg
+    -> element
+    -> Html msg
+renderElementFromCatalog catalog placeholder element =
+    catalog
+        |> List.filter (Tuple.second >> (==) element)
+        |> List.map Tuple.first
+        |> List.head
+        |> Maybe.map H.text
+        |> Maybe.withDefault placeholder
+
+
+render :
+    (element -> Html msg)
+    -> (element -> msg)
+    -> State msg element
+    -> Html msg
+render renderElement elementMsg (State maybeSelected elementList) =
     let
-        liClass : Int -> String
-        liClass idx =
-            if idx == current then
-                "selected"
-
-            else
-                ""
-
-        current : Maybe Int
-        current =
-            Array.get state.current
+        liList : List (Html msg)
+        liList =
+            elementList
+                |> List.map
+                    (renderLine maybeSelected elementMsg renderElement)
     in
-    if Array.length current.all < 1 then
-        H.div [] [ text "No selection available" ]
-    else
-        H.div []
-            [ H.ul []
-                (Dict.keys seeders
-                    |> List.map viewLine
-                )
-            ]
+    H.ul [] liList
 
-viewLine : Int -> NamedElement element -> Html Msg
-viewLine index (Dict name _) =
+
+renderLine :
+    Maybe element
+    -> (element -> msg)
+    -> (element -> Html msg)
+    -> element
+    -> Html msg
+renderLine maybeSelected elementMsg renderElement current =
+    let
+        rendered : Html msg
+        rendered =
+            renderElement current
+
+        event : Maybe (H.Attribute msg)
+        event =
+            maybeSelected
+                |> Maybe.map (elementMsg >> HE.onClick)
+
+        attrs : List (H.Attribute msg)
+        attrs =
+            HA.classList
+                [ ( "selected"
+                  , maybeSelected
+                        |> Maybe.map ((==) current)
+                        |> Maybe.withDefault False
+                  )
+                ]
+                :: List.filterMap identity [ event ]
+    in
     H.li
-        [ HE.onClick (Select index)
-        , HA.class (liClass index)
-        ]
-        [ H.text name ]
+        attrs
+        [ rendered ]

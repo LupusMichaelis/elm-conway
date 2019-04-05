@@ -7,11 +7,9 @@ module Seeder exposing
     , evenAreLive
     , getCatalog
     , getDefaultSeeder
-    , getDefaultSeederIndex
     , oddAreLive
     )
 
-import Array exposing (Array)
 import Grid.Cell as Cell
 
 
@@ -19,7 +17,7 @@ type alias Seeder =
     Int -> Cell.State
 
 
-getCatalog : Array ( String, Seeder )
+getCatalog : List ( String, Seeder )
 getCatalog =
     [ ( "All live cells", allLive )
     , ( "All deceased cells", allDeceased )
@@ -27,25 +25,11 @@ getCatalog =
     , ( "Even cells are live, other empty", evenAreLive )
     , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
     ]
-        |> Array.fromList
-
-
-
--- TODO a better default
 
 
 getDefaultSeeder : Seeder
 getDefaultSeeder =
     allLive
-
-
-
--- TODO a better default
-
-
-getDefaultSeederIndex : Int
-getDefaultSeederIndex =
-    1
 
 
 allLive : Seeder
