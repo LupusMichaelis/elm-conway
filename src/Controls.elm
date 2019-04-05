@@ -31,7 +31,7 @@ type DimensionMsg
 
 type Msg
     = Resize DimensionMsg Int
-    | SelectSeed Seeder.Seeder
+    | SelectSeed Controls.Selection.Key
     | RecycleSandbox
     | Reset
     | Tick Time.Time -- XXX separate concerns
@@ -93,7 +93,7 @@ gridDimensioner dim =
 
 
 gridSeeders :
-    Controls.Selection.State Msg Seeder.Seeder
+    Controls.Selection.State Msg ( String, Seeder.Seeder )
     -> Html Msg
 gridSeeders =
     Controls.Selection.render

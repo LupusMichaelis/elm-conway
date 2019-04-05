@@ -14,7 +14,7 @@ import Time
 type alias Model =
     { grid : Grid.Grid
     , dimension : Grid.Dimension
-    , seederSelection : Controls.Selection.State Controls.Msg Seeder.Seeder
+    , seederSelection : Controls.Selection.State Controls.Msg ( String, Seeder.Seeder )
     }
 
 
@@ -40,13 +40,8 @@ initialState =
         (Grid.generate gridSize Seeder.battlefield)
         gridSize
         (Controls.Selection.State
-            (Seeder.getCatalog
-                |> List.map Tuple.second
-                |> List.head
-            )
-            (Seeder.getCatalog
-                |> List.map Tuple.second
-            )
+            (Just Seeder.getDefault)
+            Seeder.getCatalog
         )
     , Cmd.none
     )
@@ -84,12 +79,14 @@ updateState msg model =
                     Grid.makeFromGridAndResize
                         model.grid
                         new
-                        (case model.seederSelection of
-                            Controls.Selection.State (Just seeder) _ ->
-                                seeder
+                        (Tuple.second
+                            (case model.seederSelection of
+                                Controls.Selection.State (Just ( _, seeder )) _ ->
+                                    seeder
 
-                            Controls.Selection.State Nothing _ ->
-                                Seeder.allDeceased
+                                Controls.Selection.State Nothing _ ->
+                                    Seeder.getDefaultValue
+                            )
                         )
               }
             , Cmd.none
@@ -107,12 +104,14 @@ updateState msg model =
                 | grid =
                     Grid.generate
                         model.dimension
-                        (case model.seederSelection of
-                            Controls.Selection.State (Just seeder) _ ->
-                                seeder
+                        (Tuple.second
+                            (case model.seederSelection of
+                                Controls.Selection.State (Just ( _, seeder )) _ ->
+                                    seeder
 
-                            Controls.Selection.State Nothing _ ->
-                                Seeder.allDeceased
+                                Controls.Selection.State Nothing _ ->
+                                    Seeder.getDefaultValue
+                            )
                         )
               }
             , Cmd.none

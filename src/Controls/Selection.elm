@@ -1,81 +1,95 @@
 module Controls.Selection exposing
-    ( State(..)
+    ( Key
+    , State(..)
     , render
     , renderElementFromCatalog
     , updateSelected
     )
 
+import Dict exposing (Dict)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 
 
+type alias Key =
+    Int
+
+
 type State msg element
-    = State (Maybe element) (List element)
+    = State (Maybe ( Key, element )) (Dict Key element)
 
 
-updateSelected : State msg element -> element -> ( State msg element, Cmd msg )
-updateSelected (State maybeSelected list) selected =
-    ( State (Just selected) list, Cmd.none )
+updateSelected : State msg element -> Key -> ( State msg element, Cmd msg )
+updateSelected (State maybeSelected dict) selected =
+    ( State (Dict.get selected dict |> Maybe.map ((,) selected)) dict, Cmd.none )
 
 
 renderElementFromCatalog :
-    List ( String, element )
+    Dict Key ( String, element )
     -> Html msg
-    -> element
+    -> Key
     -> Html msg
-renderElementFromCatalog catalog placeholder element =
+renderElementFromCatalog catalog placeholder elementKey =
     catalog
-        |> List.filter (Tuple.second >> (==) element)
-        |> List.map Tuple.first
+        |> Dict.filter (\currentKey ( _, _ ) -> (==) elementKey currentKey)
+        |> Dict.values
         |> List.head
+        |> Maybe.map Tuple.first
         |> Maybe.map H.text
         |> Maybe.withDefault placeholder
 
 
+
+{--
+--}
+
+
 render :
-    (element -> Html msg)
-    -> (element -> msg)
+    (Key -> Html msg)
+    -> (Key -> msg)
     -> State msg element
     -> Html msg
-render renderElement elementMsg (State maybeSelected elementList) =
+render renderElement elementMsg (State maybeSelected elementDict) =
     let
         liList : List (Html msg)
         liList =
-            elementList
-                |> List.map
-                    (renderLine maybeSelected elementMsg renderElement)
+            elementDict
+                |> Dict.map
+                    (renderLine renderElement elementMsg maybeSelected)
+                |> Dict.values
     in
     H.ul [] liList
 
 
 renderLine :
-    Maybe element
-    -> (element -> msg)
-    -> (element -> Html msg)
+    (Key -> Html msg)
+    -> (Key -> msg)
+    -> Maybe ( Key, element )
+    -> Key
     -> element
     -> Html msg
-renderLine maybeSelected elementMsg renderElement current =
+renderLine renderElement elementMsg maybeSelected currentElementKey currentElementValue =
     let
         rendered : Html msg
         rendered =
-            renderElement current
+            renderElement currentElementKey
 
-        event : Maybe (H.Attribute msg)
+        event : H.Attribute msg
         event =
-            maybeSelected
-                |> Maybe.map (elementMsg >> HE.onClick)
+            (elementMsg >> HE.onClick) currentElementKey
 
         attrs : List (H.Attribute msg)
         attrs =
             HA.classList
                 [ ( "selected"
                   , maybeSelected
-                        |> Maybe.map ((==) current)
+                        |> Maybe.map Tuple.first
+                        |> Maybe.map ((==) currentElementKey)
                         |> Maybe.withDefault False
                   )
                 ]
-                :: List.filterMap identity [ event ]
+                :: [ event ]
     in
     H.li
         attrs

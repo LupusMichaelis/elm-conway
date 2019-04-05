@@ -6,10 +6,13 @@ module Seeder exposing
     , blinker
     , evenAreLive
     , getCatalog
-    , getDefaultSeeder
+    , getDefault
+    , getDefaultValue
+    , getDefaultKey
     , oddAreLive
     )
 
+import Dict exposing (Dict)
 import Grid.Cell as Cell
 
 
@@ -17,19 +20,31 @@ type alias Seeder =
     Int -> Cell.State
 
 
-getCatalog : List ( String, Seeder )
+getCatalog : Dict Int ( String, Seeder )
 getCatalog =
-    [ ( "All live cells", allLive )
-    , ( "All deceased cells", allDeceased )
-    , ( "Odd cells are live, other empty", oddAreLive )
-    , ( "Even cells are live, other empty", evenAreLive )
-    , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
-    ]
+    Dict.fromList <|
+        List.indexedMap (,) <|
+            [ ( "All live cells", allLive )
+            , ( "All deceased cells", allDeceased )
+            , ( "Odd cells are live, other empty", oddAreLive )
+            , ( "Even cells are live, other empty", evenAreLive )
+            , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
+            ]
 
 
-getDefaultSeeder : Seeder
-getDefaultSeeder =
-    allLive
+getDefault : ( Int, ( String, Seeder ) )
+getDefault =
+    ( getDefaultKey, getDefaultValue )
+
+
+getDefaultValue : ( String, Seeder )
+getDefaultValue =
+    ( "All live cells", allLive )
+
+
+getDefaultKey : Int
+getDefaultKey =
+    0
 
 
 allLive : Seeder
