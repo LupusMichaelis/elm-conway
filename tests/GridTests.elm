@@ -6,7 +6,6 @@ module GridTests exposing
     , resizeTests
     )
 
-import Array
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
@@ -140,14 +139,14 @@ neighbourhoodTests =
                             (Grid.makeDimension 1 1)
                             (\_ -> Grid.Cell.Deceased)
 
-                    neighbours : Array.Array Grid.Position
+                    neighbours : List Grid.Position
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
                             (Grid.makePosition 0 0)
                 in
                 neighbours
-                    |> Expect.equal (Array.fromList [])
+                    |> Expect.equal []
             )
         , test "Test multicellular at origin"
             (\_ ->
@@ -158,13 +157,13 @@ neighbourhoodTests =
                             (Grid.makeDimension 10 10)
                             (\_ -> Grid.Cell.Deceased)
 
-                    neighbours : Array.Array Grid.Position
+                    neighbours : List Grid.Position
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
                             (Grid.makePosition 0 0)
 
-                    expected : Array.Array Grid.Position
+                    expected : List Grid.Position
                     expected =
                         []
                             -- order matters
@@ -174,7 +173,6 @@ neighbourhoodTests =
                             -- second
                             |> (::) (Grid.makePosition 0 1)
                             -- first
-                            |> Array.fromList
                 in
                 neighbours
                     |> Expect.equal expected
@@ -188,13 +186,13 @@ neighbourhoodTests =
                             (Grid.makeDimension 10 10)
                             (\_ -> Grid.Cell.Deceased)
 
-                    neighbours : Array.Array Grid.Position
+                    neighbours : List Grid.Position
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
                             (Grid.makePosition 5 5)
 
-                    expected : Array.Array Grid.Position
+                    expected : List Grid.Position
                     expected =
                         []
                             -- order matters
@@ -206,7 +204,6 @@ neighbourhoodTests =
                             |> (::) (Grid.makePosition 4 6)
                             |> (::) (Grid.makePosition 4 5)
                             |> (::) (Grid.makePosition 4 4)
-                            |> Array.fromList
                 in
                 neighbours
                     |> Expect.equal expected
@@ -220,7 +217,7 @@ neighbourhoodTests =
                             (Grid.makeDimension 10 10)
                             (\_ -> Grid.Cell.Deceased)
 
-                    neighbours : Array.Array Grid.Position
+                    neighbours : List Grid.Position
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
@@ -229,7 +226,7 @@ neighbourhoodTests =
                                 (grid.dimension.h - 1)
                             )
 
-                    expected : Array.Array Grid.Position
+                    expected : List Grid.Position
                     expected =
                         []
                             -- order matters
@@ -239,7 +236,6 @@ neighbourhoodTests =
                             -- second
                             |> (::) (Grid.makePosition 8 8)
                             -- first
-                            |> Array.fromList
                 in
                 neighbours
                     |> Expect.equal expected
