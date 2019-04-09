@@ -9,11 +9,11 @@ module Controls exposing
     , gridSeeders
     )
 
+import Cell
 import Controls.Button as CoBu
 import Controls.Number as CoNu
 import Controls.Selection
 import Grid
-import Cell
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Seeder
@@ -32,7 +32,7 @@ type Msg
     | SelectSeed Controls.Selection.Key
     | RecycleSandbox
     | Reset
-    | Tick Time.Time -- XXX separate concerns
+    | Tick Time.Time
 
 
 
@@ -149,11 +149,11 @@ gridCanvas grid =
         renderPixel : ( Grid.Position, Cell.State ) -> Svg Msg
         renderPixel ( position, state ) =
             S.rect
-                [ SA.x (topPx position)
-                , SA.y (leftPx position)
+                [ SA.x <| topPx position
+                , SA.y <| leftPx position
                 , SA.height "10px"
                 , SA.width "10px"
-                , SA.class (statusToClass state)
+                , SA.class <| statusToClass state
                 ]
                 []
     in

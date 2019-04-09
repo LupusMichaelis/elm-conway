@@ -334,7 +334,6 @@ packPositionState : Dimension -> Int -> state -> ( Position, state )
 packPositionState dim flattenPosition state =
     ( convertPositionFromFlat dim flattenPosition
         |> Maybe.withDefault (Position 0 0)
-      -- XXX such ugliness
     , state
     )
 
