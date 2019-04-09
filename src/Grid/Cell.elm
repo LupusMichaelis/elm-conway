@@ -13,22 +13,17 @@ type State
 
 shouldACellDie : List State -> Bool
 shouldACellDie neighbours =
-    let
-        living =
-            List.filter (\state -> Live == state) neighbours
-                |> List.length
-    in
-    living < 2 || living > 3
+    List.filter ((==) Live) neighbours
+        |> List.length
+        |> flip List.member [ 2, 3 ]
+        |> not
 
 
 shouldACellResurrect : List State -> Bool
 shouldACellResurrect neighbours =
-    let
-        living =
-            List.filter (\state -> Live == state) neighbours
-                |> List.length
-    in
-    living == 3
+    List.filter ((==) Live) neighbours
+        |> List.length
+        |> (==) 3
 
 
 fateOf : State -> List State -> State
