@@ -16,12 +16,10 @@ import Grid
 import Cell
 import Html as H exposing (Html)
 import Html.Attributes as HA
-import Html.Events as HE
 import Seeder
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
 import Time
-import Tuple
 
 
 type DimensionMsg

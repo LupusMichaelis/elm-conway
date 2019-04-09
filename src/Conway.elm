@@ -2,11 +2,9 @@ module Conway exposing (main)
 
 import Controls
 import Controls.Selection
-import Debug
 import Grid
 import Cell
 import Html exposing (Html)
-import List.Extra
 import Seeder
 import Time
 

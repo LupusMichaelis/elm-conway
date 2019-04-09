@@ -3,7 +3,6 @@ module Grid exposing
     , FateOf
     , Grid
     , Position
-    , Seeder
     , convertPositionFromFlat
     , convertPositionToFlat
     , generate
@@ -18,7 +17,6 @@ module Grid exposing
     , run
     )
 
-import Cell exposing (State(..))
 import Grid.Dimension exposing (Dimension)
 import Grid.Position exposing (Position)
 import List.Extra
