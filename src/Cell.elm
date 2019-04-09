@@ -1,4 +1,4 @@
-module Grid.Cell exposing
+module Cell exposing
     ( State(..)
     , fateOf
     , shouldACellDie

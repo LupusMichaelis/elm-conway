@@ -1,6 +1,7 @@
 module GridPositionTests exposing
     ( coordinateFlatteningTests
     , coordinateWideningTests
+    , simpleTest
     )
 
 import Expect exposing (Expectation)
@@ -9,6 +10,23 @@ import Grid
 import Grid.Dimension
 import Grid.Position
 import Test exposing (..)
+
+
+simpleTest : Test
+simpleTest =
+    describe "Test coordinate system cherry picking"
+        [ test "One cell grid"
+            (\_ ->
+                let
+                    dim : Grid.Dimension
+                    dim =
+                        Grid.Dimension.make 1 1
+                in
+                Grid.convertPositionToFlat dim
+                    (Grid.Position.make 0 0)
+                    |> Expect.equal (Just 0)
+            )
+        ]
 
 
 coordinateFlatteningTests : Test

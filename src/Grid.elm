@@ -1,9 +1,9 @@
 module Grid exposing
-    ( CellSeeder
-    , CellState
-    , Dimension
+    ( Dimension
+    , FateOf
     , Grid
     , Position
+    , Seeder
     , convertPositionFromFlat
     , convertPositionToFlat
     , generate
@@ -18,19 +18,14 @@ module Grid exposing
     , run
     )
 
-import Grid.Cell exposing (State(..))
+import Cell exposing (State(..))
 import Grid.Dimension exposing (Dimension)
 import Grid.Position exposing (Position)
 import List.Extra
-import Seeder
 
 
-type alias CellState =
-    Grid.Cell.State
-
-
-type alias CellSeeder =
-    Seeder.Seeder
+type alias Seeder state =
+    Int -> state
 
 
 type alias Dimension =
@@ -41,9 +36,17 @@ type alias Position =
     Grid.Position.Position
 
 
-type alias Grid =
+type alias FateOf state =
+    state
+    -> List state
+    -> state
+
+
+type alias Grid state =
     { dimension : Dimension
-    , flatten : List CellState
+    , defaultState : state
+    , fateOf : FateOf state
+    , flatten : List state
     }
 
 
@@ -61,30 +64,45 @@ makePosition =
     Grid.Position.make
 
 
-generate : Dimension -> CellSeeder -> Grid
-generate dim gen =
+generate :
+    Dimension
+    -> state
+    -> FateOf state
+    -> Seeder state
+    -> Grid state
+generate dim defaultState fateOf gen =
     Grid
         dim
+        defaultState
+        fateOf
         (List.Extra.initialize
             (dim.w * dim.h)
             gen
         )
 
 
-makeFromList : Dimension -> List CellState -> Maybe Grid
-makeFromList dim copied =
+makeFromList : Dimension -> state -> FateOf state -> List state -> Maybe (Grid state)
+makeFromList dim defaultState fateOf copied =
     if Grid.Dimension.getArea dim /= List.length copied then
         Nothing
 
     else
-        Just <| Grid dim <| copied
+        Just <| Grid dim defaultState fateOf copied
 
 
-makeFromGridAndChipCells : Grid -> Dimension -> (Int -> CellState -> ( Bool, CellState )) -> Maybe Grid
-makeFromGridAndChipCells grid dimension chipper =
+makeFromGridAndChipCells :
+    Grid state
+    -> Dimension
+    -> state
+    -> FateOf state
+    -> (Int -> state -> ( Bool, state ))
+    -> Maybe (Grid state)
+makeFromGridAndChipCells grid dimension defaultState fateOf chipper =
     Just
         (Grid
             dimension
+            defaultState
+            fateOf
             (grid.flatten
                 |> List.indexedMap chipper
                 |> List.filter Tuple.first
@@ -104,7 +122,7 @@ isInThisRow dim row flatten =
     flatten % dim.w /= row
 
 
-makeFromGridAndResize : Grid -> Dimension -> CellSeeder -> Grid
+makeFromGridAndResize : Grid state -> Dimension -> Seeder state -> Grid state
 makeFromGridAndResize grid newDimension seeder =
     let
         generateGrid : Dimension -> List ( Int, Int )
@@ -123,7 +141,7 @@ makeFromGridAndResize grid newDimension seeder =
                 (List.repeat size line)
                 (List.range 0 (size - 1))
 
-        fetchStateOrGenerate : Grid -> Seeder.Seeder -> List Position -> List CellState
+        fetchStateOrGenerate : Grid state -> Seeder state -> List Position -> List state
         fetchStateOrGenerate grid seeder positions =
             positions
                 |> List.map
@@ -141,7 +159,7 @@ makeFromGridAndResize grid newDimension seeder =
     generateGrid newDimension
         |> List.map (\t -> Position (Tuple.first t) (Tuple.second t))
         |> fetchStateOrGenerate grid seeder
-        |> Grid newDimension
+        |> Grid newDimension grid.defaultState grid.fateOf
 
 
 
@@ -230,15 +248,15 @@ convertPositionFromFlat dim flat =
 -- Inspect grid
 
 
-getStateAtFlat : Grid -> CellSeeder
+getStateAtFlat : Grid state -> Int -> state
 getStateAtFlat grid flattenPosition =
     List.Extra.getAt
         flattenPosition
         grid.flatten
-        |> Maybe.withDefault Deceased
+        |> Maybe.withDefault grid.defaultState
 
 
-getStateAt : Grid -> Position -> CellState
+getStateAt : Grid state -> Position -> state
 getStateAt grid position =
     let
         maybePosition : Maybe Position
@@ -251,10 +269,10 @@ getStateAt grid position =
     in
     convertPositionToFlat grid.dimension position
         |> Maybe.map (getStateAtFlat grid)
-        |> Maybe.withDefault Deceased
+        |> Maybe.withDefault grid.defaultState
 
 
-getNeighbourStatesFromFlattenPosition : Grid -> Int -> List CellState
+getNeighbourStatesFromFlattenPosition : Grid state -> Int -> List state
 getNeighbourStatesFromFlattenPosition grid pos =
     let
         neighbours : List Int
@@ -264,7 +282,7 @@ getNeighbourStatesFromFlattenPosition grid pos =
     getStatesFromFlattenPositions grid neighbours
 
 
-getNeighbourStatesFromPosition : Grid -> Position -> List CellState
+getNeighbourStatesFromPosition : Grid state -> Position -> List state
 getNeighbourStatesFromPosition grid pos =
     let
         neighbours : List Position
@@ -274,43 +292,47 @@ getNeighbourStatesFromPosition grid pos =
     getStatesFromPositions grid neighbours
 
 
-getStatesFromPositions : Grid -> List Position -> List CellState
+getStatesFromPositions : Grid state -> List Position -> List state
 getStatesFromPositions grid positions =
     List.map (getStateAt grid) positions
 
 
-getStatesFromFlattenPositions : Grid -> List Int -> List CellState
+getStatesFromFlattenPositions : Grid state -> List Int -> List state
 getStatesFromFlattenPositions grid positions =
     List.map (getStateAtFlat grid) positions
 
 
-fateOf : Grid -> Int -> CellState -> CellState
+fateOf : Grid state -> Int -> state -> state
 fateOf grid pos currentCellState =
     let
-        neighbourStates : List CellState
+        neighbourStates : List state
         neighbourStates =
             getNeighbourStatesFromFlattenPosition grid pos
     in
-    Grid.Cell.fateOf currentCellState neighbourStates
+    grid.fateOf
+        currentCellState
+        neighbourStates
 
 
 
 -- RUN FORREST! RUUUUUUN!
 
 
-run : Grid -> Grid
+run : Grid state -> Grid state
 run currentGrid =
     let
-        fateAt : Int -> CellState -> CellState
+        fateAt : Int -> state -> state
         fateAt =
             fateOf currentGrid
     in
     Grid
         currentGrid.dimension
+        currentGrid.defaultState
+        currentGrid.fateOf
         (List.indexedMap fateAt currentGrid.flatten)
 
 
-packPositionState : Dimension -> Int -> CellState -> ( Position, CellState )
+packPositionState : Dimension -> Int -> state -> ( Position, state )
 packPositionState dim flattenPosition state =
     ( convertPositionFromFlat dim flattenPosition
         |> Maybe.withDefault (Position 0 0)
@@ -319,7 +341,7 @@ packPositionState dim flattenPosition state =
     )
 
 
-iterate : Grid -> List ( Position, CellState )
+iterate : Grid state -> List ( Position, state )
 iterate grid =
     List.indexedMap
         (packPositionState grid.dimension)

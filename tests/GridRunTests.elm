@@ -1,13 +1,14 @@
 module GridRunTests exposing
-    ( cellForetoldFateTests
+    ( basicArrangement
+    , cellForetoldFateTests
     , cellInRectangularSandbox
     )
 
 import Array
+import Cell
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
-import Grid.Cell
 import Test exposing (..)
 
 
@@ -15,10 +16,10 @@ cellForetoldFateTests : Test
 cellForetoldFateTests =
     let
         l =
-            Grid.Cell.Live
+            Cell.Live
 
         d =
-            Grid.Cell.Deceased
+            Cell.Deceased
     in
     describe
         """
@@ -28,30 +29,21 @@ cellForetoldFateTests =
         [ test "Still life: block"
             (\_ ->
                 let
-                    block : List Grid.Cell.State
+                    block : List Cell.State
                     block =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d ]
+                        , [ d, l, l, d ]
+                        , [ d, l, l, d ]
+                        , [ d, d, d, d ]
                         ]
+                            |> List.concat
 
-                    grid : Maybe Grid.Grid
+                    grid : Maybe (Grid.Grid Cell.State)
                     grid =
                         Grid.makeFromList
                             (Grid.makeDimension 4 4)
+                            Cell.Deceased
+                            Cell.fateOf
                             block
                 in
                 Maybe.map Grid.run grid
@@ -60,102 +52,51 @@ cellForetoldFateTests =
         , test "Oscillator: blinker"
             (\_ ->
                 let
-                    block : List Grid.Cell.State
+                    block : List Cell.State
                     block =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d, d ]
+                        , [ d, d, d, d, d ]
+                        , [ d, l, l, l, d ]
+                        , [ d, d, d, d, d ]
+                        , [ d, d, d, d, d ]
                         ]
+                            |> List.concat
 
-                    origin : Maybe Grid.Grid
+                    origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
                             (Grid.makeDimension 5 5)
+                            Cell.Deceased
+                            Cell.fateOf
                             block
 
-                    intermediate : Maybe Grid.Grid
+                    intermediate : Maybe (Grid.Grid Cell.State)
                     intermediate =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d, d ]
+                        , [ d, d, l, d, d ]
+                        , [ d, d, l, d, d ]
+                        , [ d, d, l, d, d ]
+                        , [ d, d, d, d, d ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
+                                Cell.Deceased
+                                Cell.fateOf
 
-                    target : Maybe Grid.Grid
+                    target : Maybe (Grid.Grid Cell.State)
                     target =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d, d ]
+                        , [ d, d, d, d, d ]
+                        , [ d, l, l, l, d ]
+                        , [ d, d, d, d, d ]
+                        , [ d, d, d, d, d ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
+                                Cell.Deceased
+                                Cell.fateOf
                 in
                 Maybe.map Grid.run origin
                     |> Expect.all
@@ -170,95 +111,41 @@ cellForetoldFateTests =
         , test "Oscillator: beacon"
             (\_ ->
                 let
-                    block : List Grid.Cell.State
+                    block : List Cell.State
                     block =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d, d, d ]
+                        , [ d, l, l, d, d, d ]
+                        , [ d, l, l, d, d, d ]
+                        , [ d, d, d, l, l, d ]
+                        , [ d, d, d, l, l, d ]
+                        , [ d, d, d, d, d, d ]
                         ]
+                            |> List.concat
 
-                    origin : Maybe Grid.Grid
+                    origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
-                            (Grid.makeDimension 5 5)
+                            (Grid.makeDimension 6 6)
+                            Cell.Deceased
+                            Cell.fateOf
                             block
 
-                    intermediate : Maybe Grid.Grid
+                    intermediate : Maybe (Grid.Grid Cell.State)
                     intermediate =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d, d, d ]
+                        , [ d, l, l, d, d, d ]
+                        , [ d, l, d, d, d, d ]
+                        , [ d, d, d, d, l, d ]
+                        , [ d, d, d, l, l, d ]
+                        , [ d, d, d, d, d, d ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 5 5)
+                                (Grid.makeDimension 6 6)
+                                Cell.Deceased
+                                Cell.fateOf
 
-                    target : Maybe Grid.Grid
+                    target : Maybe (Grid.Grid Cell.State)
                     target =
                         origin
                 in
@@ -275,14 +162,62 @@ cellForetoldFateTests =
         ]
 
 
+basicArrangement : Test
+basicArrangement =
+    let
+        l =
+            Cell.Live
+
+        d =
+            Cell.Deceased
+    in
+    describe
+        """
+            Test basic arrangement
+            """
+        [ test "A line of 4 live elements shrink to a block"
+            (\_ ->
+                let
+                    skycrapper : Maybe (Grid.Grid Cell.State)
+                    skycrapper =
+                        [ [ d, l ]
+                        , [ d, l ]
+                        , [ d, l ]
+                        , [ d, l ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 4 2)
+                                Cell.Deceased
+                                Cell.fateOf
+
+                    collapsed : Maybe (Grid.Grid Cell.State)
+                    collapsed =
+                        [ [ d, d ]
+                        , [ l, l ]
+                        , [ l, l ]
+                        , [ d, d ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList
+                                (Grid.makeDimension 4 2)
+                                Cell.Deceased
+                                Cell.fateOf
+                in
+                Maybe.map Grid.run skycrapper
+                    |> Expect.equal collapsed
+            )
+        ]
+
+
 cellInRectangularSandbox : Test
 cellInRectangularSandbox =
     let
         l =
-            Grid.Cell.Live
+            Cell.Live
 
         d =
-            Grid.Cell.Deceased
+            Cell.Deceased
     in
     describe
         """
@@ -291,42 +226,21 @@ cellInRectangularSandbox =
         [ test "Still life: block"
             (\_ ->
                 let
-                    block : List Grid.Cell.State
+                    block : List Cell.State
                     block =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d ]
+                        , [ d, l, l, d ]
+                        , [ d, l, l, d ]
+                        , [ d, d, d, d ]
                         ]
+                            |> List.concat
 
-                    grid : Maybe Grid.Grid
+                    grid : Maybe (Grid.Grid Cell.State)
                     grid =
                         Grid.makeFromList
                             (Grid.makeDimension 4 4)
+                            Cell.Deceased
+                            Cell.fateOf
                             block
                 in
                 Maybe.map Grid.run grid
@@ -335,72 +249,45 @@ cellInRectangularSandbox =
         , test "Oscillator: blinker"
             (\_ ->
                 let
-                    block : List Grid.Cell.State
+                    block : List Cell.State
                     block =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d, d ]
+                        , [ d, l, l, l, d ]
+                        , [ d, d, d, d, d ]
                         ]
+                            |> List.concat
 
-                    origin : Maybe Grid.Grid
+                    origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
                             (Grid.makeDimension 5 5)
+                            Cell.Deceased
+                            Cell.fateOf
                             block
 
-                    intermediate : Maybe Grid.Grid
+                    intermediate : Maybe (Grid.Grid Cell.State)
                     intermediate =
-                        [ d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
+                        [ [ d, d, l, d, d ]
+                        , [ d, d, l, d, d ]
+                        , [ d, d, l, d, d ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
+                                Cell.Deceased
+                                Cell.fateOf
 
-                    target : Maybe Grid.Grid
+                    target : Maybe (Grid.Grid Cell.State)
                     target =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d, d, d ]
+                        , [ d, l, l, l, d ]
+                        , [ d, d, d, d, d ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
+                                Cell.Deceased
+                                Cell.fateOf
                 in
                 Maybe.map Grid.run origin
                     |> Expect.all
@@ -415,63 +302,37 @@ cellInRectangularSandbox =
         , test "Oscillator: beacon"
             (\_ ->
                 let
-                    block : List Grid.Cell.State
+                    block : List Cell.State
                     block =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , l
-                        , l
+                        [ [ d, d, d, d, l ]
+                        , [ l, d, d, l, l ]
+                        , [ d, d, d, d, l ]
+                        , [ l, d, d, l, l ]
                         ]
+                            |> List.concat
 
-                    origin : Maybe Grid.Grid
+                    origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
                             (Grid.makeDimension 5 5)
+                            Cell.Deceased
+                            Cell.fateOf
                             block
 
-                    intermediate : Maybe Grid.Grid
+                    intermediate : Maybe (Grid.Grid Cell.State)
                     intermediate =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , l
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , l
-                        , d
-                        , d
-                        , l
-                        , l
+                        [ [ d, d, d, d, l ]
+                        , [ l, d, d, l, d ]
+                        , [ d, d, d, d, d ]
+                        , [ l, d, d, l, l ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
                                 (Grid.makeDimension 5 5)
+                                Cell.Deceased
+                                Cell.fateOf
 
-                    target : Maybe Grid.Grid
+                    target : Maybe (Grid.Grid Cell.State)
                     target =
                         origin
                 in

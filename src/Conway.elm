@@ -4,7 +4,7 @@ import Controls
 import Controls.Selection
 import Debug
 import Grid
-import Grid.Cell
+import Cell
 import Html exposing (Html)
 import List.Extra
 import Seeder
@@ -12,7 +12,7 @@ import Time
 
 
 type alias Model =
-    { grid : Grid.Grid
+    { grid : Grid.Grid Cell.State
     , dimension : Grid.Dimension
     , seederSelection : Controls.Selection.State Controls.Msg ( String, Seeder.Seeder )
     }
@@ -37,7 +37,7 @@ initialState =
             Grid.makeDimension 10 10
     in
     ( Model
-        (Grid.generate gridSize Seeder.battlefield)
+        (Grid.generate gridSize Cell.Deceased Cell.fateOf Seeder.battlefield)
         gridSize
         (Controls.Selection.State
             (Just Seeder.getDefault)
@@ -104,6 +104,8 @@ updateState msg model =
                 | grid =
                     Grid.generate
                         model.dimension
+                        Cell.Deceased
+                        Cell.fateOf
                         (Tuple.second
                             (case model.seederSelection of
                                 Controls.Selection.State (Just ( _, seeder )) _ ->

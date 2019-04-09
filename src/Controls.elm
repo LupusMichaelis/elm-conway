@@ -12,8 +12,8 @@ module Controls exposing
 import Controls.Button as CoBu
 import Controls.Number as CoNu
 import Controls.Selection
-import Grid exposing (Grid)
-import Grid.Cell
+import Grid
+import Cell
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -101,7 +101,7 @@ gridSeeders =
         SelectSeed
 
 
-gridCanvas : Grid.Grid -> Html Msg
+gridCanvas : Grid.Grid Cell.State -> Html Msg
 gridCanvas grid =
     let
         -- XXX rendering logic should be done somewhere else and tested
@@ -139,16 +139,16 @@ gridCanvas grid =
             )
                 ++ "px"
 
-        statusToClass : Grid.Cell.State -> String
+        statusToClass : Cell.State -> String
         statusToClass state =
             case state of
-                Grid.Cell.Live ->
+                Cell.Live ->
                     "live"
 
-                Grid.Cell.Deceased ->
+                Cell.Deceased ->
                     "deceased"
 
-        renderPixel : ( Grid.Position, Grid.Cell.State ) -> Svg Msg
+        renderPixel : ( Grid.Position, Cell.State ) -> Svg Msg
         renderPixel ( position, state ) =
             S.rect
                 [ SA.x (topPx position)

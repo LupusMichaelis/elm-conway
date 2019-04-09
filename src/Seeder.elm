@@ -7,13 +7,13 @@ module Seeder exposing
     , evenAreLive
     , getCatalog
     , getDefault
-    , getDefaultValue
     , getDefaultKey
+    , getDefaultValue
     , oddAreLive
     )
 
+import Cell
 import Dict exposing (Dict)
-import Grid.Cell as Cell
 
 
 type alias Seeder =
