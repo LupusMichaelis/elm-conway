@@ -20,6 +20,7 @@ import Seeder
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
 import Time
+import Svg.Lazy
 
 
 type DimensionMsg
@@ -166,7 +167,7 @@ gridCanvas grid =
             , SA.strokeWidth "1px"
             ]
             (Grid.iterate grid
-                |> List.map renderPixel
+                |> List.map (Svg.Lazy.lazy renderPixel)
             )
         ]
 
