@@ -5,6 +5,8 @@ module Cell exposing
     , shouldACellResurrect
     )
 
+import Basic
+
 
 type State
     = Live -- happy cell shanting around
@@ -15,7 +17,7 @@ shouldACellDie : List State -> Bool
 shouldACellDie neighbours =
     List.filter ((==) Live) neighbours
         |> List.length
-        |> flip List.member [ 2, 3 ]
+        |> Basic.flip List.member [ 2, 3 ]
         |> not
 
 

@@ -19,8 +19,8 @@ import Html.Attributes as HA
 import Seeder
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
-import Time
 import Svg.Lazy
+import Time
 
 
 type DimensionMsg
@@ -33,7 +33,7 @@ type Msg
     | SelectSeed Controls.Selection.Key
     | RecycleSandbox
     | Reset
-    | Tick Time.Time
+    | Tick Time.Posix
 
 
 
@@ -73,7 +73,7 @@ gridDimensioner dim =
                     Resize dimMsg (dimMsgToInt dimMsg - 1)
 
                 CoNu.Change n ->
-                    Resize dimMsg (String.toInt n |> Result.withDefault 0)
+                    Resize dimMsg (String.toInt n |> Maybe.withDefault 0)
     in
     H.div []
         [ CoNu.ctrl
@@ -109,7 +109,7 @@ gridCanvas grid =
             (grid.dimension.h
                 * (1 + 10)
                 + 1
-                |> toString
+                |> String.fromInt
             )
                 ++ "px"
 
@@ -118,7 +118,7 @@ gridCanvas grid =
             (grid.dimension.w
                 * (1 + 10)
                 + 1
-                |> toString
+                |> String.fromInt
             )
                 ++ "px"
 
@@ -126,7 +126,7 @@ gridCanvas grid =
         topPx position =
             (position.t
                 |> (*) 10
-                |> toString
+                |> String.fromInt
             )
                 ++ "px"
 
@@ -134,7 +134,7 @@ gridCanvas grid =
         leftPx position =
             (position.l
                 |> (*) 10
-                |> toString
+                |> String.fromInt
             )
                 ++ "px"
 

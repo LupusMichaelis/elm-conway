@@ -22,7 +22,7 @@ type State msg element
 
 updateSelected : State msg element -> Key -> ( State msg element, Cmd msg )
 updateSelected (State maybeSelected dict) selected =
-    ( State (Dict.get selected dict |> Maybe.map ((,) selected)) dict, Cmd.none )
+    ( State (Dict.get selected dict |> Maybe.map (Tuple.pair selected)) dict, Cmd.none )
 
 
 renderElementFromCatalog :
@@ -38,11 +38,6 @@ renderElementFromCatalog catalog placeholder elementKey =
         |> Maybe.map Tuple.first
         |> Maybe.map H.text
         |> Maybe.withDefault placeholder
-
-
-
-{--
---}
 
 
 render :

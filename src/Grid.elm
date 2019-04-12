@@ -112,12 +112,28 @@ makeFromGridAndChipCells grid dimension defaultState fateOf chipper =
 isInThisColumn : Dimension -> Int -> Int -> Bool
 isInThisColumn dim column flatten =
     -- XXX something fishy, I ignore dimension and tell the column…
-    flatten % (column + 1) /= 0
+    modBy (column + 1) flatten /= 0
 
 
 isInThisRow : Dimension -> Int -> Int -> Bool
 isInThisRow dim row flatten =
-    flatten % dim.w /= row
+    modBy dim.w flatten /= row
+
+
+fetchStateOrGenerate : Grid state -> Seeder state -> List Position -> List state
+fetchStateOrGenerate grid seeder positions =
+    positions
+        |> List.map
+            (\position ->
+                if isWithinDimension grid.dimension position then
+                    getStateAt grid position
+
+                else
+                    position
+                        |> convertPositionToFlat grid.dimension
+                        |> Maybe.withDefault 0
+                        |> seeder
+            )
 
 
 makeFromGridAndResize : Grid state -> Dimension -> Seeder state -> Grid state
@@ -135,24 +151,9 @@ makeFromGridAndResize grid newDimension seeder =
             -> List ( Int, Int ) -- row, col
         generateRow size line =
             List.map2
-                (,)
+                Tuple.pair
                 (List.repeat size line)
                 (List.range 0 (size - 1))
-
-        fetchStateOrGenerate : Grid state -> Seeder state -> List Position -> List state
-        fetchStateOrGenerate grid seeder positions =
-            positions
-                |> List.map
-                    (\position ->
-                        if isWithinDimension grid.dimension position then
-                            getStateAt grid position
-
-                        else
-                            position
-                                |> convertPositionToFlat grid.dimension
-                                |> Maybe.withDefault 0
-                                |> seeder
-                    )
     in
     generateGrid newDimension
         |> List.map (\t -> Position (Tuple.first t) (Tuple.second t))
@@ -300,8 +301,8 @@ getStatesFromFlattenPositions grid positions =
     List.map (getStateAtFlat grid) positions
 
 
-fateOf : Grid state -> Int -> state -> state
-fateOf grid pos currentCellState =
+fateOfState : Grid state -> Int -> state -> state
+fateOfState grid pos currentCellState =
     let
         neighbourStates : List state
         neighbourStates =
@@ -321,7 +322,7 @@ run currentGrid =
     let
         fateAt : Int -> state -> state
         fateAt =
-            fateOf currentGrid
+            fateOfState currentGrid
     in
     Grid
         currentGrid.dimension

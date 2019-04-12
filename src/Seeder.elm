@@ -23,7 +23,7 @@ type alias Seeder =
 getCatalog : Dict Int ( String, Seeder )
 getCatalog =
     Dict.fromList <|
-        List.indexedMap (,) <|
+        List.indexedMap Tuple.pair <|
             [ ( "All live cells", allLive )
             , ( "All deceased cells", allDeceased )
             , ( "Odd cells are live, other empty", oddAreLive )
@@ -59,7 +59,7 @@ allDeceased _ =
 
 oddAreLive : Seeder
 oddAreLive idx =
-    if idx % 2 == 0 then
+    if modBy 2 idx == 0 then
         Cell.Live
 
     else
@@ -68,7 +68,7 @@ oddAreLive idx =
 
 evenAreLive : Seeder
 evenAreLive idx =
-    if idx % 2 == 0 then
+    if modBy 2 idx == 0 then
         Cell.Deceased
 
     else
@@ -78,11 +78,9 @@ evenAreLive idx =
 battlefield : Seeder
 battlefield idx =
     if
-        idx
-            % 3
+        modBy 3 idx
             == 0
-            || idx
-            % 5
+            || modBy 5 idx
             == 0
     then
         Cell.Live

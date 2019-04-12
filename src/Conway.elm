@@ -1,5 +1,6 @@
 module Conway exposing (main)
 
+import Browser
 import Cell
 import Controls
 import Controls.Selection
@@ -16,9 +17,10 @@ type alias Model =
     }
 
 
-viewState : Model -> Html Controls.Msg
+viewState : Model -> Browser.Document Controls.Msg
 viewState model =
-    Html.div []
+    { title = "Conway's game of life"
+    , body =
         [ Controls.gridCanvas model.grid
         , Controls.gridDimensioner model.dimension
         , Controls.gridSeeders model.seederSelection
@@ -26,6 +28,7 @@ viewState model =
         , Controls.gridReseter
         , Controls.decorate
         ]
+    }
 
 
 initialState : ( Model, Cmd Controls.Msg )
@@ -47,7 +50,7 @@ initialState =
 
 subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
-    Time.every Time.second Controls.Tick
+    Time.every 1000 Controls.Tick
 
 
 updateState : Controls.Msg -> Model -> ( Model, Cmd Controls.Msg )
@@ -121,10 +124,10 @@ updateState msg model =
             initialState
 
 
-main : Program Never Model Controls.Msg
+main : Program () Model Controls.Msg
 main =
-    Html.program
-        { init = initialState
+    Browser.document
+        { init = always initialState
         , update = updateState
         , subscriptions = subscriptions
         , view = viewState

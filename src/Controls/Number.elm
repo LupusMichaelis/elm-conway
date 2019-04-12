@@ -37,7 +37,7 @@ update msg model =
             { model | value = model.value + 1 }
 
         Change s ->
-            { model | value = String.toInt s |> Result.withDefault 0 }
+            { model | value = String.toInt s |> Maybe.withDefault 0 }
 
 
 ctrl :
@@ -51,7 +51,7 @@ ctrl change increase decrease label model =
     H.label []
         [ H.text label
         , H.input
-            [ HA.value <| toString model.value
+            [ HA.value <| String.fromInt model.value
             , HE.onInput change
             ]
             []
