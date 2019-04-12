@@ -3,3 +3,5 @@ elm-stuff
 node_modules
 dist
 .coverage/
+build
+index.html
