@@ -6,30 +6,20 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "elm-test"
+    "test": "elm-test",
+    "dev": "elm-live src/Conway.elm"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LupusMichaelis/elm-conway.git"
-  },
+  "repository": "https://github.com/LupusMichaelis/elm-conway.git",
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ace-css": "1.1",
-    "css-loader": "0.26.1",
-    "elm": "^0.19.0-bugfix6",
+    "elm": "0.19",
     "elm-format": "^0.8.1",
+    "elm-live": "^3.4.0",
     "elm-test": "^0.19.0",
-    "elm-webpack-loader": "4.2",
-    "file-loader": "0.10.0",
-    "font-awesome": "4",
-    "json-server": "0.9.5",
-    "style-loader": "0.23.1",
-    "url-loader": "0.5.7",
-    "webpack": "2.2",
-    "webpack-cli": "1.0.0",
-    "webpack-dev-server": "2.5.0"
+    "json-server": "0.9.5"
   },
   "devDependencies": {},
-  "description": ""
+  "description": "",
+  "private": true
 }
