@@ -1,6 +1,5 @@
 module Grid exposing
-    ( Dimension
-    , FateOf
+    ( FateOf
     , Grid
     , Position
     , convertPositionFromFlat
@@ -10,24 +9,19 @@ module Grid exposing
     , getStateAt
     , isWithinDimension
     , iterate
-    , makeDimension
     , makeFromGridAndResize
     , makeFromList
     , makePosition
     , run
     )
 
-import Grid.Dimension exposing (Dimension)
+import Dimension
 import Grid.Position exposing (Position)
 import List.Extra
 
 
 type alias Seeder state =
     Int -> state
-
-
-type alias Dimension =
-    Grid.Dimension.Dimension
 
 
 type alias Position =
@@ -41,20 +35,11 @@ type alias FateOf state =
 
 
 type alias Grid state =
-    { dimension : Dimension
+    { dimension : Dimension.Two
     , defaultState : state
     , fateOf : FateOf state
     , flatten : List state
     }
-
-
-
--- Factories
-
-
-makeDimension : Int -> Int -> Dimension
-makeDimension =
-    Grid.Dimension.make
 
 
 makePosition : Int -> Int -> Position
@@ -63,7 +48,7 @@ makePosition =
 
 
 generate :
-    Dimension
+    Dimension.Two
     -> state
     -> FateOf state
     -> Seeder state
@@ -79,9 +64,14 @@ generate dim defaultState fateOf gen =
         )
 
 
-makeFromList : Dimension -> state -> FateOf state -> List state -> Maybe (Grid state)
+makeFromList :
+    Dimension.Two
+    -> state
+    -> FateOf state
+    -> List state
+    -> Maybe (Grid state)
 makeFromList dim defaultState fateOf copied =
-    if Grid.Dimension.getArea dim /= List.length copied then
+    if Dimension.getArea dim /= List.length copied then
         Nothing
 
     else
@@ -90,7 +80,7 @@ makeFromList dim defaultState fateOf copied =
 
 makeFromGridAndChipCells :
     Grid state
-    -> Dimension
+    -> Dimension.Two
     -> state
     -> FateOf state
     -> (Int -> state -> ( Bool, state ))
@@ -109,13 +99,21 @@ makeFromGridAndChipCells grid dimension defaultState fateOf chipper =
         )
 
 
-isInThisColumn : Dimension -> Int -> Int -> Bool
+isInThisColumn :
+    Dimension.Two
+    -> Int
+    -> Int
+    -> Bool
 isInThisColumn dim column flatten =
     -- XXX something fishy, I ignore dimension and tell the column…
     modBy (column + 1) flatten /= 0
 
 
-isInThisRow : Dimension -> Int -> Int -> Bool
+isInThisRow :
+    Dimension.Two
+    -> Int
+    -> Int
+    -> Bool
 isInThisRow dim row flatten =
     modBy dim.w flatten /= row
 
@@ -136,10 +134,14 @@ fetchStateOrGenerate grid seeder positions =
             )
 
 
-makeFromGridAndResize : Grid state -> Dimension -> Seeder state -> Grid state
+makeFromGridAndResize :
+    Grid state
+    -> Dimension.Two
+    -> Seeder state
+    -> Grid state
 makeFromGridAndResize grid newDimension seeder =
     let
-        generateGrid : Dimension -> List ( Int, Int )
+        generateGrid : Dimension.Two -> List ( Int, Int )
         generateGrid dim =
             List.range 0 (dim.h - 1)
                 |> List.map (generateRow dim.w)
@@ -165,7 +167,7 @@ makeFromGridAndResize grid newDimension seeder =
 -- Manipulating positions within dimensions
 
 
-isWithinDimension : Dimension -> Position -> Bool
+isWithinDimension : Dimension.Two -> Position -> Bool
 isWithinDimension d p =
     p.t
         >= 0
@@ -177,9 +179,9 @@ isWithinDimension d p =
         > p.l
 
 
-isWithinFlattenDimension : Dimension -> Int -> Bool
+isWithinFlattenDimension : Dimension.Two -> Int -> Bool
 isWithinFlattenDimension d p =
-    p < Grid.Dimension.getArea d
+    p < Dimension.getArea d
 
 
 
@@ -189,7 +191,7 @@ isWithinFlattenDimension d p =
 {-| Given a Dimension and a Position, returns a List of neighbouring positions within
 the borders.
 -}
-getNeighbourPositions : Dimension -> Position -> List Position
+getNeighbourPositions : Dimension.Two -> Position -> List Position
 getNeighbourPositions dim p =
     [ { p | t = p.t - 1, l = p.l - 1 }
     , { p | t = p.t - 1 }
@@ -203,7 +205,7 @@ getNeighbourPositions dim p =
         |> List.filter (isWithinDimension dim)
 
 
-getNeighbourFlattenPositions : Dimension -> Int -> List Int
+getNeighbourFlattenPositions : Dimension.Two -> Int -> List Int
 getNeighbourFlattenPositions dim p =
     [ p - dim.w - 1
     , p - dim.w
@@ -221,7 +223,7 @@ getNeighbourFlattenPositions dim p =
 -- Conversion helpers
 
 
-convertPositionToFlat : Dimension -> Position -> Maybe Int
+convertPositionToFlat : Dimension.Two -> Position -> Maybe Int
 convertPositionToFlat dim pos =
     if pos.t >= dim.h || pos.l >= dim.w then
         Nothing
@@ -230,7 +232,7 @@ convertPositionToFlat dim pos =
         Just (pos.t * dim.w + pos.l)
 
 
-convertPositionFromFlat : Dimension -> Int -> Maybe Position
+convertPositionFromFlat : Dimension.Two -> Int -> Maybe Position
 convertPositionFromFlat dim flat =
     if isWithinFlattenDimension dim flat then
         Just
@@ -331,7 +333,7 @@ run currentGrid =
         (List.indexedMap fateAt currentGrid.flatten)
 
 
-packPositionState : Dimension -> Int -> state -> ( Position, state )
+packPositionState : Dimension.Two -> Int -> state -> ( Position, state )
 packPositionState dim flattenPosition state =
     ( convertPositionFromFlat dim flattenPosition
         |> Maybe.withDefault (Position 0 0)

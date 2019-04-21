@@ -13,6 +13,7 @@ import Cell
 import Controls.Button as CoBu
 import Controls.Number as CoNu
 import Controls.Selection
+import Dimension
 import Grid
 import Html as H exposing (Html)
 import Html.Attributes as HA
@@ -51,7 +52,7 @@ decorate =
         []
 
 
-gridDimensioner : Grid.Dimension -> Html Msg
+gridDimensioner : Dimension.Two -> Html Msg
 gridDimensioner dim =
     let
         dimMsgToInt : DimensionMsg -> Int

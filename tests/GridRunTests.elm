@@ -6,6 +6,7 @@ module GridRunTests exposing
 
 import Array
 import Cell
+import Dimension
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
@@ -41,7 +42,7 @@ cellForetoldFateTests =
                     grid : Maybe (Grid.Grid Cell.State)
                     grid =
                         Grid.makeFromList
-                            (Grid.makeDimension 4 4)
+                            (Dimension.make 4 4)
                             Cell.Deceased
                             Cell.fateOf
                             block
@@ -65,7 +66,7 @@ cellForetoldFateTests =
                     origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
-                            (Grid.makeDimension 5 5)
+                            (Dimension.make 5 5)
                             Cell.Deceased
                             Cell.fateOf
                             block
@@ -80,7 +81,7 @@ cellForetoldFateTests =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 5 5)
+                                (Dimension.make 5 5)
                                 Cell.Deceased
                                 Cell.fateOf
 
@@ -94,7 +95,7 @@ cellForetoldFateTests =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 5 5)
+                                (Dimension.make 5 5)
                                 Cell.Deceased
                                 Cell.fateOf
                 in
@@ -125,7 +126,7 @@ cellForetoldFateTests =
                     origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
-                            (Grid.makeDimension 6 6)
+                            (Dimension.make 6 6)
                             Cell.Deceased
                             Cell.fateOf
                             block
@@ -141,7 +142,7 @@ cellForetoldFateTests =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 6 6)
+                                (Dimension.make 6 6)
                                 Cell.Deceased
                                 Cell.fateOf
 
@@ -187,7 +188,7 @@ basicArrangement =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 4 2)
+                                (Dimension.make 4 2)
                                 Cell.Deceased
                                 Cell.fateOf
 
@@ -200,7 +201,7 @@ basicArrangement =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 4 2)
+                                (Dimension.make 4 2)
                                 Cell.Deceased
                                 Cell.fateOf
                 in
@@ -238,7 +239,7 @@ cellInRectangularSandbox =
                     grid : Maybe (Grid.Grid Cell.State)
                     grid =
                         Grid.makeFromList
-                            (Grid.makeDimension 4 4)
+                            (Dimension.make 4 4)
                             Cell.Deceased
                             Cell.fateOf
                             block
@@ -260,7 +261,7 @@ cellInRectangularSandbox =
                     origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
-                            (Grid.makeDimension 5 5)
+                            (Dimension.make 5 5)
                             Cell.Deceased
                             Cell.fateOf
                             block
@@ -273,7 +274,7 @@ cellInRectangularSandbox =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 5 5)
+                                (Dimension.make 5 5)
                                 Cell.Deceased
                                 Cell.fateOf
 
@@ -285,7 +286,7 @@ cellInRectangularSandbox =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 5 5)
+                                (Dimension.make 5 5)
                                 Cell.Deceased
                                 Cell.fateOf
                 in
@@ -314,7 +315,7 @@ cellInRectangularSandbox =
                     origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
-                            (Grid.makeDimension 5 5)
+                            (Dimension.make 5 5)
                             Cell.Deceased
                             Cell.fateOf
                             block
@@ -328,7 +329,7 @@ cellInRectangularSandbox =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Grid.makeDimension 5 5)
+                                (Dimension.make 5 5)
                                 Cell.Deceased
                                 Cell.fateOf
 

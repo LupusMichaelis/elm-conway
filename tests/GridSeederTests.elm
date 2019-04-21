@@ -1,6 +1,7 @@
 module GridSeederTests exposing (resizingTests)
 
 import Cell
+import Dimension
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
@@ -21,9 +22,9 @@ resizingTests =
         [ test "Test bug of odd population, stabilized, resized with live cells and get shuffled"
             (\_ ->
                 let
-                    dimension : Grid.Dimension
+                    dimension : Dimension.Two
                     dimension =
-                        Grid.makeDimension 10 10
+                        Dimension.make 10 10
 
                     original : Grid.Grid Cell.State
                     original =

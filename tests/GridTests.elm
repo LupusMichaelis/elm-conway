@@ -7,6 +7,7 @@ module GridTests exposing
     )
 
 import Cell
+import Dimension
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
@@ -19,35 +20,35 @@ isWithinDimensionTests =
         [ test "Test (1,1) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
-                    (Grid.makeDimension 1 1)
+                    (Dimension.make 1 1)
                     (Grid.makePosition 1 1)
                     |> Expect.false "expected to find with out boundaries"
             )
         , test "Test (0,0) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
-                    (Grid.makeDimension 1 1)
+                    (Dimension.make 1 1)
                     (Grid.makePosition 0 0)
                     |> Expect.true "expected to find within boundaries"
             )
         , test "Test (0,1) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
-                    (Grid.makeDimension 1 1)
+                    (Dimension.make 1 1)
                     (Grid.makePosition 0 1)
                     |> Expect.false "expected to find with out boundaries"
             )
         , test "Test (0,-1) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
-                    (Grid.makeDimension 1 1)
+                    (Dimension.make 1 1)
                     (Grid.makePosition 0 -1)
                     |> Expect.false "expected to find with out boundaries"
             )
         , test "Test (-2,-1) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
-                    (Grid.makeDimension 1 1)
+                    (Dimension.make 1 1)
                     (Grid.makePosition -2 -1)
                     |> Expect.false "expected to find with out boundaries"
             )
@@ -61,7 +62,7 @@ getStateOfCellTests =
             (\_ ->
                 let
                     dim =
-                        Grid.makeDimension 1 1
+                        Dimension.make 1 1
                 in
                 Grid.getStateAt
                     (Grid.generate dim
@@ -76,7 +77,7 @@ getStateOfCellTests =
             (\_ ->
                 let
                     dim =
-                        Grid.makeDimension 1 1
+                        Dimension.make 1 1
                 in
                 Grid.getStateAt
                     (Grid.generate dim
@@ -91,7 +92,7 @@ getStateOfCellTests =
             (\_ ->
                 let
                     dim =
-                        Grid.makeDimension 1 1
+                        Dimension.make 1 1
                 in
                 Grid.getStateAt
                     (Grid.generate dim
@@ -111,9 +112,9 @@ makeGridFromStatesTests =
         [ test "Test same size"
             (\_ ->
                 let
-                    dim : Grid.Dimension
+                    dim : Dimension.Two
                     dim =
-                        Grid.makeDimension 1 1
+                        Dimension.make 1 1
 
                     list : List Cell.State
                     list =
@@ -129,9 +130,9 @@ makeGridFromStatesTests =
         , test "Test different size"
             (\_ ->
                 let
-                    dim : Grid.Dimension
+                    dim : Dimension.Two
                     dim =
-                        Grid.makeDimension 1 2
+                        Dimension.make 1 2
 
                     list : List Cell.State
                     list =
@@ -156,7 +157,7 @@ neighbourhoodTests =
                     grid : Grid.Grid Cell.State
                     grid =
                         Grid.generate
-                            (Grid.makeDimension 1 1)
+                            (Dimension.make 1 1)
                             Cell.Deceased
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
@@ -176,7 +177,7 @@ neighbourhoodTests =
                     grid : Grid.Grid Cell.State
                     grid =
                         Grid.generate
-                            (Grid.makeDimension 10 10)
+                            (Dimension.make 10 10)
                             Cell.Deceased
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
@@ -204,7 +205,7 @@ neighbourhoodTests =
                     grid : Grid.Grid Cell.State
                     grid =
                         Grid.generate
-                            (Grid.makeDimension 10 10)
+                            (Dimension.make 10 10)
                             Cell.Deceased
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
@@ -237,7 +238,7 @@ neighbourhoodTests =
                     grid : Grid.Grid Cell.State
                     grid =
                         Grid.generate
-                            (Grid.makeDimension 10 10)
+                            (Dimension.make 10 10)
                             Cell.Deceased
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
@@ -286,13 +287,13 @@ resizeTests =
                         , d
                         ]
                             |> Grid.makeFromList
-                                (Grid.makeDimension 2 2)
+                                (Dimension.make 2 2)
                                 Cell.Deceased
                                 Cell.fateOf
 
-                    enlargedSize : Grid.Dimension
+                    enlargedSize : Dimension.Two
                     enlargedSize =
-                        Grid.makeDimension 2 3
+                        Dimension.make 2 3
 
                     enlarged : Maybe (Grid.Grid Cell.State)
                     enlarged =
@@ -329,13 +330,13 @@ resizeTests =
                         , d
                         ]
                             |> Grid.makeFromList
-                                (Grid.makeDimension 2 2)
+                                (Dimension.make 2 2)
                                 Cell.Deceased
                                 Cell.fateOf
 
-                    enlargedSize : Grid.Dimension
+                    enlargedSize : Dimension.Two
                     enlargedSize =
-                        Grid.makeDimension 3 2
+                        Dimension.make 3 2
 
                     enlarged : Maybe (Grid.Grid Cell.State)
                     enlarged =
@@ -372,13 +373,13 @@ resizeTests =
                         , l
                         ]
                             |> Grid.makeFromList
-                                (Grid.makeDimension 2 2)
+                                (Dimension.make 2 2)
                                 Cell.Deceased
                                 Cell.fateOf
 
-                    enlargedSize : Grid.Dimension
+                    enlargedSize : Dimension.Two
                     enlargedSize =
-                        Grid.makeDimension 2 3
+                        Dimension.make 2 3
 
                     enlarged : Maybe (Grid.Grid Cell.State)
                     enlarged =
@@ -415,13 +416,13 @@ resizeTests =
                         , l
                         ]
                             |> Grid.makeFromList
-                                (Grid.makeDimension 2 2)
+                                (Dimension.make 2 2)
                                 Cell.Deceased
                                 Cell.fateOf
 
-                    enlargedSize : Grid.Dimension
+                    enlargedSize : Dimension.Two
                     enlargedSize =
-                        Grid.makeDimension 3 2
+                        Dimension.make 3 2
 
                     enlarged : Maybe (Grid.Grid Cell.State)
                     enlarged =
@@ -458,13 +459,13 @@ resizeTests =
                         , l
                         ]
                             |> Grid.makeFromList
-                                (Grid.makeDimension 2 2)
+                                (Dimension.make 2 2)
                                 Cell.Deceased
                                 Cell.fateOf
 
-                    enlargedSize : Grid.Dimension
+                    enlargedSize : Dimension.Two
                     enlargedSize =
-                        Grid.makeDimension 2 3
+                        Dimension.make 2 3
 
                     enlarged : Maybe (Grid.Grid Cell.State)
                     enlarged =
@@ -501,13 +502,13 @@ resizeTests =
                         , l
                         ]
                             |> Grid.makeFromList
-                                (Grid.makeDimension 2 2)
+                                (Dimension.make 2 2)
                                 Cell.Deceased
                                 Cell.fateOf
 
-                    enlargedSize : Grid.Dimension
+                    enlargedSize : Dimension.Two
                     enlargedSize =
-                        Grid.makeDimension 3 2
+                        Dimension.make 3 2
 
                     enlarged : Maybe (Grid.Grid Cell.State)
                     enlarged =

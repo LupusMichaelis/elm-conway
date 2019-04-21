@@ -4,6 +4,7 @@ import Browser
 import Cell
 import Controls
 import Controls.Selection
+import Dimension
 import Grid
 import Html exposing (Html)
 import Seeder
@@ -12,7 +13,7 @@ import Time
 
 type alias Model =
     { grid : Grid.Grid Cell.State
-    , dimension : Grid.Dimension
+    , dimension : Dimension.Two
     , seederSelection : Controls.Selection.State Controls.Msg ( String, Seeder.Seeder )
     }
 
@@ -35,7 +36,7 @@ initialState : ( Model, Cmd Controls.Msg )
 initialState =
     let
         gridSize =
-            Grid.makeDimension 10 10
+            Dimension.make 10 10
     in
     ( Model
         (Grid.generate gridSize Cell.Deceased Cell.fateOf Seeder.battlefield)
@@ -61,11 +62,11 @@ updateState msg model =
 
         Controls.Resize dm n ->
             let
-                current : Grid.Dimension
+                current : Dimension.Two
                 current =
                     model.dimension
 
-                new : Grid.Dimension
+                new : Dimension.Two
                 new =
                     case dm of
                         Controls.Width ->
