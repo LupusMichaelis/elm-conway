@@ -1,11 +1,16 @@
+rect
+{
+    transition: fill ease-out 0.3s;
+}
+
 rect.live
 {
-    fill: blue;
+    fill: purple;
 }
 
 rect.deceased
 {
-    fill: red;
+    fill: lavender;
 }
 
 li.selected
