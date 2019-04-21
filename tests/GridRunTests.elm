@@ -192,6 +192,7 @@ basicArrangement =
                                 Cell.Deceased
                                 Cell.fateOf
 
+
                     collapsed : Maybe (Grid.Grid Cell.State)
                     collapsed =
                         [ [ d, d ]

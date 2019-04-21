@@ -242,4 +242,77 @@ manyStates =
                         )
                     |> Maybe.withDefault (Expect.fail "Grid couldn't be generated")
             )
+        , test "Check neighbours in a vertical rectangular area"
+            (\_ ->
+                List.range 0 (10 * 8 - 1)
+                    |> List.map MockState
+                    |> Grid.makeFromList
+                        (Dimension.Two 10 8)
+                        (MockState 0)
+                        mockFate
+                    |> Maybe.map
+                        (Expect.all
+                            [ \asset ->
+                                Grid.getNeighbourPositions
+                                    (Position.make 1024 523)
+                                    asset.dimension
+                                    |> List.map (Grid.getStateAt asset)
+                                    |> List.sortWith cmpMockState
+                                    |> Expect.equal
+                                        []
+                            , \asset ->
+                                Grid.getNeighbourPositions
+                                    (Position.make 0 0)
+                                    asset.dimension
+                                    |> List.map (Grid.getStateAt asset)
+                                    |> List.sortWith cmpMockState
+                                    |> Expect.equal
+                                        [ MockState 1
+                                        , MockState 8
+                                        , MockState 9
+                                        ]
+                            , \asset ->
+                                Grid.getNeighbourPositions
+                                    (Position.make (10 - 1) (8 - 1))
+                                    asset.dimension
+                                    |> List.map (Grid.getStateAt asset)
+                                    |> List.sortWith cmpMockState
+                                    |> Expect.equal
+                                        [ MockState 70
+                                        , MockState 71
+                                        , MockState 78
+                                        ]
+                            , \asset ->
+                                Grid.getNeighbourPositions
+                                    (Position.make (10 - 1) 5)
+                                    asset.dimension
+                                    |> List.map (Grid.getStateAt asset)
+                                    |> List.sortWith cmpMockState
+                                    |> Expect.equal
+                                        [ MockState 68
+                                        , MockState 69
+                                        , MockState 70
+                                        , MockState 76
+                                        , MockState 78
+                                        ]
+                            , \asset ->
+                                Grid.getNeighbourPositions
+                                    (Position.make 5 6)
+                                    asset.dimension
+                                    |> List.map (Grid.getStateAt asset)
+                                    |> List.sortWith cmpMockState
+                                    |> Expect.equal
+                                        [ MockState 37
+                                        , MockState 38
+                                        , MockState 39
+                                        , MockState 45
+                                        , MockState 47
+                                        , MockState 53
+                                        , MockState 54
+                                        , MockState 55
+                                        ]
+                            ]
+                        )
+                    |> Maybe.withDefault (Expect.fail "Grid couldn't be generated")
+            )
         ]
