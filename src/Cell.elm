@@ -14,18 +14,18 @@ type State
 
 
 shouldACellDie : List State -> Bool
-shouldACellDie neighbours =
-    List.filter ((==) Live) neighbours
-        |> List.length
-        |> Basic.flip List.member [ 2, 3 ]
-        |> not
+shouldACellDie =
+    List.filter ((==) Live)
+        >> List.length
+        >> Basic.flip List.member [ 2, 3 ]
+        >> not
 
 
 shouldACellResurrect : List State -> Bool
-shouldACellResurrect neighbours =
-    List.filter ((==) Live) neighbours
-        |> List.length
-        |> (==) 3
+shouldACellResurrect =
+    List.filter ((==) Live)
+        >> List.length
+        >> (==) 3
 
 
 fateOf : State -> List State -> State

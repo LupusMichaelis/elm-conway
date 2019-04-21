@@ -166,8 +166,8 @@ neighbourhoodTests =
                     neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
-                            grid.dimension
                             (Position.make 0 0)
+                            grid.dimension
                 in
                 neighbours
                     |> Expect.equal []
@@ -186,8 +186,8 @@ neighbourhoodTests =
                     neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
-                            grid.dimension
                             (Position.make 0 0)
+                            grid.dimension
 
                     expected : List Position.Two
                     expected =
@@ -214,8 +214,8 @@ neighbourhoodTests =
                     neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
-                            grid.dimension
                             (Position.make 5 5)
+                            grid.dimension
 
                     expected : List Position.Two
                     expected =
@@ -247,11 +247,11 @@ neighbourhoodTests =
                     neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
-                            grid.dimension
                             (Position.make
                                 (grid.dimension.w - 1)
                                 (grid.dimension.h - 1)
                             )
+                            grid.dimension
 
                     expected : List Position.Two
                     expected =

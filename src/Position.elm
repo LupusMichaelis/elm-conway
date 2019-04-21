@@ -17,5 +17,5 @@ make =
 
 
 fromTuple : ( Int, Int ) -> Two
-fromTuple t =
-    Two (Tuple.first t) (Tuple.second t)
+fromTuple ( t, l ) =
+    Two t l

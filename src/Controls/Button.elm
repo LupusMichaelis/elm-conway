@@ -8,9 +8,9 @@ button :
     msg
     -> String
     -> Html msg
-button msg caption =
-    H.button
-        [ HE.onClick msg
-        ]
-        [ H.text caption
-        ]
+button msg =
+    H.text
+        >> List.singleton
+        >> H.button
+            [ HE.onClick msg
+            ]

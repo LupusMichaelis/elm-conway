@@ -48,13 +48,13 @@ getDefaultKey =
 
 
 allLive : Seeder
-allLive _ =
-    Cell.Live
+allLive =
+    always Cell.Live
 
 
 allDeceased : Seeder
-allDeceased _ =
-    Cell.Deceased
+allDeceased =
+    always Cell.Deceased
 
 
 oddAreLive : Seeder
