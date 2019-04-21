@@ -9,6 +9,10 @@
     "test": "elm-test",
     "dev": "elm-live src/Conway.elm"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LupusMichaelis/elm-conway.git"
+  },
   "repository": "https://github.com/LupusMichaelis/elm-conway.git",
   "author": "",
   "license": "ISC",
