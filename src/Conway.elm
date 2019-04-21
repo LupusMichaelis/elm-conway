@@ -39,7 +39,7 @@ initialState =
             Dimension.make 10 10
     in
     ( Model
-        (Grid.generate gridSize Cell.Deceased Cell.fateOf Seeder.battlefield)
+        (Grid.generate gridSize Cell.Deceased Cell.fateOf (Tuple.second Seeder.getDefaultValue))
         gridSize
         (Controls.Selection.State
             (Just Seeder.getDefault)

@@ -34,17 +34,20 @@ getCatalog =
 
 getDefault : ( Int, ( String, Seeder ) )
 getDefault =
-    ( getDefaultKey, getDefaultValue )
+    getCatalog
+        |> Dict.get 2
+        |> Maybe.map (Tuple.pair 2)
+        |> Maybe.withDefault ( 0, ( "All live cells", allLive ) )
 
 
 getDefaultValue : ( String, Seeder )
 getDefaultValue =
-    ( "All live cells", allLive )
+    getDefault |> Tuple.second
 
 
 getDefaultKey : Int
 getDefaultKey =
-    0
+    getDefault |> Tuple.first
 
 
 allLive : Seeder
