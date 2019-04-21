@@ -152,8 +152,8 @@ gridCanvas grid =
         renderPixel : ( Position.Two, Cell.State ) -> Svg Msg
         renderPixel ( position, state ) =
             S.rect
-                [ SA.x <| topPx position
-                , SA.y <| leftPx position
+                [ SA.y <| topPx position
+                , SA.x <| leftPx position
                 , SA.height "10px"
                 , SA.width "10px"
                 , SA.class <| statusToClass state
