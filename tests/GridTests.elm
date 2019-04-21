@@ -11,6 +11,7 @@ import Dimension
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
+import Position
 import Test exposing (..)
 
 
@@ -21,35 +22,35 @@ isWithinDimensionTests =
             (\_ ->
                 Grid.isWithinDimension
                     (Dimension.make 1 1)
-                    (Grid.makePosition 1 1)
+                    (Position.make 1 1)
                     |> Expect.false "expected to find with out boundaries"
             )
         , test "Test (0,0) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
                     (Dimension.make 1 1)
-                    (Grid.makePosition 0 0)
+                    (Position.make 0 0)
                     |> Expect.true "expected to find within boundaries"
             )
         , test "Test (0,1) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
                     (Dimension.make 1 1)
-                    (Grid.makePosition 0 1)
+                    (Position.make 0 1)
                     |> Expect.false "expected to find with out boundaries"
             )
         , test "Test (0,-1) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
                     (Dimension.make 1 1)
-                    (Grid.makePosition 0 -1)
+                    (Position.make 0 -1)
                     |> Expect.false "expected to find with out boundaries"
             )
         , test "Test (-2,-1) is inside boundaries (1,1)"
             (\_ ->
                 Grid.isWithinDimension
                     (Dimension.make 1 1)
-                    (Grid.makePosition -2 -1)
+                    (Position.make -2 -1)
                     |> Expect.false "expected to find with out boundaries"
             )
         ]
@@ -70,7 +71,7 @@ getStateOfCellTests =
                         Cell.fateOf
                         (\_ -> Cell.Deceased)
                     )
-                    (Grid.makePosition 0 0)
+                    (Position.make 0 0)
                     |> Expect.equal Cell.Deceased
             )
         , test "Test the unique cell is alive!"
@@ -85,7 +86,7 @@ getStateOfCellTests =
                         Cell.fateOf
                         (\_ -> Cell.Live)
                     )
-                    (Grid.makePosition 0 0)
+                    (Position.make 0 0)
                     |> Expect.equal Cell.Live
             )
         , test "Test the outer cell is empty!"
@@ -100,7 +101,7 @@ getStateOfCellTests =
                         Cell.fateOf
                         (\_ -> Cell.Live)
                     )
-                    (Grid.makePosition 10 10)
+                    (Position.make 10 10)
                     |> Expect.equal Cell.Deceased
             )
         ]
@@ -162,11 +163,11 @@ neighbourhoodTests =
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
 
-                    neighbours : List Grid.Position
+                    neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
-                            (Grid.makePosition 0 0)
+                            (Position.make 0 0)
                 in
                 neighbours
                     |> Expect.equal []
@@ -182,19 +183,19 @@ neighbourhoodTests =
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
 
-                    neighbours : List Grid.Position
+                    neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
-                            (Grid.makePosition 0 0)
+                            (Position.make 0 0)
 
-                    expected : List Grid.Position
+                    expected : List Position.Two
                     expected =
                         []
                             -- order matters
-                            |> {- third -} (::) (Grid.makePosition 1 1)
-                            |> {- second -} (::) (Grid.makePosition 1 0)
-                            |> {- first -} (::) (Grid.makePosition 0 1)
+                            |> {- third -} (::) (Position.make 1 1)
+                            |> {- second -} (::) (Position.make 1 0)
+                            |> {- first -} (::) (Position.make 0 1)
                 in
                 neighbours
                     |> Expect.equal expected
@@ -210,24 +211,24 @@ neighbourhoodTests =
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
 
-                    neighbours : List Grid.Position
+                    neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
-                            (Grid.makePosition 5 5)
+                            (Position.make 5 5)
 
-                    expected : List Grid.Position
+                    expected : List Position.Two
                     expected =
                         []
                             -- order matters
-                            |> (::) (Grid.makePosition 6 6)
-                            |> (::) (Grid.makePosition 6 5)
-                            |> (::) (Grid.makePosition 6 4)
-                            |> (::) (Grid.makePosition 5 6)
-                            |> (::) (Grid.makePosition 5 4)
-                            |> (::) (Grid.makePosition 4 6)
-                            |> (::) (Grid.makePosition 4 5)
-                            |> (::) (Grid.makePosition 4 4)
+                            |> (::) (Position.make 6 6)
+                            |> (::) (Position.make 6 5)
+                            |> (::) (Position.make 6 4)
+                            |> (::) (Position.make 5 6)
+                            |> (::) (Position.make 5 4)
+                            |> (::) (Position.make 4 6)
+                            |> (::) (Position.make 4 5)
+                            |> (::) (Position.make 4 4)
                 in
                 neighbours
                     |> Expect.equal expected
@@ -243,22 +244,22 @@ neighbourhoodTests =
                             Cell.fateOf
                             (\_ -> Cell.Deceased)
 
-                    neighbours : List Grid.Position
+                    neighbours : List Position.Two
                     neighbours =
                         Grid.getNeighbourPositions
                             grid.dimension
-                            (Grid.makePosition
+                            (Position.make
                                 (grid.dimension.w - 1)
                                 (grid.dimension.h - 1)
                             )
 
-                    expected : List Grid.Position
+                    expected : List Position.Two
                     expected =
                         []
                             -- order matters
-                            |> {- third -} (::) (Grid.makePosition 9 8)
-                            |> {- second -} (::) (Grid.makePosition 8 9)
-                            |> {- first -} (::) (Grid.makePosition 8 8)
+                            |> {- third -} (::) (Position.make 9 8)
+                            |> {- second -} (::) (Position.make 8 9)
+                            |> {- first -} (::) (Position.make 8 8)
                 in
                 neighbours
                     |> Expect.equal expected

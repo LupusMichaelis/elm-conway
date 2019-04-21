@@ -17,6 +17,7 @@ import Dimension
 import Grid
 import Html as H exposing (Html)
 import Html.Attributes as HA
+import Position
 import Seeder
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
@@ -123,7 +124,7 @@ gridCanvas grid =
             )
                 ++ "px"
 
-        topPx : Grid.Position -> String
+        topPx : Position.Two -> String
         topPx position =
             (position.t
                 |> (*) 10
@@ -131,7 +132,7 @@ gridCanvas grid =
             )
                 ++ "px"
 
-        leftPx : Grid.Position -> String
+        leftPx : Position.Two -> String
         leftPx position =
             (position.l
                 |> (*) 10
@@ -148,7 +149,7 @@ gridCanvas grid =
                 Cell.Deceased ->
                     "deceased"
 
-        renderPixel : ( Grid.Position, Cell.State ) -> Svg Msg
+        renderPixel : ( Position.Two, Cell.State ) -> Svg Msg
         renderPixel ( position, state ) =
             S.rect
                 [ SA.x <| topPx position

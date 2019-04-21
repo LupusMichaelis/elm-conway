@@ -1,7 +1,6 @@
 module Grid exposing
     ( FateOf
     , Grid
-    , Position
     , convertPositionFromFlat
     , convertPositionToFlat
     , generate
@@ -11,21 +10,16 @@ module Grid exposing
     , iterate
     , makeFromGridAndResize
     , makeFromList
-    , makePosition
     , run
     )
 
 import Dimension
-import Grid.Position exposing (Position)
 import List.Extra
+import Position
 
 
 type alias Seeder state =
     Int -> state
-
-
-type alias Position =
-    Grid.Position.Position
 
 
 type alias FateOf state =
@@ -40,11 +34,6 @@ type alias Grid state =
     , fateOf : FateOf state
     , flatten : List state
     }
-
-
-makePosition : Int -> Int -> Position
-makePosition =
-    Grid.Position.make
 
 
 generate :
@@ -118,7 +107,11 @@ isInThisRow dim row flatten =
     modBy dim.w flatten /= row
 
 
-fetchStateOrGenerate : Grid state -> Seeder state -> List Position -> List state
+fetchStateOrGenerate :
+    Grid state
+    -> Seeder state
+    -> List Position.Two
+    -> List state
 fetchStateOrGenerate grid seeder positions =
     positions
         |> List.map
@@ -158,7 +151,7 @@ makeFromGridAndResize grid newDimension seeder =
                 (List.range 0 (size - 1))
     in
     generateGrid newDimension
-        |> List.map (\t -> Position (Tuple.first t) (Tuple.second t))
+        |> List.map Position.fromTuple
         |> fetchStateOrGenerate grid seeder
         |> Grid newDimension grid.defaultState grid.fateOf
 
@@ -167,7 +160,7 @@ makeFromGridAndResize grid newDimension seeder =
 -- Manipulating positions within dimensions
 
 
-isWithinDimension : Dimension.Two -> Position -> Bool
+isWithinDimension : Dimension.Two -> Position.Two -> Bool
 isWithinDimension d p =
     p.t
         >= 0
@@ -191,7 +184,7 @@ isWithinFlattenDimension d p =
 {-| Given a Dimension and a Position, returns a List of neighbouring positions within
 the borders.
 -}
-getNeighbourPositions : Dimension.Two -> Position -> List Position
+getNeighbourPositions : Dimension.Two -> Position.Two -> List Position.Two
 getNeighbourPositions dim p =
     [ { p | t = p.t - 1, l = p.l - 1 }
     , { p | t = p.t - 1 }
@@ -223,7 +216,7 @@ getNeighbourFlattenPositions dim p =
 -- Conversion helpers
 
 
-convertPositionToFlat : Dimension.Two -> Position -> Maybe Int
+convertPositionToFlat : Dimension.Two -> Position.Two -> Maybe Int
 convertPositionToFlat dim pos =
     if pos.t >= dim.h || pos.l >= dim.w then
         Nothing
@@ -232,11 +225,11 @@ convertPositionToFlat dim pos =
         Just (pos.t * dim.w + pos.l)
 
 
-convertPositionFromFlat : Dimension.Two -> Int -> Maybe Position
+convertPositionFromFlat : Dimension.Two -> Int -> Maybe Position.Two
 convertPositionFromFlat dim flat =
     if isWithinFlattenDimension dim flat then
         Just
-            (Position
+            (Position.Two
                 (flat // dim.w)
                 (flat - (flat // dim.w) * dim.w)
             )
@@ -257,10 +250,10 @@ getStateAtFlat grid flattenPosition =
         |> Maybe.withDefault grid.defaultState
 
 
-getStateAt : Grid state -> Position -> state
+getStateAt : Grid state -> Position.Two -> state
 getStateAt grid position =
     let
-        maybePosition : Maybe Position
+        maybePosition : Maybe Position.Two
         maybePosition =
             if isWithinDimension grid.dimension position then
                 Just position
@@ -283,17 +276,17 @@ getNeighbourStatesFromFlattenPosition grid pos =
     getStatesFromFlattenPositions grid neighbours
 
 
-getNeighbourStatesFromPosition : Grid state -> Position -> List state
+getNeighbourStatesFromPosition : Grid state -> Position.Two -> List state
 getNeighbourStatesFromPosition grid pos =
     let
-        neighbours : List Position
+        neighbours : List Position.Two
         neighbours =
             getNeighbourPositions grid.dimension pos
     in
     getStatesFromPositions grid neighbours
 
 
-getStatesFromPositions : Grid state -> List Position -> List state
+getStatesFromPositions : Grid state -> List Position.Two -> List state
 getStatesFromPositions grid positions =
     List.map (getStateAt grid) positions
 
@@ -333,15 +326,15 @@ run currentGrid =
         (List.indexedMap fateAt currentGrid.flatten)
 
 
-packPositionState : Dimension.Two -> Int -> state -> ( Position, state )
+packPositionState : Dimension.Two -> Int -> state -> ( Position.Two, state )
 packPositionState dim flattenPosition state =
     ( convertPositionFromFlat dim flattenPosition
-        |> Maybe.withDefault (Position 0 0)
+        |> Maybe.withDefault (Position.Two 0 0)
     , state
     )
 
 
-iterate : Grid state -> List ( Position, state )
+iterate : Grid state -> List ( Position.Two, state )
 iterate grid =
     List.indexedMap
         (packPositionState grid.dimension)
