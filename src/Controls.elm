@@ -1,12 +1,15 @@
 module Controls exposing
     ( DimensionMsg(..)
     , Msg(..)
+    , Speed(..)
     , decorate
     , gridCanvas
     , gridDimensioner
     , gridRecycler
     , gridReseter
     , gridSeeders
+    , gridSlowDown
+    , gridSpeedUp
     , gridSwitch
     )
 
@@ -31,6 +34,12 @@ type DimensionMsg
     | Width
 
 
+type Speed
+    = Slow
+    | Normal
+    | Fast
+
+
 type Msg
     = Resize DimensionMsg Int
     | SelectSeed Controls.Selection.Key
@@ -38,6 +47,8 @@ type Msg
     | Reset
     | Tick Time.Posix
     | ToggleRunning
+    | SlowDown
+    | SpeedUp
 
 
 
@@ -194,3 +205,33 @@ gridSwitch running =
 
         else
             "Resume"
+
+
+gridSpeedUp : Speed -> Html Msg
+gridSpeedUp speed =
+    CoBu.button SpeedUp
+        (case speed of
+            Slow ->
+                "Normal"
+
+            Normal ->
+                "Fast"
+
+            Fast ->
+                "Fast"
+        )
+
+
+gridSlowDown : Speed -> Html Msg
+gridSlowDown speed =
+    CoBu.button SlowDown
+        (case speed of
+            Slow ->
+                "Slow"
+
+            Normal ->
+                "Slow"
+
+            Fast ->
+                "Normal"
+        )

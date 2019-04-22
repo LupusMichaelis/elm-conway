@@ -17,6 +17,7 @@ type alias Model =
     , seederSelection :
         Controls.Selection.State Controls.Msg ( String, Seeder.Type Cell.State )
     , running : Bool
+    , speed : Controls.Speed
     }
 
 
@@ -29,7 +30,9 @@ viewState model =
         , Controls.gridSeeders model.seederSelection
         , Controls.gridRecycler
         , Controls.gridReseter
+        , Controls.gridSlowDown model.speed
         , Controls.gridSwitch model.running
+        , Controls.gridSpeedUp model.speed
         , Controls.decorate
         ]
     }
@@ -49,6 +52,7 @@ initialState =
             Seeder.getCatalog
         )
         True
+        Controls.Normal
     , Cmd.none
     )
 
@@ -56,7 +60,18 @@ initialState =
 subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
     if model.running then
-        Time.every 300 Controls.Tick
+        Time.every
+            (case model.speed of
+                Controls.Slow ->
+                    1000
+
+                Controls.Normal ->
+                    500
+
+                Controls.Fast ->
+                    200
+            )
+            Controls.Tick
 
     else
         Sub.none
@@ -131,6 +146,38 @@ updateState msg model =
 
         Controls.ToggleRunning ->
             ( { model | running = not model.running }, Cmd.none )
+
+        Controls.SlowDown ->
+            ( { model
+                | speed =
+                    case model.speed of
+                        Controls.Slow ->
+                            Controls.Slow
+
+                        Controls.Normal ->
+                            Controls.Slow
+
+                        Controls.Fast ->
+                            Controls.Normal
+              }
+            , Cmd.none
+            )
+
+        Controls.SpeedUp ->
+            ( { model
+                | speed =
+                    case model.speed of
+                        Controls.Slow ->
+                            Controls.Normal
+
+                        Controls.Normal ->
+                            Controls.Fast
+
+                        Controls.Fast ->
+                            Controls.Fast
+              }
+            , Cmd.none
+            )
 
         Controls.Reset ->
             initialState
