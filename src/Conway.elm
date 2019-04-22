@@ -38,7 +38,7 @@ initialState : ( Model, Cmd Controls.Msg )
 initialState =
     let
         gridSize =
-            Dimension.make 10 10
+            Dimension.make 33 33
     in
     ( Model
         (Grid.generate gridSize Cell.Deceased Cell.fateOf (Tuple.second Seeder.getDefaultValue))
