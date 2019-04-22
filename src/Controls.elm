@@ -14,8 +14,8 @@ module Controls exposing
     )
 
 import Cell
-import Controls.Button as CoBu
-import Controls.Number as CoNu
+import Controls.Button
+import Controls.Number
 import Controls.Selection
 import Dimension
 import Grid
@@ -78,31 +78,31 @@ gridDimensioner dim =
                 Height ->
                     dim.h
 
-        toMsg : DimensionMsg -> CoNu.Msg -> Msg
+        toMsg : DimensionMsg -> Controls.Number.Msg -> Msg
         toMsg dimMsg msg =
             case msg of
-                CoNu.Increase ->
+                Controls.Number.Increase ->
                     Resize dimMsg (dimMsgToInt dimMsg + 1)
 
-                CoNu.Decrease ->
+                Controls.Number.Decrease ->
                     Resize dimMsg (dimMsgToInt dimMsg - 1)
 
-                CoNu.Change n ->
+                Controls.Number.Change n ->
                     Resize dimMsg (String.toInt n |> Maybe.withDefault 0)
     in
     H.div []
-        [ CoNu.ctrl
-            (toMsg Height << CoNu.Change)
-            (toMsg Height CoNu.Increase)
-            (toMsg Height CoNu.Decrease)
+        [ Controls.Number.ctrl
+            (toMsg Height << Controls.Number.Change)
+            (toMsg Height Controls.Number.Increase)
+            (toMsg Height Controls.Number.Decrease)
             "Height:"
-            (CoNu.init dim.h)
-        , CoNu.ctrl
-            (toMsg Width << CoNu.Change)
-            (toMsg Width CoNu.Increase)
-            (toMsg Width CoNu.Decrease)
+            (Controls.Number.init dim.h)
+        , Controls.Number.ctrl
+            (toMsg Width << Controls.Number.Change)
+            (toMsg Width Controls.Number.Increase)
+            (toMsg Width Controls.Number.Decrease)
             "Width:"
-            (CoNu.init dim.w)
+            (Controls.Number.init dim.w)
         ]
 
 
@@ -189,17 +189,17 @@ gridCanvas grid =
 
 gridReseter : Html Msg
 gridReseter =
-    CoBu.button Reset "Reseter"
+    Controls.Button.button Reset "Reseter"
 
 
 gridRecycler : Html Msg
 gridRecycler =
-    CoBu.button RecycleSandbox "Recycle"
+    Controls.Button.button RecycleSandbox "Recycle"
 
 
 gridSwitch : Bool -> Html Msg
 gridSwitch running =
-    CoBu.button ToggleRunning <|
+    Controls.Button.button ToggleRunning <|
         if running then
             "Pause"
 
@@ -209,7 +209,7 @@ gridSwitch running =
 
 gridSpeedUp : Speed -> Html Msg
 gridSpeedUp speed =
-    CoBu.button SpeedUp
+    Controls.Button.button SpeedUp
         (case speed of
             Slow ->
                 "Normal"
@@ -224,7 +224,7 @@ gridSpeedUp speed =
 
 gridSlowDown : Speed -> Html Msg
 gridSlowDown speed =
-    CoBu.button SlowDown
+    Controls.Button.button SlowDown
         (case speed of
             Slow ->
                 "Slow"
