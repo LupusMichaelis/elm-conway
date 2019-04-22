@@ -9,6 +9,7 @@ import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
 import Position
+import Seeder
 import Test exposing (..)
 
 
@@ -16,9 +17,9 @@ type MockState
     = MockState Int
 
 
-mockSeeder : Int -> MockState
+mockSeeder : Seeder.Type MockState
 mockSeeder =
-    MockState
+    Seeder.Index MockState
 
 
 cmpMockState : MockState -> MockState -> Order

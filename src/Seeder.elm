@@ -1,5 +1,5 @@
 module Seeder exposing
-    ( Seeder
+    ( Type(..)
     , allDeceased
     , allLive
     , battlefield
@@ -14,13 +14,18 @@ module Seeder exposing
 
 import Cell
 import Dict exposing (Dict)
+import Dimension
+import Position
 
 
-type alias Seeder =
-    Int -> Cell.State
+type Type state
+    = Value state
+    | Index (Int -> state)
+    | Position (Position.Two -> state)
+    | Dimension (Dimension.Two -> Position.Two -> state)
 
 
-getCatalog : Dict Int ( String, Seeder )
+getCatalog : Dict Int ( String, Type Cell.State )
 getCatalog =
     Dict.fromList <|
         List.indexedMap Tuple.pair <|
@@ -32,7 +37,7 @@ getCatalog =
             ]
 
 
-getDefault : ( Int, ( String, Seeder ) )
+getDefault : ( Int, ( String, Type Cell.State ) )
 getDefault =
     getCatalog
         |> Dict.get 2
@@ -40,7 +45,7 @@ getDefault =
         |> Maybe.withDefault ( 0, ( "All live cells", allLive ) )
 
 
-getDefaultValue : ( String, Seeder )
+getDefaultValue : ( String, Type Cell.State )
 getDefaultValue =
     getDefault |> Tuple.second
 
@@ -50,58 +55,70 @@ getDefaultKey =
     getDefault |> Tuple.first
 
 
-allLive : Seeder
+allLive : Type Cell.State
 allLive =
-    always Cell.Live
+    Value Cell.Live
 
 
-allDeceased : Seeder
+allDeceased : Type Cell.State
 allDeceased =
-    always Cell.Deceased
+    Value Cell.Deceased
 
 
-oddAreLive : Seeder
-oddAreLive idx =
-    if modBy 2 idx == 0 then
-        Cell.Deceased
+oddAreLive : Type Cell.State
+oddAreLive =
+    Index
+        (\idx ->
+            if modBy 2 idx == 0 then
+                Cell.Deceased
 
-    else
-        Cell.Live
-
-
-evenAreLive : Seeder
-evenAreLive idx =
-    if modBy 2 idx == 0 then
-        Cell.Live
-
-    else
-        Cell.Deceased
+            else
+                Cell.Live
+        )
 
 
-battlefield : Seeder
-battlefield idx =
-    if
-        modBy 3 idx
-            == 0
-            || modBy 5 idx
-            == 0
-    then
-        Cell.Live
+evenAreLive : Type Cell.State
+evenAreLive =
+    Index
+        (\idx ->
+            if modBy 2 idx == 0 then
+                Cell.Live
 
-    else
-        Cell.Deceased
+            else
+                Cell.Deceased
+        )
 
 
-blinker : Seeder
-blinker idx =
-    if idx == 15 + 0 then
-        Cell.Live
+battlefield : Type Cell.State
+battlefield =
+    Index
+        (\idx ->
+            if
+                modBy 3 idx
+                    == 0
+                    || modBy 5 idx
+                    == 0
+            then
+                Cell.Live
 
-    else if idx == 15 + 1 then
-        Cell.Live
+            else
+                Cell.Deceased
+        )
 
-    else if idx == 15 + 2 then
-        Cell.Live
 
-    else
-        Cell.Deceased
+blinker : Type Cell.State
+blinker =
+    Index
+        (\idx ->
+            if idx == 15 + 0 then
+                Cell.Live
+
+            else if idx == 15 + 1 then
+                Cell.Live
+
+            else if idx == 15 + 2 then
+                Cell.Live
+
+            else
+                Cell.Deceased
+        )

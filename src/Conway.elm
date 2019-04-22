@@ -14,7 +14,8 @@ import Time
 type alias Model =
     { grid : Grid.Grid Cell.State
     , dimension : Dimension.Two
-    , seederSelection : Controls.Selection.State Controls.Msg ( String, Seeder.Seeder )
+    , seederSelection :
+        Controls.Selection.State Controls.Msg ( String, Seeder.Type Cell.State )
     , running : Bool
     }
 

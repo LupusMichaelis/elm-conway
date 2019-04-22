@@ -18,10 +18,7 @@ import Basic
 import Dimension
 import List.Extra
 import Position
-
-
-type alias Seeder state =
-    Int -> state
+import Seeder
 
 
 type alias FateOf state =
@@ -42,12 +39,30 @@ generate :
     Dimension.Two
     -> state
     -> FateOf state
-    -> Seeder state
+    -> Seeder.Type state
     -> Grid state
-generate dim defaultState fateOf =
+generate dim defaultState fateOf seeder =
+    let
+        wrappedGenerator : Int -> state
+        wrappedGenerator =
+            \position ->
+                case seeder of
+                    Seeder.Value value ->
+                        value
+
+                    Seeder.Index generator ->
+                        generator position
+
+                    Seeder.Position generator ->
+                        generator <| positionFromFlat dim position
+
+                    Seeder.Dimension generator ->
+                        generator dim <| positionFromFlat dim position
+    in
     List.Extra.initialize
         (dim.w * dim.h)
-        >> Grid dim defaultState fateOf
+        wrappedGenerator
+        |> Grid dim defaultState fateOf
 
 
 makeFromList :
@@ -89,7 +104,7 @@ isInThisRow dim row =
 
 fetchStateOrGenerate :
     Grid state
-    -> Seeder state
+    -> Seeder.Type state
     -> List Position.Two
     -> List state
 fetchStateOrGenerate grid seeder =
@@ -99,14 +114,25 @@ fetchStateOrGenerate grid seeder =
                 getStateAt grid position
 
             else
-                seeder <| positionToFlat grid.dimension position
+                case seeder of
+                    Seeder.Value value ->
+                        value
+
+                    Seeder.Index generator ->
+                        generator <| positionToFlat grid.dimension position
+
+                    Seeder.Position generator ->
+                        generator position
+
+                    Seeder.Dimension generator ->
+                        generator grid.dimension position
         )
 
 
 makeFromGridAndResize :
     Grid state
     -> Dimension.Two
-    -> Seeder state
+    -> Seeder.Type state
     -> Grid state
 makeFromGridAndResize grid newDimension seeder =
     let

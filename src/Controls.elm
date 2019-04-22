@@ -96,7 +96,7 @@ gridDimensioner dim =
 
 
 gridSeeders :
-    Controls.Selection.State Msg ( String, Seeder.Seeder )
+    Controls.Selection.State Msg ( String, Seeder.Type Cell.State )
     -> Html Msg
 gridSeeders =
     Controls.Selection.render

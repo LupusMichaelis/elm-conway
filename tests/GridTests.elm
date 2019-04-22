@@ -12,6 +12,7 @@ import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
 import Position
+import Seeder
 import Test exposing (..)
 
 
@@ -69,7 +70,7 @@ getStateOfCellTests =
                     (Grid.generate dim
                         Cell.Deceased
                         Cell.fateOf
-                        (\_ -> Cell.Deceased)
+                        (Seeder.Value Cell.Deceased)
                     )
                     (Position.make 0 0)
                     |> Expect.equal Cell.Deceased
@@ -84,7 +85,7 @@ getStateOfCellTests =
                     (Grid.generate dim
                         Cell.Deceased
                         Cell.fateOf
-                        (\_ -> Cell.Live)
+                        (Seeder.Value Cell.Live)
                     )
                     (Position.make 0 0)
                     |> Expect.equal Cell.Live
@@ -99,7 +100,7 @@ getStateOfCellTests =
                     (Grid.generate dim
                         Cell.Deceased
                         Cell.fateOf
-                        (\_ -> Cell.Live)
+                        (Seeder.Value Cell.Live)
                     )
                     (Position.make 10 10)
                     |> Expect.equal Cell.Deceased
@@ -161,7 +162,7 @@ neighbourhoodTests =
                             (Dimension.make 1 1)
                             Cell.Deceased
                             Cell.fateOf
-                            (\_ -> Cell.Deceased)
+                            (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
                     neighbours =
@@ -181,7 +182,7 @@ neighbourhoodTests =
                             (Dimension.make 10 10)
                             Cell.Deceased
                             Cell.fateOf
-                            (\_ -> Cell.Deceased)
+                            (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
                     neighbours =
@@ -209,7 +210,7 @@ neighbourhoodTests =
                             (Dimension.make 10 10)
                             Cell.Deceased
                             Cell.fateOf
-                            (\_ -> Cell.Deceased)
+                            (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
                     neighbours =
@@ -242,7 +243,7 @@ neighbourhoodTests =
                             (Dimension.make 10 10)
                             Cell.Deceased
                             Cell.fateOf
-                            (\_ -> Cell.Deceased)
+                            (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
                     neighbours =
@@ -312,7 +313,7 @@ resizeTests =
                             Grid.makeFromGridAndResize
                                 g
                                 enlargedSize
-                                (\_ -> Cell.Deceased)
+                                (Seeder.Value Cell.Deceased)
                         )
                     |> Expect.equal enlarged
             )
@@ -355,7 +356,7 @@ resizeTests =
                             Grid.makeFromGridAndResize
                                 g
                                 enlargedSize
-                                (\_ -> Cell.Deceased)
+                                (Seeder.Value Cell.Deceased)
                         )
                     |> Expect.equal enlarged
             )
@@ -398,7 +399,7 @@ resizeTests =
                             Grid.makeFromGridAndResize
                                 g
                                 enlargedSize
-                                (\_ -> Cell.Deceased)
+                                (Seeder.Value Cell.Deceased)
                         )
                     |> Expect.equal enlarged
             )
@@ -441,7 +442,7 @@ resizeTests =
                             Grid.makeFromGridAndResize
                                 g
                                 enlargedSize
-                                (\_ -> Cell.Deceased)
+                                (Seeder.Value Cell.Deceased)
                         )
                     |> Expect.equal enlarged
             )
@@ -484,7 +485,7 @@ resizeTests =
                             Grid.makeFromGridAndResize
                                 g
                                 enlargedSize
-                                (\_ -> Cell.Deceased)
+                                (Seeder.Value Cell.Deceased)
                         )
                     |> Expect.equal enlarged
             )
@@ -527,7 +528,7 @@ resizeTests =
                             Grid.makeFromGridAndResize
                                 g
                                 enlargedSize
-                                (\_ -> Cell.Deceased)
+                                (Seeder.Value Cell.Deceased)
                         )
                     |> Expect.equal enlarged
             )
