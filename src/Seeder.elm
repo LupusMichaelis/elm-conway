@@ -34,6 +34,7 @@ getCatalog =
             , ( "Odd cells are live, other empty", oddAreLive )
             , ( "Even cells are live, other empty", evenAreLive )
             , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
+            , ( "Place a bliker", blinker )
             ]
 
 
@@ -108,15 +109,16 @@ battlefield =
 
 blinker : Type Cell.State
 blinker =
-    Index
-        (\idx ->
-            if idx == 15 + 0 then
-                Cell.Live
-
-            else if idx == 15 + 1 then
-                Cell.Live
-
-            else if idx == 15 + 2 then
+    Position
+        (\position ->
+            if
+                1
+                    == modBy 4 position.t
+                    && ([ 0, 1, 2 ]
+                            |> List.map ((==) (modBy 4 position.l))
+                            |> List.foldl (||) False
+                       )
+            then
                 Cell.Live
 
             else
