@@ -7,6 +7,7 @@ module Controls exposing
     , gridRecycler
     , gridReseter
     , gridSeeders
+    , gridSwitch
     )
 
 import Cell
@@ -36,6 +37,7 @@ type Msg
     | RecycleSandbox
     | Reset
     | Tick Time.Posix
+    | ToggleRunning
 
 
 
@@ -182,3 +184,13 @@ gridReseter =
 gridRecycler : Html Msg
 gridRecycler =
     CoBu.button RecycleSandbox "Recycle"
+
+
+gridSwitch : Bool -> Html Msg
+gridSwitch running =
+    CoBu.button ToggleRunning <|
+        if running then
+            "Pause"
+
+        else
+            "Resume"

@@ -15,6 +15,7 @@ type alias Model =
     { grid : Grid.Grid Cell.State
     , dimension : Dimension.Two
     , seederSelection : Controls.Selection.State Controls.Msg ( String, Seeder.Seeder )
+    , running : Bool
     }
 
 
@@ -27,6 +28,7 @@ viewState model =
         , Controls.gridSeeders model.seederSelection
         , Controls.gridRecycler
         , Controls.gridReseter
+        , Controls.gridSwitch model.running
         , Controls.decorate
         ]
     }
@@ -45,13 +47,18 @@ initialState =
             (Just Seeder.getDefault)
             Seeder.getCatalog
         )
+        True
     , Cmd.none
     )
 
 
 subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
-    Time.every 1000 Controls.Tick
+    if model.running then
+        Time.every 300 Controls.Tick
+
+    else
+        Sub.none
 
 
 updateState : Controls.Msg -> Model -> ( Model, Cmd Controls.Msg )
@@ -120,6 +127,9 @@ updateState msg model =
               }
             , Cmd.none
             )
+
+        Controls.ToggleRunning ->
+            ( { model | running = not model.running }, Cmd.none )
 
         Controls.Reset ->
             initialState
