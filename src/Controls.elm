@@ -15,6 +15,7 @@ module Controls exposing
 
 import Cell
 import Controls.Button
+import Controls.Canvas
 import Controls.Number
 import Controls.Selection
 import Dimension
@@ -23,9 +24,6 @@ import Html as H exposing (Html)
 import Html.Attributes as HA
 import Position
 import Seeder
-import Svg as S exposing (Svg)
-import Svg.Attributes as SA
-import Svg.Lazy
 import Time
 
 
@@ -116,75 +114,19 @@ gridSeeders =
 
 
 gridCanvas : Grid.Grid Cell.State -> Html Msg
-gridCanvas grid =
-    let
-        -- XXX rendering logic should be done somewhere else and tested
-        heightPx : String
-        heightPx =
-            (grid.dimension.h
-                * (1 + 10)
-                + 1
-                |> String.fromInt
+gridCanvas =
+    Controls.Canvas.node <|
+        Controls.Canvas.Type
+            1
+            16
+            (\state ->
+                case state of
+                    Cell.Live ->
+                        "live"
+
+                    Cell.Deceased ->
+                        "deceased"
             )
-                ++ "px"
-
-        widthPx : String
-        widthPx =
-            (grid.dimension.w
-                * (1 + 10)
-                + 1
-                |> String.fromInt
-            )
-                ++ "px"
-
-        topPx : Position.Two -> String
-        topPx position =
-            (position.t
-                |> (*) 10
-                |> String.fromInt
-            )
-                ++ "px"
-
-        leftPx : Position.Two -> String
-        leftPx position =
-            (position.l
-                |> (*) 10
-                |> String.fromInt
-            )
-                ++ "px"
-
-        statusToClass : Cell.State -> String
-        statusToClass state =
-            case state of
-                Cell.Live ->
-                    "live"
-
-                Cell.Deceased ->
-                    "deceased"
-
-        renderPixel : ( Position.Two, Cell.State ) -> Svg Msg
-        renderPixel ( position, state ) =
-            S.rect
-                [ SA.y <| topPx position
-                , SA.x <| leftPx position
-                , SA.height "10px"
-                , SA.width "10px"
-                , SA.class <| statusToClass state
-                ]
-                []
-    in
-    H.div []
-        [ S.svg
-            [ SA.height heightPx
-            , SA.width widthPx
-            , SA.fill "black"
-            , SA.stroke "white"
-            , SA.strokeWidth "1px"
-            ]
-            (Grid.iterate grid
-                |> List.map (Svg.Lazy.lazy renderPixel)
-            )
-        ]
 
 
 gridReseter : Html Msg
