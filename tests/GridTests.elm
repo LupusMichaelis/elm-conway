@@ -282,11 +282,10 @@ resizeTests =
                 let
                     original : Maybe (Grid.Grid Cell.State)
                     original =
-                        [ d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d ]
+                        , [ d, d ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
                                 (Dimension.make 2 2)
                                 Cell.Deceased
@@ -298,13 +297,10 @@ resizeTests =
 
                     enlarged : Maybe (Grid.Grid Cell.State)
                     enlarged =
-                        [ d
-                        , d
-                        , d
-                        , d
-                        , d
-                        , d
+                        [ [ d, d, d ]
+                        , [ d, d, d ]
                         ]
+                            |> List.concat
                             |> Grid.makeFromList
                                 enlargedSize
                                 Cell.Deceased

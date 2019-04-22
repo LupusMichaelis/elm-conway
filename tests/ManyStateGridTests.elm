@@ -329,7 +329,7 @@ runStates =
             List.foldl (\(MockState neighbour) (MockState me) -> MockState (neighbour + me))
     in
     describe "Run states"
-        [ test "A line of 4 live elements shrink to a block"
+        [ test "Define the state as a sum of neighbours and self"
             (\_ ->
                 let
                     skycrapper : Maybe (Grid.Grid MockState)

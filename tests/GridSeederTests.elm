@@ -18,13 +18,13 @@ resizingTests =
         d =
             Cell.Deceased
     in
-    describe "Test resizing grid"
+    describe "Test resizing grid with seeder"
         [ test "Test bug of odd population, stabilized, resized with live cells and get shuffled"
             (\_ ->
                 let
                     dimension : Dimension.Two
                     dimension =
-                        Dimension.make 10 10
+                        Dimension.make 3 5
 
                     original : Grid.Grid Cell.State
                     original =
@@ -32,20 +32,13 @@ resizingTests =
                             dimension
                             Cell.Deceased
                             Cell.fateOf
-                            Seeder.evenAreLive
+                            Seeder.oddAreLive
 
                     stepZero : Maybe (Grid.Grid Cell.State)
                     stepZero =
-                        [ [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
-                        , [ d, l, d, l, d, l, d, l, d, l ]
+                        [ [ d, l, d, l, d ]
+                        , [ l, d, l, d, l ]
+                        , [ d, l, d, l, d ]
                         ]
                             |> List.concat
                             |> Grid.makeFromList dimension
@@ -54,16 +47,9 @@ resizingTests =
 
                     stepOne : Maybe (Grid.Grid Cell.State)
                     stepOne =
-                        [ [ d, d, d, d, d, d, d, d, d, d ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ l, l, d, l, d, l, d, l, d, l ]
-                        , [ d, d, d, d, d, d, d, d, d, d ]
+                        [ [ d, l, l, l, d ]
+                        , [ l, d, d, d, l ]
+                        , [ d, l, l, l, d ]
                         ]
                             |> List.concat
                             |> Grid.makeFromList dimension
@@ -72,19 +58,37 @@ resizingTests =
 
                     stepTwo : Maybe (Grid.Grid Cell.State)
                     stepTwo =
-                        [ [ d, d, d, d, d, d, d, d, d, d ]
-                        , [ d, d, l, l, l, l, l, l, d, d ]
-                        , [ d, d, d, d, d, d, d, d, d, d ]
-                        , [ d, d, l, l, l, l, l, l, d, d ]
-                        , [ d, d, d, d, d, d, d, d, d, d ]
-                        , [ d, d, l, l, l, l, l, l, d, d ]
-                        , [ d, d, d, d, d, d, d, d, d, d ]
-                        , [ d, d, l, l, l, l, l, l, d, d ]
-                        , [ d, d, d, d, d, d, d, d, d, d ]
-                        , [ d, d, l, l, l, l, l, l, d, d ]
+                        [ [ d, l, l, l, d ]
+                        , [ l, d, d, d, l ]
+                        , [ d, l, l, l, d ]
                         ]
                             |> List.concat
                             |> Grid.makeFromList dimension
+                                Cell.Deceased
+                                Cell.fateOf
+
+                    stepThree : Maybe (Grid.Grid Cell.State)
+                    stepThree =
+                        [ [ d, l, l ]
+                        , [ l, d, d ]
+                        , [ d, l, l ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList (Dimension.make 3 3)
+                                Cell.Deceased
+                                Cell.fateOf
+
+                    stepFour : Maybe (Grid.Grid Cell.State)
+                    stepFour =
+                        [ [ d, l, l ]
+                        , [ l, d, d ]
+                        , [ d, l, l ]
+                        , [ l, d, l ]
+                        , [ d, l, d ]
+                        , [ l, d, l ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList (Dimension.make 6 3)
                                 Cell.Deceased
                                 Cell.fateOf
                 in
@@ -105,6 +109,36 @@ resizingTests =
                                 |> Grid.run
                                 |> Just
                                 |> Expect.equal stepTwo
+                        , \asset ->
+                            asset
+                                |> Grid.run
+                                |> Grid.run
+                                |> (\grid ->
+                                        Grid.makeFromGridAndResize
+                                            grid
+                                            (Dimension.make 3 3)
+                                            Seeder.oddAreLive
+                                   )
+                                |> Just
+                                |> Expect.equal stepThree
+                        , \asset ->
+                            asset
+                                |> Grid.run
+                                |> Grid.run
+                                |> (\grid ->
+                                        Grid.makeFromGridAndResize
+                                            grid
+                                            (Dimension.make 3 3)
+                                            Seeder.oddAreLive
+                                   )
+                                |> (\grid ->
+                                        Grid.makeFromGridAndResize
+                                            grid
+                                            (Dimension.make 6 3)
+                                            Seeder.oddAreLive
+                                   )
+                                |> Just
+                                |> Expect.equal stepFour
                         ]
             )
         ]
