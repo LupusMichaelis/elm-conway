@@ -1,4 +1,7 @@
-module ManyStateGridTests exposing (manyStates)
+module ManyStateGridTests exposing
+    ( manyStates
+    , runStates
+    )
 
 import Cell
 import Dimension
@@ -13,11 +16,6 @@ type MockState
     = MockState Int
 
 
-mockFate : MockState -> List MockState -> MockState
-mockFate _ _ =
-    MockState 0
-
-
 mockSeeder : Int -> MockState
 mockSeeder =
     MockState
@@ -30,6 +28,11 @@ cmpMockState (MockState lhs) (MockState rhs) =
 
 manyStates : Test
 manyStates =
+    let
+        mockFate : MockState -> List MockState -> MockState
+        mockFate _ _ =
+            MockState 0
+    in
     describe "Values held by grid"
         [ test "Have squared grid"
             (\_ ->
@@ -314,5 +317,48 @@ manyStates =
                             ]
                         )
                     |> Maybe.withDefault (Expect.fail "Grid couldn't be generated")
+            )
+        ]
+
+
+runStates : Test
+runStates =
+    let
+        mockFate : MockState -> List MockState -> MockState
+        mockFate =
+            List.foldl (\(MockState neighbour) (MockState me) -> MockState (neighbour + me))
+    in
+    describe "Run states"
+        [ test "A line of 4 live elements shrink to a block"
+            (\_ ->
+                let
+                    skycrapper : Maybe (Grid.Grid MockState)
+                    skycrapper =
+                        [ [ MockState 0, MockState 1 ]
+                        , [ MockState 0, MockState 1 ]
+                        , [ MockState 0, MockState 1 ]
+                        , [ MockState 0, MockState 1 ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList
+                                (Dimension.make 4 2)
+                                (MockState 0)
+                                mockFate
+
+                    collapsed : Maybe (Grid.Grid MockState)
+                    collapsed =
+                        [ [ MockState 2, MockState 2 ]
+                        , [ MockState 3, MockState 3 ]
+                        , [ MockState 3, MockState 3 ]
+                        , [ MockState 2, MockState 2 ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList
+                                (Dimension.make 4 2)
+                                (MockState 0)
+                                mockFate
+                in
+                Maybe.map Grid.run skycrapper
+                    |> Expect.equal collapsed
             )
         ]
