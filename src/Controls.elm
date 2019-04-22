@@ -127,6 +127,7 @@ gridCanvas =
                     Cell.Deceased ->
                         "deceased"
             )
+            Controls.Canvas.Circle
 
 
 gridReseter : Html Msg

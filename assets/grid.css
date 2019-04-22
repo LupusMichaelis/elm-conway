@@ -1,14 +1,14 @@
-rect
+rect, circle
 {
     transition: fill ease-out 0.3s;
 }
 
-rect.live
+.live
 {
     fill: purple;
 }
 
-rect.deceased
+.deceased
 {
     fill: lavender;
 }

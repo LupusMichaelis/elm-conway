@@ -1,5 +1,6 @@
 module Controls.Canvas exposing
-    ( Type
+    ( Kind(..)
+    , Type
     , node
     )
 
@@ -16,7 +17,13 @@ type alias Type state =
     { gap : Int
     , side : Int
     , stateToClass : state -> String
+    , kind : Kind
     }
+
+
+type Kind
+    = Rectangle
+    | Circle
 
 
 pixel : Int -> String
@@ -65,12 +72,33 @@ left canvas position =
 
 
 renderPixel : Type state -> Grid.Grid state -> ( Position.Two, state ) -> Svg msg
-renderPixel canvas grid ( position, state ) =
+renderPixel canvas =
+    case canvas.kind of
+        Rectangle ->
+            renderPixelAsRectangle canvas
+
+        Circle ->
+            renderPixelAsCircle canvas
+
+
+renderPixelAsRectangle : Type state -> Grid.Grid state -> ( Position.Two, state ) -> Svg msg
+renderPixelAsRectangle canvas grid ( position, state ) =
     S.rect
         [ SA.y <| pixel <| top canvas position
         , SA.x <| pixel <| left canvas position
         , SA.height <| pixel canvas.side
         , SA.width <| pixel canvas.side
+        , SA.class <| canvas.stateToClass state
+        ]
+        []
+
+
+renderPixelAsCircle : Type state -> Grid.Grid state -> ( Position.Two, state ) -> Svg msg
+renderPixelAsCircle canvas grid ( position, state ) =
+    S.circle
+        [ SA.cy <| pixel <| top canvas position + canvas.side // 2
+        , SA.cx <| pixel <| left canvas position + canvas.side // 2
+        , SA.r <| pixel <| canvas.side // 2
         , SA.class <| canvas.stateToClass state
         ]
         []
