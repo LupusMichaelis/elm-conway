@@ -63,19 +63,19 @@ allDeceased =
 oddAreLive : Seeder
 oddAreLive idx =
     if modBy 2 idx == 0 then
-        Cell.Live
+        Cell.Deceased
 
     else
-        Cell.Deceased
+        Cell.Live
 
 
 evenAreLive : Seeder
 evenAreLive idx =
     if modBy 2 idx == 0 then
-        Cell.Deceased
+        Cell.Live
 
     else
-        Cell.Live
+        Cell.Deceased
 
 
 battlefield : Seeder
