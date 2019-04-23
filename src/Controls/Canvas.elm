@@ -1,9 +1,14 @@
 module Controls.Canvas exposing
-    ( Kind(..)
+    ( Shape(..)
     , Type
+    , getCatalogOfShape
+    , getDefaultShape
+    , getDefaultShapeKey
+    , getDefaultShapeValue
     , node
     )
 
+import Dict exposing (Dict)
 import Grid
 import Html as H exposing (Html)
 import Html.Attributes as HA
@@ -17,13 +22,40 @@ type alias Type state =
     { gap : Int
     , side : Int
     , stateToClass : state -> String
-    , kind : Kind
+    , shape : Shape
     }
 
 
-type Kind
+type Shape
     = Rectangle
     | Circle
+
+
+getCatalogOfShape : Dict Int ( String, Shape )
+getCatalogOfShape =
+    Dict.fromList <|
+        List.indexedMap Tuple.pair <|
+            [ ( "Rectangle", Rectangle )
+            , ( "Circle", Circle )
+            ]
+
+
+getDefaultShape : ( Int, ( String, Shape ) )
+getDefaultShape =
+    getCatalogOfShape
+        |> Dict.get 1
+        |> Maybe.map (Tuple.pair 1)
+        |> Maybe.withDefault ( 0, ( "Rectangle", Rectangle ) )
+
+
+getDefaultShapeValue : ( String, Shape )
+getDefaultShapeValue =
+    getDefaultShape |> Tuple.second
+
+
+getDefaultShapeKey : Int
+getDefaultShapeKey =
+    getDefaultShape |> Tuple.first
 
 
 pixel : Int -> String
@@ -73,7 +105,7 @@ left canvas position =
 
 renderPixel : Type state -> Grid.Grid state -> ( Position.Two, state ) -> Svg msg
 renderPixel canvas =
-    case canvas.kind of
+    case canvas.shape of
         Rectangle ->
             renderPixelAsRectangle canvas
 

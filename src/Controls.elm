@@ -7,7 +7,8 @@ module Controls exposing
     , gridDimensioner
     , gridRecycler
     , gridReseter
-    , gridSeeders
+    , gridSelectSeeder
+    , gridSelectShape
     , gridSlowDown
     , gridSpeedUp
     , gridSwitch
@@ -41,6 +42,7 @@ type Speed
 type Msg
     = Resize DimensionMsg Int
     | SelectSeed Controls.Selection.Key
+    | SelectShape Controls.Selection.Key
     | RecycleSandbox
     | Reset
     | Tick Time.Posix
@@ -104,17 +106,29 @@ gridDimensioner dim =
         ]
 
 
-gridSeeders :
+gridSelectShape :
+    Controls.Selection.State Msg ( String, Controls.Canvas.Shape )
+    -> Html Msg
+gridSelectShape =
+    Controls.Selection.render
+        (Controls.Selection.renderElementFromCatalog
+            Controls.Canvas.getCatalogOfShape
+            (H.text "No name")
+        )
+        SelectShape
+
+
+gridSelectSeeder :
     Controls.Selection.State Msg ( String, Seeder.Type Cell.State )
     -> Html Msg
-gridSeeders =
+gridSelectSeeder =
     Controls.Selection.render
         (Controls.Selection.renderElementFromCatalog Seeder.getCatalog (H.text "No name"))
         SelectSeed
 
 
-gridCanvas : Grid.Grid Cell.State -> Html Msg
-gridCanvas =
+gridCanvas : Controls.Canvas.Shape -> Grid.Grid Cell.State -> Html Msg
+gridCanvas shape =
     Controls.Canvas.node <|
         Controls.Canvas.Type
             1
@@ -127,7 +141,7 @@ gridCanvas =
                     Cell.Deceased ->
                         "deceased"
             )
-            Controls.Canvas.Circle
+            shape
 
 
 gridReseter : Html Msg

@@ -3,6 +3,7 @@ module Conway exposing (main)
 import Browser
 import Cell
 import Controls
+import Controls.Canvas
 import Controls.Selection
 import Dimension
 import Grid
@@ -16,6 +17,8 @@ type alias Model =
     , dimension : Dimension.Two
     , seederSelection :
         Controls.Selection.State Controls.Msg ( String, Seeder.Type Cell.State )
+    , shapeSelection :
+        Controls.Selection.State Controls.Msg ( String, Controls.Canvas.Shape )
     , running : Bool
     , speed : Controls.Speed
     }
@@ -25,9 +28,20 @@ viewState : Model -> Browser.Document Controls.Msg
 viewState model =
     { title = "Conway's game of life"
     , body =
-        [ Controls.gridCanvas model.grid
+        [ Controls.gridCanvas
+            (Tuple.second
+                (case model.shapeSelection of
+                    Controls.Selection.State (Just ( _, shape )) _ ->
+                        shape
+
+                    Controls.Selection.State Nothing _ ->
+                        Controls.Canvas.getDefaultShapeValue
+                )
+            )
+            model.grid
         , Controls.gridDimensioner model.dimension
-        , Controls.gridSeeders model.seederSelection
+        , Controls.gridSelectSeeder model.seederSelection
+        , Controls.gridSelectShape model.shapeSelection
         , Controls.gridRecycler
         , Controls.gridReseter
         , Controls.gridSlowDown model.speed
@@ -50,6 +64,10 @@ initialState =
         (Controls.Selection.State
             (Just Seeder.getDefault)
             Seeder.getCatalog
+        )
+        (Controls.Selection.State
+            (Just Controls.Canvas.getDefaultShape)
+            Controls.Canvas.getCatalogOfShape
         )
         True
         Controls.Normal
@@ -123,6 +141,13 @@ updateState msg model =
                     Controls.Selection.updateSelected model.seederSelection seed
             in
             ( { model | seederSelection = selectionModel }, cmds )
+
+        Controls.SelectShape shape ->
+            let
+                ( selectionModel, cmds ) =
+                    Controls.Selection.updateSelected model.shapeSelection shape
+            in
+            ( { model | shapeSelection = selectionModel }, cmds )
 
         Controls.RecycleSandbox ->
             ( { model
