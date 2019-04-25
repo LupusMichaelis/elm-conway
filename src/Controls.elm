@@ -82,13 +82,19 @@ gridDimensioner dim =
         toMsg dimMsg msg =
             case msg of
                 Controls.Number.Increase ->
-                    Resize dimMsg (dimMsgToInt dimMsg + 1)
+                    dimMsgToInt dimMsg
+                        + 1
+                        |> Resize dimMsg
 
                 Controls.Number.Decrease ->
-                    Resize dimMsg (dimMsgToInt dimMsg - 1)
+                    dimMsgToInt dimMsg
+                        - 1
+                        |> Resize dimMsg
 
                 Controls.Number.Change n ->
-                    Resize dimMsg (String.toInt n |> Maybe.withDefault 0)
+                    String.toInt n
+                        |> Maybe.withDefault 0
+                        |> Resize dimMsg
     in
     H.div []
         [ Controls.Number.ctrl
@@ -122,26 +128,24 @@ gridSelectSeeder :
     Controls.Selection.State Msg ( String, Seeder.Type Cell.State )
     -> Html Msg
 gridSelectSeeder =
+    let
+        catalogEntryRenderer =
+            Controls.Selection.renderElementFromCatalog
+                Seeder.getCatalog
+            <|
+                H.text "Anonymous seeder"
+    in
     Controls.Selection.render
-        (Controls.Selection.renderElementFromCatalog Seeder.getCatalog (H.text "No name"))
+        catalogEntryRenderer
         SelectSeed
 
 
-gridCanvas : Controls.Canvas.Shape -> Grid.Grid Cell.State -> Html Msg
-gridCanvas shape =
-    Controls.Canvas.node <|
-        Controls.Canvas.Type
-            1
-            16
-            (\state ->
-                case state of
-                    Cell.Live ->
-                        "live"
-
-                    Cell.Deceased ->
-                        "deceased"
-            )
-            shape
+gridCanvas :
+    Controls.Canvas.Type Cell.State
+    -> Grid.Grid Cell.State
+    -> Html Msg
+gridCanvas =
+    Controls.Canvas.node
 
 
 gridReseter : Html Msg

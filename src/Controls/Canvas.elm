@@ -2,12 +2,14 @@ module Controls.Canvas exposing
     ( Shape(..)
     , Type
     , getCatalogOfShape
+    , getCatalogOfShapeEntry
     , getDefaultShape
     , getDefaultShapeKey
     , getDefaultShapeValue
     , node
     )
 
+import Basic
 import Dict exposing (Dict)
 import Grid
 import Html as H exposing (Html)
@@ -29,6 +31,19 @@ type alias Type state =
 type Shape
     = Rectangle
     | Circle
+
+
+getCatalogOfShapeEntry : Shape -> Maybe ( Int, ( String, Shape ) )
+getCatalogOfShapeEntry shape =
+    getCatalogOfShape
+        |> Dict.toList
+        |> List.filter (Tuple.second >> Tuple.second >> (==) shape)
+        |> List.map Tuple.first
+        |> List.map (\key -> ( key, getCatalogOfShape |> Dict.get key ))
+        |> List.map (Tuple.mapFirst Just)
+        |> List.map (Basic.uncurry (Maybe.map2 Tuple.pair))
+        |> List.filterMap identity
+        |> List.head
 
 
 getCatalogOfShape : Dict Int ( String, Shape )

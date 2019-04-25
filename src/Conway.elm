@@ -1,5 +1,6 @@
 module Conway exposing (main)
 
+import Basic
 import Browser
 import Cell
 import Controls
@@ -13,7 +14,8 @@ import Time
 
 
 type alias Model =
-    { grid : Grid.Grid Cell.State
+    { settings : Settings
+    , grid : Grid.Grid Cell.State
     , dimension : Dimension.Two
     , seederSelection :
         Controls.Selection.State Controls.Msg ( String, Seeder.Type Cell.State )
@@ -24,8 +26,34 @@ type alias Model =
     }
 
 
-viewState : Model -> Browser.Document Controls.Msg
-viewState model =
+type alias Settings =
+    { canvas : Controls.Canvas.Type Cell.State
+    , gridDimension : Dimension.Two
+    }
+
+
+settings : Settings
+settings =
+    { canvas =
+        Controls.Canvas.Type
+            1
+            8
+            (\state ->
+                case state of
+                    Cell.Live ->
+                        "live"
+
+                    Cell.Deceased ->
+                        "deceased"
+            )
+            Controls.Canvas.Rectangle
+    , gridDimension =
+        Dimension.make 33 33
+    }
+
+
+view : Model -> Browser.Document Controls.Msg
+view model =
     { title = "Conway's game of life"
     , body =
         [ Controls.gridCanvas
@@ -37,6 +65,11 @@ viewState model =
                     Controls.Selection.State Nothing _ ->
                         Controls.Canvas.getDefaultShapeValue
                 )
+                |> Tuple.pair settings.canvas
+                |> Basic.uncurry
+                    (\canvas shape ->
+                        { canvas | shape = shape }
+                    )
             )
             model.grid
         , Controls.gridDimensioner model.dimension
@@ -54,19 +87,21 @@ viewState model =
 
 initialState : ( Model, Cmd Controls.Msg )
 initialState =
-    let
-        gridSize =
-            Dimension.make 33 33
-    in
     ( Model
-        (Grid.generate gridSize Cell.Deceased Cell.fateOf (Tuple.second Seeder.getDefaultValue))
-        gridSize
+        settings
+        (Grid.generate
+            settings.gridDimension
+            Cell.Deceased
+            Cell.fateOf
+            (Tuple.second Seeder.getDefaultValue)
+        )
+        settings.gridDimension
         (Controls.Selection.State
             (Just Seeder.getDefault)
             Seeder.getCatalog
         )
         (Controls.Selection.State
-            (Just Controls.Canvas.getDefaultShape)
+            (Controls.Canvas.getCatalogOfShapeEntry settings.canvas.shape)
             Controls.Canvas.getCatalogOfShape
         )
         True
@@ -214,5 +249,5 @@ main =
         { init = always initialState
         , update = updateState
         , subscriptions = subscriptions
-        , view = viewState
+        , view = view
         }
