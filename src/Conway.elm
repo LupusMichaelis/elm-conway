@@ -31,8 +31,8 @@ type alias Model =
 main : Program () Model Controls.Msg
 main =
     Browser.document
-        { init = always (initialState Settings.get)
-        , update = updateState
+        { init = always ( initialState Settings.get, Cmd.none )
+        , update = \msg model -> ( updateState msg model, Cmd.none )
         , subscriptions = subscriptions
         , view = view
         }
@@ -71,9 +71,9 @@ view model =
     }
 
 
-initialState : Settings.Type -> ( Model, Cmd Controls.Msg )
+initialState : Settings.Type -> Model
 initialState settings =
-    ( Model
+    Model
         settings
         (Grid.generate
             settings.gridDimension
@@ -92,8 +92,6 @@ initialState settings =
         )
         True
         Controls.Normal
-    , Cmd.none
-    )
 
 
 subscriptions : Model -> Sub Controls.Msg
@@ -114,11 +112,11 @@ subscriptions model =
         Sub.none
 
 
-updateState : Controls.Msg -> Model -> ( Model, Cmd Controls.Msg )
+updateState : Controls.Msg -> Model -> Model
 updateState msg model =
     case msg of
         Controls.Tick now ->
-            ( { model | grid = Grid.run model.grid }, Cmd.none )
+            { model | grid = Grid.run model.grid }
 
         Controls.Resize dm n ->
             let
@@ -135,7 +133,7 @@ updateState msg model =
                         Controls.Height ->
                             { current | h = n }
             in
-            ( { model
+            { model
                 | dimension = new
                 , grid =
                     Grid.makeFromGridAndResize
@@ -150,26 +148,24 @@ updateState msg model =
                                     Seeder.getDefaultValue
                             )
                         )
-              }
-            , Cmd.none
-            )
+            }
 
         Controls.SelectSeed seed ->
             let
-                ( selectionModel, cmds ) =
+                selectionModel =
                     Controls.Selection.updateSelected model.seederSelection seed
             in
-            ( { model | seederSelection = selectionModel }, cmds )
+            { model | seederSelection = selectionModel }
 
         Controls.SelectShape shape ->
             let
-                ( selectionModel, cmds ) =
+                selectionModel =
                     Controls.Selection.updateSelected model.shapeSelection shape
             in
-            ( { model | shapeSelection = selectionModel }, cmds )
+            { model | shapeSelection = selectionModel }
 
         Controls.RecycleSandbox ->
-            ( { model
+            { model
                 | grid =
                     Grid.generate
                         model.dimension
@@ -184,15 +180,13 @@ updateState msg model =
                                     Seeder.getDefaultValue
                             )
                         )
-              }
-            , Cmd.none
-            )
+            }
 
         Controls.ToggleRunning ->
-            ( { model | running = not model.running }, Cmd.none )
+            { model | running = not model.running }
 
         Controls.SlowDown ->
-            ( { model
+            { model
                 | speed =
                     case model.speed of
                         Controls.Slow ->
@@ -203,12 +197,10 @@ updateState msg model =
 
                         Controls.Fast ->
                             Controls.Normal
-              }
-            , Cmd.none
-            )
+            }
 
         Controls.SpeedUp ->
-            ( { model
+            { model
                 | speed =
                     case model.speed of
                         Controls.Slow ->
@@ -219,9 +211,7 @@ updateState msg model =
 
                         Controls.Fast ->
                             Controls.Fast
-              }
-            , Cmd.none
-            )
+            }
 
         Controls.Reset ->
             initialState model.settings

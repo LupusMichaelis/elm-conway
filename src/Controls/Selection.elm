@@ -20,9 +20,9 @@ type State msg element
     = State (Maybe ( Key, element )) (Dict Key element)
 
 
-updateSelected : State msg element -> Key -> ( State msg element, Cmd msg )
+updateSelected : State msg element -> Key -> State msg element
 updateSelected (State maybeSelected dict) selected =
-    ( State (Dict.get selected dict |> Maybe.map (Tuple.pair selected)) dict, Cmd.none )
+    State (Dict.get selected dict |> Maybe.map (Tuple.pair selected)) dict
 
 
 renderElementFromCatalog :
