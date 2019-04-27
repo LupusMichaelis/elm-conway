@@ -11,11 +11,12 @@ import Grid
 import Html exposing (Html)
 import List.Nonempty
 import Seeder
+import Settings
 import Time
 
 
 type alias Model =
-    { settings : Settings
+    { settings : Settings.Type
     , grid : Grid.Grid Cell.State
     , dimension : Dimension.Two
     , seederSelection :
@@ -27,37 +28,14 @@ type alias Model =
     }
 
 
-type alias Settings =
-    { canvas : Controls.Canvas.Type Cell.State
-    , gridDimension : Dimension.Two
-    , speedList : List.Nonempty.Nonempty ( Controls.Speed, Int )
-    }
-
-
-settings : Settings
-settings =
-    { canvas =
-        Controls.Canvas.Type
-            1
-            8
-            (\state ->
-                case state of
-                    Cell.Live ->
-                        "live"
-
-                    Cell.Deceased ->
-                        "deceased"
-            )
-            Controls.Canvas.Rectangle
-    , gridDimension =
-        Dimension.make 33 33
-    , speedList =
-        List.Nonempty.Nonempty
-            ( Controls.Slow, 1000 )
-            [ ( Controls.Normal, 500 )
-            , ( Controls.Fast, 200 )
-            ]
-    }
+main : Program () Model Controls.Msg
+main =
+    Browser.document
+        { init = always (initialState Settings.get)
+        , update = updateState
+        , subscriptions = subscriptions
+        , view = view
+        }
 
 
 view : Model -> Browser.Document Controls.Msg
@@ -73,7 +51,7 @@ view model =
                     Controls.Selection.State Nothing _ ->
                         Controls.Canvas.getDefaultShapeValue
                 )
-                |> Tuple.pair settings.canvas
+                |> Tuple.pair model.settings.canvas
                 |> Basic.uncurry
                     (\canvas shape ->
                         { canvas | shape = shape }
@@ -93,8 +71,8 @@ view model =
     }
 
 
-initialState : ( Model, Cmd Controls.Msg )
-initialState =
+initialState : Settings.Type -> ( Model, Cmd Controls.Msg )
+initialState settings =
     ( Model
         settings
         (Grid.generate
@@ -246,14 +224,4 @@ updateState msg model =
             )
 
         Controls.Reset ->
-            initialState
-
-
-main : Program () Model Controls.Msg
-main =
-    Browser.document
-        { init = always initialState
-        , update = updateState
-        , subscriptions = subscriptions
-        , view = view
-        }
+            initialState model.settings
