@@ -9,6 +9,7 @@ import Controls.Selection
 import Dimension
 import Grid
 import Html exposing (Html)
+import List.Nonempty
 import Seeder
 import Time
 
@@ -29,6 +30,7 @@ type alias Model =
 type alias Settings =
     { canvas : Controls.Canvas.Type Cell.State
     , gridDimension : Dimension.Two
+    , speedList : List.Nonempty.Nonempty ( Controls.Speed, Int )
     }
 
 
@@ -49,6 +51,12 @@ settings =
             Controls.Canvas.Rectangle
     , gridDimension =
         Dimension.make 33 33
+    , speedList =
+        List.Nonempty.Nonempty
+            ( Controls.Slow, 1000 )
+            [ ( Controls.Normal, 500 )
+            , ( Controls.Fast, 200 )
+            ]
     }
 
 
@@ -114,15 +122,13 @@ subscriptions : Model -> Sub Controls.Msg
 subscriptions model =
     if model.running then
         Time.every
-            (case model.speed of
-                Controls.Slow ->
-                    1000
-
-                Controls.Normal ->
-                    500
-
-                Controls.Fast ->
-                    200
+            (model.settings.speedList
+                |> List.Nonempty.filter
+                    (Tuple.first >> (==) model.speed)
+                    (List.Nonempty.head model.settings.speedList)
+                |> List.Nonempty.map Tuple.second
+                |> List.Nonempty.head
+                |> toFloat
             )
             Controls.Tick
 
