@@ -48,3 +48,13 @@ swapTests =
                     |> Expect.equal (3, 6)
             )
         ]
+
+composeTests : Test
+composeTests =
+    describe "Compose with two arguments"
+        [ test "Swap two numbers"
+            (\_ ->
+                Basic.compose2 Tuple.pair Basic.swap 6 3
+                    |> Expect.equal (3, 6)
+            )
+        ]

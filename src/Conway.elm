@@ -32,7 +32,7 @@ main : Program () Model Controls.Msg
 main =
     Browser.document
         { init = always ( initialState Settings.get, Cmd.none )
-        , update = \msg model -> ( updateState msg model, Cmd.none )
+        , update = Basic.compose2 updateState (Tuple.pair Cmd.none >> Basic.swap)
         , subscriptions = subscriptions
         , view = view
         }

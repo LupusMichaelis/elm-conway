@@ -1,9 +1,15 @@
 module Basic exposing
-    ( curry
+    ( compose2
+    , curry
     , flip
     , swap
     , uncurry
     )
+
+
+compose2 : (a -> b -> c) -> (c -> d) -> a -> b -> d
+compose2 f next a b =
+    f a b |> next
 
 
 flip : (b -> a -> c) -> a -> b -> c
