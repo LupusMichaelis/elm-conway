@@ -9,21 +9,23 @@ module Grid exposing
     , isWithinDimension
     , iterate
     , iterateStateList
+    , makeFromArray
     , makeFromGridAndResize
     , makeFromList
     , run
     )
 
+import Array exposing (Array)
+import Array.Extra
 import Basic
 import Dimension
-import List.Extra
 import Position
 import Seeder
 
 
 type alias FateOf state =
     state
-    -> List state
+    -> Array state
     -> state
 
 
@@ -31,7 +33,7 @@ type alias Grid state =
     { dimension : Dimension.Two
     , defaultState : state
     , fateOf : FateOf state
-    , stateList : List state
+    , stateList : Array state
     }
 
 
@@ -59,7 +61,7 @@ generate dim defaultState fateOf seeder =
                     Seeder.Dimension generator ->
                         generator dim <| positionFromFlat dim position
     in
-    List.Extra.initialize
+    Array.initialize
         (dim.w * dim.h)
         wrappedGenerator
         |> Grid dim defaultState fateOf
@@ -72,13 +74,24 @@ makeFromList :
     -> List state
     -> Maybe (Grid state)
 makeFromList dim defaultState fateOf copied =
-    if Dimension.getArea dim /= List.length copied then
+    Array.fromList copied
+        |> makeFromArray dim defaultState fateOf
+
+
+makeFromArray :
+    Dimension.Two
+    -> state
+    -> FateOf state
+    -> Array state
+    -> Maybe (Grid state)
+makeFromArray dim defaultState fateOf copied =
+    if Dimension.getArea dim /= Array.length copied then
         Nothing
 
     else
         copied
             |> iterateStateList dim
-            |> List.map Tuple.second
+            |> Array.map Tuple.second
             |> Grid dim defaultState fateOf
             |> Just
 
@@ -105,10 +118,10 @@ isInThisRow dim row =
 fetchStateOrGenerate :
     Grid state
     -> Seeder.Type state
-    -> List Position.Two
-    -> List state
+    -> Array Position.Two
+    -> Array state
 fetchStateOrGenerate grid seeder =
-    List.map
+    Array.map
         (\position ->
             if isWithinDimension grid.dimension position then
                 getStateAt grid position
@@ -136,22 +149,22 @@ makeFromGridAndResize :
     -> Grid state
 makeFromGridAndResize grid newDimension seeder =
     let
-        generateGrid : Dimension.Two -> List Position.Two
+        generateGrid : Dimension.Two -> Array Position.Two
         generateGrid dim =
-            List.range 0 (dim.h - 1)
-                |> List.map (generateRow dim.w)
-                |> List.concat
-                |> List.map Position.fromTuple
+            (List.range 0 (dim.h - 1) |> Array.fromList)
+                |> Array.map (generateRow dim.w)
+                |> Array.foldr Array.append Array.empty
+                |> Array.map Position.fromTuple
 
         generateRow :
             Int
             -> Int
-            -> List ( Int, Int ) -- row, col
+            -> Array ( Int, Int ) -- row, col
         generateRow size line =
-            List.map2
+            Array.Extra.map2
                 Tuple.pair
-                (List.repeat size line)
-                (List.range 0 (size - 1))
+                (Array.repeat size line)
+                (List.range 0 (size - 1) |> Array.fromList)
     in
     generateGrid newDimension
         |> fetchStateOrGenerate grid seeder
@@ -183,13 +196,13 @@ isWithinFlattenDimension d =
 -- that's BS, should be able to make that with a turtle and distance mesurement
 
 
-{-| Given a Dimension and a Position, returns a List of neighbouring positions within
+{-| Given a Dimension and a Position, returns a Array of neighbouring positions within
 the borders.
 -}
-getNeighbourPositions : Position.Two -> Dimension.Two -> List Position.Two
+getNeighbourPositions : Position.Two -> Dimension.Two -> Array Position.Two
 getNeighbourPositions p =
     let
-        positions : List Position.Two
+        positions : Array Position.Two
         positions =
             [ { p | t = p.t - 1, l = p.l - 1 }
             , { p | t = p.t - 1 }
@@ -200,8 +213,9 @@ getNeighbourPositions p =
             , { p | t = p.t + 1 }
             , { p | t = p.t + 1, l = p.l + 1 }
             ]
+                |> Array.fromList
     in
-    isWithinDimension >> Basic.flip List.filter positions
+    isWithinDimension >> Basic.flip Array.filter positions
 
 
 
@@ -247,7 +261,7 @@ convertPositionFromFlat dim flat =
 getStateAtFlat : Grid state -> Int -> state
 getStateAtFlat grid =
     Basic.flip
-        List.Extra.getAt
+        Array.get
         grid.stateList
         >> Maybe.withDefault grid.defaultState
 
@@ -268,15 +282,15 @@ getStateAt grid position =
         |> Maybe.withDefault grid.defaultState
 
 
-getNeighbourStatesFromPosition : Grid state -> Position.Two -> List state
+getNeighbourStatesFromPosition : Grid state -> Position.Two -> Array state
 getNeighbourStatesFromPosition grid =
     Basic.flip getNeighbourPositions grid.dimension
         >> getStatesFromPositions grid
 
 
-getStatesFromPositions : Grid state -> List Position.Two -> List state
+getStatesFromPositions : Grid state -> Array Position.Two -> Array state
 getStatesFromPositions grid =
-    List.map (getStateAt grid)
+    Array.map (getStateAt grid)
 
 
 fateOfState : Grid state -> Position.Two -> state -> state
@@ -300,16 +314,16 @@ run currentGrid =
         currentGrid.dimension
         currentGrid.defaultState
         currentGrid.fateOf
-        (iterate currentGrid |> List.map fateAt)
+        (iterate currentGrid |> Array.map fateAt)
 
 
-iterate : Grid state -> List ( Position.Two, state )
+iterate : Grid state -> Array ( Position.Two, state )
 iterate grid =
     grid.stateList
         |> iterateStateList grid.dimension
 
 
-iterateStateList : Dimension.Two -> List state -> List ( Position.Two, state )
+iterateStateList : Dimension.Two -> Array state -> Array ( Position.Two, state )
 iterateStateList dimension =
-    List.indexedMap Tuple.pair
-        >> List.map (Tuple.mapFirst (positionFromFlat dimension))
+    Array.indexedMap Tuple.pair
+        >> Array.map (Tuple.mapFirst (positionFromFlat dimension))

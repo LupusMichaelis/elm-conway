@@ -5,6 +5,7 @@ module Cell exposing
     , shouldACellResurrect
     )
 
+import Array exposing (Array)
 import Basic
 
 
@@ -13,22 +14,22 @@ type State
     | Deceased -- a corpse's lying there
 
 
-shouldACellDie : List State -> Bool
+shouldACellDie : Array State -> Bool
 shouldACellDie =
-    List.filter ((==) Live)
-        >> List.length
+    Array.filter ((==) Live)
+        >> Array.length
         >> Basic.flip List.member [ 2, 3 ]
         >> not
 
 
-shouldACellResurrect : List State -> Bool
+shouldACellResurrect : Array State -> Bool
 shouldACellResurrect =
-    List.filter ((==) Live)
-        >> List.length
+    Array.filter ((==) Live)
+        >> Array.length
         >> (==) 3
 
 
-fateOf : State -> List State -> State
+fateOf : State -> Array State -> State
 fateOf cellState neighbourStates =
     case cellState of
         Live ->

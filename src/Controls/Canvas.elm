@@ -9,6 +9,7 @@ module Controls.Canvas exposing
     , node
     )
 
+import Array
 import Basic
 import Dict exposing (Dict)
 import Grid
@@ -89,7 +90,8 @@ node canvas grid =
             , SA.strokeWidth <| pixel canvas.gap
             ]
             (Grid.iterate grid
-                |> List.map (Svg.Lazy.lazy (renderPixel canvas grid))
+                |> Array.map (Svg.Lazy.lazy (renderPixel canvas grid))
+                |> Array.toList
             )
         ]
 

@@ -3,6 +3,7 @@ module ManyStateGridTests exposing
     , runStates
     )
 
+import Array exposing (Array)
 import Cell
 import Dimension
 import Expect exposing (Expectation)
@@ -30,7 +31,7 @@ cmpMockState (MockState lhs) (MockState rhs) =
 manyStates : Test
 manyStates =
     let
-        mockFate : MockState -> List MockState -> MockState
+        mockFate : MockState -> Array MockState -> MockState
         mockFate _ _ =
             MockState 0
     in
@@ -114,6 +115,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 1024 523)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -122,6 +124,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 0 0)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -133,6 +136,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make (10 - 1) (10 - 1))
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -144,6 +148,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 5 (10 - 1))
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -157,6 +162,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 5 7)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -187,6 +193,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 1024 523)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -195,6 +202,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 0 0)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -206,6 +214,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make (8 - 1) (10 - 1))
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -217,6 +226,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 5 (10 - 1))
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -230,6 +240,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 5 6)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -260,6 +271,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 1024 523)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -268,6 +280,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 0 0)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -279,6 +292,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make (10 - 1) (8 - 1))
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -290,6 +304,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make (10 - 1) 5)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -303,6 +318,7 @@ manyStates =
                                 Grid.getNeighbourPositions
                                     (Position.make 5 6)
                                     asset.dimension
+                                    |> Array.toList
                                     |> List.map (Grid.getStateAt asset)
                                     |> List.sortWith cmpMockState
                                     |> Expect.equal
@@ -325,9 +341,9 @@ manyStates =
 runStates : Test
 runStates =
     let
-        mockFate : MockState -> List MockState -> MockState
+        mockFate : MockState -> Array MockState -> MockState
         mockFate =
-            List.foldl (\(MockState neighbour) (MockState me) -> MockState (neighbour + me))
+            Array.foldl (\(MockState neighbour) (MockState me) -> MockState (neighbour + me))
     in
     describe "Run states"
         [ test "Define the state as a sum of neighbours and self"

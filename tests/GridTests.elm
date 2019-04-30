@@ -6,6 +6,7 @@ module GridTests exposing
     , resizeTests
     )
 
+import Array
 import Cell
 import Dimension
 import Expect exposing (Expectation)
@@ -169,6 +170,7 @@ neighbourhoodTests =
                         Grid.getNeighbourPositions
                             (Position.make 0 0)
                             grid.dimension
+                            |> Array.toList
                 in
                 neighbours
                     |> Expect.equal []
@@ -189,6 +191,7 @@ neighbourhoodTests =
                         Grid.getNeighbourPositions
                             (Position.make 0 0)
                             grid.dimension
+                            |> Array.toList
 
                     expected : List Position.Two
                     expected =
@@ -217,6 +220,7 @@ neighbourhoodTests =
                         Grid.getNeighbourPositions
                             (Position.make 5 5)
                             grid.dimension
+                            |> Array.toList
 
                     expected : List Position.Two
                     expected =
@@ -253,6 +257,7 @@ neighbourhoodTests =
                                 (grid.dimension.h - 1)
                             )
                             grid.dimension
+                            |> Array.toList
 
                     expected : List Position.Two
                     expected =
