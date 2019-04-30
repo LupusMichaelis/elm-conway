@@ -10,7 +10,6 @@ import Array
 import Cell
 import Dimension
 import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
 import Grid
 import Position
 import Seeder
