@@ -114,7 +114,7 @@ resizingTests =
                                 |> Grid.run
                                 |> Grid.run
                                 |> (\grid ->
-                                        Grid.makeFromGridAndResize
+                                        Grid.makeFromGridThenResize
                                             grid
                                             (Dimension.make 3 3)
                                             Seeder.oddAreLive
@@ -126,13 +126,13 @@ resizingTests =
                                 |> Grid.run
                                 |> Grid.run
                                 |> (\grid ->
-                                        Grid.makeFromGridAndResize
+                                        Grid.makeFromGridThenResize
                                             grid
                                             (Dimension.make 3 3)
                                             Seeder.oddAreLive
                                    )
                                 |> (\grid ->
-                                        Grid.makeFromGridAndResize
+                                        Grid.makeFromGridThenResize
                                             grid
                                             (Dimension.make 6 3)
                                             Seeder.oddAreLive

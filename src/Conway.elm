@@ -136,7 +136,7 @@ updateState msg model =
             { model
                 | dimension = new
                 , grid =
-                    Grid.makeFromGridAndResize
+                    Grid.makeFromGridThenResize
                         model.grid
                         new
                         (Tuple.second

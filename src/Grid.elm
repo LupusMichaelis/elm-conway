@@ -10,7 +10,7 @@ module Grid exposing
     , iterate
     , iterateStateList
     , makeFromArray
-    , makeFromGridAndResize
+    , makeFromGridThenResize
     , makeFromList
     , run
     )
@@ -142,12 +142,12 @@ fetchStateOrGenerate grid seeder =
         )
 
 
-makeFromGridAndResize :
+makeFromGridThenResize :
     Grid state
     -> Dimension.Two
     -> Seeder.Type state
     -> Grid state
-makeFromGridAndResize grid newDimension seeder =
+makeFromGridThenResize grid newDimension seeder =
     let
         generateGrid : Dimension.Two -> Array Position.Two
         generateGrid dim =

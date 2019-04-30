@@ -315,7 +315,7 @@ resizeTests =
                 original
                     |> Maybe.map
                         (\g ->
-                            Grid.makeFromGridAndResize
+                            Grid.makeFromGridThenResize
                                 g
                                 enlargedSize
                                 (Seeder.Value Cell.Deceased)
@@ -358,7 +358,7 @@ resizeTests =
                 original
                     |> Maybe.map
                         (\g ->
-                            Grid.makeFromGridAndResize
+                            Grid.makeFromGridThenResize
                                 g
                                 enlargedSize
                                 (Seeder.Value Cell.Deceased)
@@ -401,7 +401,7 @@ resizeTests =
                 original
                     |> Maybe.map
                         (\g ->
-                            Grid.makeFromGridAndResize
+                            Grid.makeFromGridThenResize
                                 g
                                 enlargedSize
                                 (Seeder.Value Cell.Deceased)
@@ -444,7 +444,7 @@ resizeTests =
                 original
                     |> Maybe.map
                         (\g ->
-                            Grid.makeFromGridAndResize
+                            Grid.makeFromGridThenResize
                                 g
                                 enlargedSize
                                 (Seeder.Value Cell.Deceased)
@@ -487,7 +487,7 @@ resizeTests =
                 original
                     |> Maybe.map
                         (\g ->
-                            Grid.makeFromGridAndResize
+                            Grid.makeFromGridThenResize
                                 g
                                 enlargedSize
                                 (Seeder.Value Cell.Deceased)
@@ -530,7 +530,7 @@ resizeTests =
                 original
                     |> Maybe.map
                         (\g ->
-                            Grid.makeFromGridAndResize
+                            Grid.makeFromGridThenResize
                                 g
                                 enlargedSize
                                 (Seeder.Value Cell.Deceased)
