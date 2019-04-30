@@ -96,25 +96,6 @@ makeFromArray dim defaultState fateOf copied =
             |> Just
 
 
-isInThisColumn :
-    Dimension.Two
-    -> Int
-    -> Int
-    -> Bool
-isInThisColumn dim column =
-    -- XXX something fishy, I ignore dimension and tell the column…
-    modBy (column + 1) >> (/=) 0
-
-
-isInThisRow :
-    Dimension.Two
-    -> Int
-    -> Int
-    -> Bool
-isInThisRow dim row =
-    modBy dim.w >> (/=) row
-
-
 fetchStateOrGenerate :
     Grid state
     -> Seeder.Type state
