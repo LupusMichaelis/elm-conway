@@ -1,6 +1,6 @@
 module Settings exposing
-    ( get
-    , Type
+    ( Type
+    , get
     )
 
 import Cell

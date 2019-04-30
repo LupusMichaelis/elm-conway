@@ -91,7 +91,7 @@ initialState settings =
             Controls.Canvas.getCatalogOfShape
         )
         True
-        Controls.Normal
+        (List.Nonempty.head settings.speedList |> Tuple.first)
 
 
 subscriptions : Model -> Sub Controls.Msg
