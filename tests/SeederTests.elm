@@ -94,7 +94,7 @@ seederTests =
             )
         , test "Blinker placement"
             (\_ ->
-                case Seeder.blinker of
+                case Seeder.blinker Seeder.Horizontal of
                     Seeder.Position f ->
                         f
                             |> Expect.all
@@ -108,6 +108,29 @@ seederTests =
                                 , (|>) (Position.Two 1 3) >> Expect.equal Cell.Deceased
                                 , (|>) (Position.Two 2 0) >> Expect.equal Cell.Deceased
                                 , (|>) (Position.Two 2 1) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 2 2) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 2 3) >> Expect.equal Cell.Deceased
+                                ]
+
+                    _ ->
+                        Expect.fail "The seeder should be position driven"
+            )
+        , test "Blinker placed alternatively"
+            (\_ ->
+                case Seeder.blinker Seeder.Vertical of
+                    Seeder.Position f ->
+                        f
+                            |> Expect.all
+                                [ (|>) (Position.Two 0 0) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 0 1) >> Expect.equal Cell.Live
+                                , (|>) (Position.Two 0 2) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 0 3) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 1 0) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 1 1) >> Expect.equal Cell.Live
+                                , (|>) (Position.Two 1 2) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 1 3) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 2 0) >> Expect.equal Cell.Deceased
+                                , (|>) (Position.Two 2 1) >> Expect.equal Cell.Live
                                 , (|>) (Position.Two 2 2) >> Expect.equal Cell.Deceased
                                 , (|>) (Position.Two 2 3) >> Expect.equal Cell.Deceased
                                 ]

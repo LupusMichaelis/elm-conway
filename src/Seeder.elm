@@ -1,5 +1,6 @@
 module Seeder exposing
-    ( Type(..)
+    ( Blinker(..)
+    , Type(..)
     , allDeceased
     , allLive
     , battlefield
@@ -25,6 +26,11 @@ type Type state
     | Dimension (Dimension.Two -> Position.Two -> state)
 
 
+type Blinker
+    = Vertical
+    | Horizontal
+
+
 getCatalog : Dict Int ( String, Type Cell.State )
 getCatalog =
     Dict.fromList <|
@@ -34,7 +40,8 @@ getCatalog =
             , ( "Odd cells are live, other empty", oddAreLive )
             , ( "Even cells are live, other empty", evenAreLive )
             , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
-            , ( "Place a blinker", blinker )
+            , ( "Place blinkers horizontally", blinker Horizontal )
+            , ( "Place blinkers vertically", blinker Vertical )
             ]
 
 
@@ -107,17 +114,27 @@ battlefield =
         )
 
 
-blinker : Type Cell.State
-blinker =
+blinker : Blinker -> Type Cell.State
+blinker disposition =
     Position
         (\position ->
             if
-                1
-                    == modBy 4 position.t
-                    && ([ 0, 1, 2 ]
-                            |> List.map ((==) (modBy 4 position.l))
-                            |> List.foldl (||) False
-                       )
+                case disposition of
+                    Horizontal ->
+                        1
+                            == modBy 4 position.t
+                            && ([ 0, 1, 2 ]
+                                    |> List.map ((==) (modBy 4 position.l))
+                                    |> List.foldl (||) False
+                               )
+
+                    Vertical ->
+                        1
+                            == modBy 4 position.l
+                            && ([ 0, 1, 2 ]
+                                    |> List.map ((==) (modBy 4 position.t))
+                                    |> List.foldl (||) False
+                               )
             then
                 Cell.Live
 
