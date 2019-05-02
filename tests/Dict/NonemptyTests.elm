@@ -1,26 +1,26 @@
-module Dict.NonEmptyTests exposing (factoryTests)
+module Dict.NonemptyTests exposing (factoryTests)
 
 import Basic
 import Dict exposing (Dict)
-import Dict.NonEmpty exposing (NonEmpty)
+import Dict.Nonempty exposing (Nonempty)
 import Expect exposing (Expectation)
 import Test exposing (..)
 
 
 factoryTests : Test
 factoryTests =
-    describe "NonEmpty Dict Factories"
+    describe "Nonempty Dict Factories"
         [ test "From empty dict, expect nothing"
             (\_ ->
                 []
                     |> Dict.fromList
-                    |> Dict.NonEmpty.fromDict
+                    |> Dict.Nonempty.fromDict
                     |> Expect.equal Nothing
             )
         , test "From empty list, expect nothing"
             (\_ ->
                 []
-                    |> Dict.NonEmpty.fromList
+                    |> Dict.Nonempty.fromList
                     |> Expect.equal Nothing
             )
         ]
