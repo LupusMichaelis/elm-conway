@@ -34,7 +34,7 @@ getCatalog =
             , ( "Odd cells are live, other empty", oddAreLive )
             , ( "Even cells are live, other empty", evenAreLive )
             , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
-            , ( "Place a bliker", blinker )
+            , ( "Place a blinker", blinker )
             ]
 
 
