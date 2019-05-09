@@ -3,6 +3,7 @@ module Dict.Nonempty exposing
     , fromDict
     , fromList
     , fromNonemptyList
+    , size
     )
 
 import Basic
@@ -20,12 +21,9 @@ fromDict dict =
         Nothing
 
     else
-        let
-            first : Maybe comparable
-            first =
-                dict |> Dict.keys |> List.minimum
-        in
-        first
+        dict
+            |> Dict.keys
+            |> List.minimum
             |> Maybe.map
                 (Basic.flip Nonempty dict)
 
@@ -47,3 +45,8 @@ fromNonemptyList (List.Nonempty.Nonempty (( headKey, headValue ) as head) tail) 
 singleton : comparable -> v -> Nonempty comparable v
 singleton key v =
     Nonempty key <| Dict.singleton key v
+
+
+size : Nonempty comparable v -> Int
+size (Nonempty k d) =
+    Dict.size d

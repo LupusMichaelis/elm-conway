@@ -4,6 +4,7 @@ import Basic
 import Dict exposing (Dict)
 import Dict.Nonempty exposing (Nonempty)
 import Expect exposing (Expectation)
+import List.Nonempty
 import Test exposing (..)
 
 
@@ -22,5 +23,27 @@ factoryTests =
                 []
                     |> Dict.Nonempty.fromList
                     |> Expect.equal Nothing
+            )
+        , test "One element"
+            (\_ ->
+                [ ( 0, "zero" ) ]
+                    |> Dict.fromList
+                    |> Dict.Nonempty.fromDict
+                    |> Maybe.map Dict.Nonempty.size
+                    |> Expect.equal (Just 1)
+            )
+        , test "Singleton"
+            (\_ ->
+                Dict.singleton 0 "zero"
+                    |> Dict.Nonempty.fromDict
+                    |> Maybe.map Dict.Nonempty.size
+                    |> Expect.equal (Just 1)
+            )
+        , test "Non empty list"
+            (\_ ->
+                List.Nonempty.fromList [ ( 0, "zero" ) ]
+                    |> Maybe.map Dict.Nonempty.fromNonemptyList
+                    |> Maybe.map Dict.Nonempty.size
+                    |> Expect.equal (Just 1)
             )
         ]
