@@ -32,6 +32,26 @@ factoryTests =
                     |> Maybe.map Dict.Nonempty.size
                     |> Expect.equal (Just 1)
             )
+        , test "Two element"
+            (\_ ->
+                [ ( 0, "zero" )
+                , ( 1, "one" )
+                ]
+                    |> Dict.fromList
+                    |> Dict.Nonempty.fromDict
+                    |> Maybe.map Dict.Nonempty.size
+                    |> Expect.equal (Just 2)
+            )
+        , test "Two element, inverted"
+            (\_ ->
+                [ ( 1, "one" )
+                , ( 0, "zero" )
+                ]
+                    |> Dict.fromList
+                    |> Dict.Nonempty.fromDict
+                    |> Maybe.map Dict.Nonempty.size
+                    |> Expect.equal (Just 2)
+            )
         , test "Singleton"
             (\_ ->
                 Dict.singleton 0 "zero"
