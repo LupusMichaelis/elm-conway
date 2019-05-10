@@ -116,28 +116,72 @@ battlefield =
 
 blinker : Blinker -> Type Cell.State
 blinker disposition =
-    Position
-        (\position ->
+    let
+        horizontal : Position.Two -> Cell.State
+        horizontal position =
             if
-                case disposition of
-                    Horizontal ->
-                        1
-                            == modBy 4 position.t
-                            && ([ 0, 1, 2 ]
-                                    |> List.map ((==) (modBy 4 position.l))
-                                    |> List.foldl (||) False
-                               )
-
-                    Vertical ->
-                        1
-                            == modBy 4 position.l
-                            && ([ 0, 1, 2 ]
-                                    |> List.map ((==) (modBy 4 position.t))
-                                    |> List.foldl (||) False
-                               )
+                1
+                    == modBy 4 position.t
+                    && ([ 0, 1, 2 ]
+                            |> List.map ((==) (modBy 4 position.l))
+                            |> List.foldl (||) False
+                       )
             then
                 Cell.Live
 
             else
                 Cell.Deceased
-        )
+
+        vertical : Position.Two -> Cell.State
+        vertical position =
+            if
+                1
+                    == modBy 4 position.l
+                    && ([ 0, 1, 2 ]
+                            |> List.map ((==) (modBy 4 position.t))
+                            |> List.foldl (||) False
+                       )
+            then
+                Cell.Live
+
+            else
+                Cell.Deceased
+
+        alternating : Blinker -> Blinker -> Position.Two -> Cell.State
+        alternating a b position =
+            let
+                f =
+                    if modBy 6 position.l < 4 then
+                        case a of
+                            Horizontal ->
+                                horizontal
+
+                            Vertical ->
+                                vertical
+
+                            Alternating an bn ->
+                                alternating an bn
+
+                    else
+                        case b of
+                            Horizontal ->
+                                horizontal
+
+                            Vertical ->
+                                vertical
+
+                            Alternating an bn ->
+                                alternating an bn
+            in
+            f position
+    in
+    Position <|
+        case disposition of
+            Horizontal ->
+                horizontal
+
+            Vertical ->
+                vertical
+
+            Alternating a b ->
+                alternating a b
