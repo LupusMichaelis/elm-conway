@@ -14,8 +14,9 @@ module Seeder exposing
     )
 
 import Cell
-import Dict exposing (Dict)
+import Dict.Nonempty
 import Dimension
+import List.Nonempty
 import Position
 
 
@@ -29,28 +30,41 @@ type Type state
 type Blinker
     = Vertical
     | Horizontal
+    | Alternating Blinker Blinker
 
 
-getCatalog : Dict Int ( String, Type Cell.State )
+getCatalog : Dict.Nonempty.Nonempty Int ( String, Type Cell.State )
 getCatalog =
-    Dict.fromList <|
-        List.indexedMap Tuple.pair <|
-            [ ( "All live cells", allLive )
-            , ( "All deceased cells", allDeceased )
-            , ( "Odd cells are live, other empty", oddAreLive )
-            , ( "Even cells are live, other empty", evenAreLive )
-            , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
-            , ( "Place blinkers horizontally", blinker Horizontal )
-            , ( "Place blinkers vertically", blinker Vertical )
-            ]
+    [ ( "All live cells", allLive )
+    , ( "All deceased cells", allDeceased )
+    , ( "Odd cells are live, other empty", oddAreLive )
+    , ( "Even cells are live, other empty", evenAreLive )
+    , ( "A battlefield with a living cell every 3 and 5 cell", battlefield )
+    , ( "Place blinkers horizontally", blinker Horizontal )
+    , ( "Place blinkers vertically", blinker Vertical )
+    , ( "Place blinkers horizontally, then vertically, alternatively"
+      , blinker <| Alternating Vertical Horizontal
+      )
+    ]
+        |> List.Nonempty.Nonempty
+            ( "All live cells", allLive )
+        |> List.Nonempty.indexedMap Tuple.pair
+        |> Dict.Nonempty.fromNonemptyList
 
 
 getDefault : ( Int, ( String, Type Cell.State ) )
 getDefault =
-    getCatalog
-        |> Dict.get 2
+    let
+        catalog =
+            getCatalog
+
+        (Dict.Nonempty.Nonempty k v d) =
+            catalog
+    in
+    catalog
+        |> Dict.Nonempty.get 2
         |> Maybe.map (Tuple.pair 2)
-        |> Maybe.withDefault ( 0, ( "All live cells", allLive ) )
+        |> Maybe.withDefault ( k, v )
 
 
 getDefaultValue : ( String, Type Cell.State )

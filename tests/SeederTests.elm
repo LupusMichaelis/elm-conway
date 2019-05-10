@@ -4,7 +4,7 @@ module SeederTests exposing
     )
 
 import Cell
-import Dict
+import Dict.Nonempty
 import Expect exposing (Expectation)
 import Position
 import Seeder
@@ -17,7 +17,7 @@ catalogTests =
         [ test "Check if we've got at least one seeder"
             (\_ ->
                 Seeder.getCatalog
-                    |> Dict.size
+                    |> Dict.Nonempty.size
                     |> Expect.atLeast 1
             )
         ]
