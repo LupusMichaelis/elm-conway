@@ -7,6 +7,7 @@ module Controls.Selection exposing
     )
 
 import Dict exposing (Dict)
+import Dict.Nonempty
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -17,23 +18,24 @@ type alias Key =
 
 
 type State msg element
-    = State (Maybe ( Key, element )) (Dict Key element)
+    = State (Maybe ( Key, element )) (Dict.Nonempty.Nonempty Key element)
 
 
 updateSelected : State msg element -> Key -> State msg element
 updateSelected (State maybeSelected dict) selected =
-    State (Dict.get selected dict |> Maybe.map (Tuple.pair selected)) dict
+    State (Dict.Nonempty.get selected dict |> Maybe.map (Tuple.pair selected)) dict
 
 
 renderElementFromCatalog :
-    Dict Key ( String, element )
+    Dict.Nonempty.Nonempty Int ( String, element )
     -> Html msg
     -> Key
     -> Html msg
 renderElementFromCatalog catalog placeholder elementKey =
     catalog
-        |> Dict.filter (\currentKey ( _, _ ) -> (==) elementKey currentKey)
-        |> Dict.values
+        |> Dict.Nonempty.filter (\currentKey ( _, _ ) -> (==) elementKey currentKey)
+        |> Maybe.map Dict.Nonempty.values
+        |> Maybe.withDefault []
         |> List.head
         |> Maybe.map Tuple.first
         |> Maybe.map H.text
@@ -50,9 +52,9 @@ render renderElement elementMsg (State maybeSelected elementDict) =
         liList : List (Html msg)
         liList =
             elementDict
-                |> Dict.map
+                |> Dict.Nonempty.map
                     (renderLine renderElement elementMsg maybeSelected)
-                |> Dict.values
+                |> Dict.Nonempty.values
     in
     H.ul [] liList
 

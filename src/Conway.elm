@@ -6,6 +6,8 @@ import Cell
 import Controls
 import Controls.Canvas
 import Controls.Selection
+import Dict
+import Dict.Nonempty
 import Dimension
 import Grid
 import Html exposing (Html)
@@ -78,7 +80,7 @@ initialState settings =
         (Grid.generate
             settings.gridDimension
             Cell.Deceased
-            Cell.fateOf
+            Cell.b3s23
             (Tuple.second Seeder.getDefaultValue)
         )
         settings.gridDimension
@@ -170,7 +172,7 @@ updateState msg model =
                     Grid.generate
                         model.dimension
                         Cell.Deceased
-                        Cell.fateOf
+                        Cell.b3s23
                         (Tuple.second
                             (case model.seederSelection of
                                 Controls.Selection.State (Just ( _, seeder )) _ ->

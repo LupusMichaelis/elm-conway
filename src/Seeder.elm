@@ -14,6 +14,7 @@ module Seeder exposing
     )
 
 import Cell
+import Controls.Selection
 import Dict.Nonempty
 import Dimension
 import List.Nonempty
@@ -33,7 +34,7 @@ type Blinker
     | Alternating Blinker Blinker
 
 
-getCatalog : Dict.Nonempty.Nonempty Int ( String, Type Cell.State )
+getCatalog : Dict.Nonempty.Nonempty Controls.Selection.Key ( String, Type Cell.State )
 getCatalog =
     [ ( "All live cells", allLive )
     , ( "All deceased cells", allDeceased )

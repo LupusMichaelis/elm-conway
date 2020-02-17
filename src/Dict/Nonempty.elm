@@ -11,6 +11,7 @@ module Dict.Nonempty exposing
     , insert
     , intersect
     , keys
+    , map
     , member
     , merge
     , partition

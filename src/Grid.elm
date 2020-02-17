@@ -18,6 +18,7 @@ module Grid exposing
 import Array exposing (Array)
 import Array.Extra
 import Basic
+import Cell
 import Dimension
 import Position
 import Seeder
@@ -32,7 +33,7 @@ type alias FateOf state =
 type alias Grid state =
     { dimension : Dimension.Two
     , defaultState : state
-    , fateOf : FateOf state
+    , rule : List (Cell.Rule state)
     , stateList : Array state
     }
 
@@ -40,10 +41,10 @@ type alias Grid state =
 generate :
     Dimension.Two
     -> state
-    -> FateOf state
+    -> List (Cell.Rule state)
     -> Seeder.Type state
     -> Grid state
-generate dim defaultState fateOf seeder =
+generate dim defaultState rule seeder =
     let
         wrappedGenerator : Int -> state
         wrappedGenerator =
@@ -64,27 +65,27 @@ generate dim defaultState fateOf seeder =
     Array.initialize
         (dim.w * dim.h)
         wrappedGenerator
-        |> Grid dim defaultState fateOf
+        |> Grid dim defaultState rule
 
 
 makeFromList :
     Dimension.Two
     -> state
-    -> FateOf state
+    -> List (Cell.Rule state)
     -> List state
     -> Maybe (Grid state)
-makeFromList dim defaultState fateOf copied =
+makeFromList dim defaultState rule copied =
     Array.fromList copied
-        |> makeFromArray dim defaultState fateOf
+        |> makeFromArray dim defaultState rule
 
 
 makeFromArray :
     Dimension.Two
     -> state
-    -> FateOf state
+    -> List (Cell.Rule state)
     -> Array state
     -> Maybe (Grid state)
-makeFromArray dim defaultState fateOf copied =
+makeFromArray dim defaultState rule copied =
     if Dimension.getArea dim /= Array.length copied then
         Nothing
 
@@ -92,7 +93,7 @@ makeFromArray dim defaultState fateOf copied =
         copied
             |> iterateStateList dim
             |> Array.map Tuple.second
-            |> Grid dim defaultState fateOf
+            |> Grid dim defaultState rule
             |> Just
 
 
@@ -149,7 +150,7 @@ makeFromGridThenResize grid newDimension seeder =
     in
     generateGrid newDimension
         |> fetchStateOrGenerate grid seeder
-        |> Grid newDimension grid.defaultState grid.fateOf
+        |> Grid newDimension grid.defaultState grid.rule
 
 
 
@@ -277,7 +278,7 @@ getStatesFromPositions grid =
 fateOfState : Grid state -> Position.Two -> state -> state
 fateOfState grid pos =
     getNeighbourStatesFromPosition grid pos
-        |> Basic.flip grid.fateOf
+        |> Basic.flip (Cell.fateOf grid.rule)
 
 
 
@@ -294,7 +295,7 @@ run currentGrid =
     Grid
         currentGrid.dimension
         currentGrid.defaultState
-        currentGrid.fateOf
+        currentGrid.rule
         (iterate currentGrid |> Array.map fateAt)
 
 
@@ -307,4 +308,4 @@ iterate grid =
 iterateStateList : Dimension.Two -> Array state -> Array ( Position.Two, state )
 iterateStateList dimension =
     Array.indexedMap Tuple.pair
-        >> Array.map (Tuple.mapFirst (positionFromFlat dimension))
+        >> Array.map (positionFromFlat dimension |> Tuple.mapFirst)

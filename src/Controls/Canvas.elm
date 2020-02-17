@@ -12,9 +12,11 @@ module Controls.Canvas exposing
 import Array
 import Basic
 import Dict exposing (Dict)
+import Dict.Nonempty
 import Grid
 import Html as H exposing (Html)
 import Html.Attributes as HA
+import List.Nonempty
 import Position
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
@@ -37,29 +39,28 @@ type Shape
 getCatalogOfShapeEntry : Shape -> Maybe ( Int, ( String, Shape ) )
 getCatalogOfShapeEntry shape =
     getCatalogOfShape
-        |> Dict.toList
+        |> Dict.Nonempty.toList
         |> List.filter (Tuple.second >> Tuple.second >> (==) shape)
         |> List.map Tuple.first
-        |> List.map (\key -> ( key, getCatalogOfShape |> Dict.get key ))
+        |> List.map (\key -> ( key, getCatalogOfShape |> Dict.Nonempty.get key ))
         |> List.map (Tuple.mapFirst Just)
         |> List.map (Basic.uncurry (Maybe.map2 Tuple.pair))
         |> List.filterMap identity
         |> List.head
 
 
-getCatalogOfShape : Dict Int ( String, Shape )
+getCatalogOfShape : Dict.Nonempty.Nonempty Int ( String, Shape )
 getCatalogOfShape =
-    Dict.fromList <|
-        List.indexedMap Tuple.pair <|
-            [ ( "Rectangle", Rectangle )
-            , ( "Circle", Circle )
-            ]
+    List.Nonempty.Nonempty
+        ( 0, ( "Rectangle", Rectangle ) )
+        [ ( 1, ( "Circle", Circle ) ) ]
+        |> Dict.Nonempty.fromNonemptyList
 
 
 getDefaultShape : ( Int, ( String, Shape ) )
 getDefaultShape =
     getCatalogOfShape
-        |> Dict.get 1
+        |> Dict.Nonempty.get 1
         |> Maybe.map (Tuple.pair 1)
         |> Maybe.withDefault ( 0, ( "Rectangle", Rectangle ) )
 
