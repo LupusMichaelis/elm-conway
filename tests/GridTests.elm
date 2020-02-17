@@ -69,7 +69,7 @@ getStateOfCellTests =
                 Grid.getStateAt
                     (Grid.generate dim
                         Cell.Deceased
-                        Cell.fateOf
+                        Cell.b3s23
                         (Seeder.Value Cell.Deceased)
                     )
                     (Position.make 0 0)
@@ -84,7 +84,7 @@ getStateOfCellTests =
                 Grid.getStateAt
                     (Grid.generate dim
                         Cell.Deceased
-                        Cell.fateOf
+                        Cell.b3s23
                         (Seeder.Value Cell.Live)
                     )
                     (Position.make 0 0)
@@ -99,7 +99,7 @@ getStateOfCellTests =
                 Grid.getStateAt
                     (Grid.generate dim
                         Cell.Deceased
-                        Cell.fateOf
+                        Cell.b3s23
                         (Seeder.Value Cell.Live)
                     )
                     (Position.make 10 10)
@@ -125,7 +125,7 @@ makeGridFromStatesTests =
                 Grid.makeFromList
                     dim
                     Cell.Deceased
-                    Cell.fateOf
+                    Cell.b3s23
                     list
                     |> Expect.notEqual Nothing
             )
@@ -143,7 +143,7 @@ makeGridFromStatesTests =
                 Grid.makeFromList
                     dim
                     Cell.Deceased
-                    Cell.fateOf
+                    Cell.b3s23
                     list
                     |> Expect.equal Nothing
             )
@@ -161,7 +161,7 @@ neighbourhoodTests =
                         Grid.generate
                             (Dimension.make 1 1)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
@@ -182,7 +182,7 @@ neighbourhoodTests =
                         Grid.generate
                             (Dimension.make 10 10)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
@@ -211,7 +211,7 @@ neighbourhoodTests =
                         Grid.generate
                             (Dimension.make 10 10)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
@@ -245,7 +245,7 @@ neighbourhoodTests =
                         Grid.generate
                             (Dimension.make 10 10)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             (Seeder.Value Cell.Deceased)
 
                     neighbours : List Position.Two
@@ -294,7 +294,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 (Dimension.make 2 2)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     enlargedSize : Dimension.Two
                     enlargedSize =
@@ -309,7 +309,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 enlargedSize
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 original
                     |> Maybe.map
@@ -334,7 +334,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 (Dimension.make 2 2)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     enlargedSize : Dimension.Two
                     enlargedSize =
@@ -352,7 +352,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 enlargedSize
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 original
                     |> Maybe.map
@@ -377,7 +377,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 (Dimension.make 2 2)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     enlargedSize : Dimension.Two
                     enlargedSize =
@@ -395,7 +395,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 enlargedSize
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 original
                     |> Maybe.map
@@ -420,7 +420,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 (Dimension.make 2 2)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     enlargedSize : Dimension.Two
                     enlargedSize =
@@ -438,7 +438,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 enlargedSize
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 original
                     |> Maybe.map
@@ -463,7 +463,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 (Dimension.make 2 2)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     enlargedSize : Dimension.Two
                     enlargedSize =
@@ -481,7 +481,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 enlargedSize
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 original
                     |> Maybe.map
@@ -506,7 +506,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 (Dimension.make 2 2)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     enlargedSize : Dimension.Two
                     enlargedSize =
@@ -524,7 +524,7 @@ resizeTests =
                             |> Grid.makeFromList
                                 enlargedSize
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 original
                     |> Maybe.map

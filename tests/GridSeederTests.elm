@@ -31,7 +31,7 @@ resizingTests =
                         Grid.generate
                             dimension
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             Seeder.oddAreLive
 
                     stepZero : Maybe (Grid.Grid Cell.State)
@@ -43,7 +43,7 @@ resizingTests =
                             |> List.concat
                             |> Grid.makeFromList dimension
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     stepOne : Maybe (Grid.Grid Cell.State)
                     stepOne =
@@ -54,7 +54,7 @@ resizingTests =
                             |> List.concat
                             |> Grid.makeFromList dimension
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     stepTwo : Maybe (Grid.Grid Cell.State)
                     stepTwo =
@@ -65,7 +65,7 @@ resizingTests =
                             |> List.concat
                             |> Grid.makeFromList dimension
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     stepThree : Maybe (Grid.Grid Cell.State)
                     stepThree =
@@ -76,7 +76,7 @@ resizingTests =
                             |> List.concat
                             |> Grid.makeFromList (Dimension.make 3 3)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     stepFour : Maybe (Grid.Grid Cell.State)
                     stepFour =
@@ -90,7 +90,7 @@ resizingTests =
                             |> List.concat
                             |> Grid.makeFromList (Dimension.make 6 3)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 original
                     |> Expect.all

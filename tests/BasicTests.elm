@@ -1,13 +1,14 @@
 module BasicTests exposing
     ( curryTests
-    , swapTests
     , flipTests
+    , swapTests
     , uncurryTests
     )
 
 import Basic
-import Test exposing (..)
 import Expect exposing (Expectation)
+import Test exposing (..)
+
 
 curryTests : Test
 curryTests =
@@ -15,19 +16,21 @@ curryTests =
         [ test "Curry two numbers"
             (\_ ->
                 Basic.curry identity 1 2
-                    |> Expect.equal (1, 2)
+                    |> Expect.equal ( 1, 2 )
             )
         ]
+
 
 uncurryTests : Test
 uncurryTests =
     describe "A function that get a second function and gives it two arguments containes in a tuple"
         [ test "Uncurry two numbers"
             (\_ ->
-                Basic.uncurry (//) (6, 3)
+                Basic.uncurry (//) ( 6, 3 )
                     |> Expect.equal 2
             )
         ]
+
 
 flipTests : Test
 flipTests =
@@ -35,19 +38,21 @@ flipTests =
         [ test "Swap two numbers"
             (\_ ->
                 Basic.flip Tuple.pair 6 3
-                    |> Expect.equal (3, 6)
+                    |> Expect.equal ( 3, 6 )
             )
         ]
+
 
 swapTests : Test
 swapTests =
     describe "Swap a tuple"
         [ test "Swap two numbers"
             (\_ ->
-                Basic.swap (6, 3)
-                    |> Expect.equal (3, 6)
+                Basic.swap ( 6, 3 )
+                    |> Expect.equal ( 3, 6 )
             )
         ]
+
 
 composeTests : Test
 composeTests =
@@ -55,6 +60,6 @@ composeTests =
         [ test "Swap two numbers"
             (\_ ->
                 Basic.compose2 Tuple.pair Basic.swap 6 3
-                    |> Expect.equal (3, 6)
+                    |> Expect.equal ( 3, 6 )
             )
         ]

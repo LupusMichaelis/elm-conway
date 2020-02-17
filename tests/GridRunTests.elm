@@ -13,6 +13,54 @@ import Grid
 import Test exposing (..)
 
 
+basicArrangement : Test
+basicArrangement =
+    let
+        l =
+            Cell.Live
+
+        d =
+            Cell.Deceased
+    in
+    describe
+        """
+            Test basic arrangement
+            """
+        [ test "A line of 4 live elements shrink to a block"
+            (\_ ->
+                let
+                    skycrapper : Maybe (Grid.Grid Cell.State)
+                    skycrapper =
+                        [ [ d, l ]
+                        , [ d, l ]
+                        , [ d, l ]
+                        , [ d, l ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList
+                                (Dimension.make 4 2)
+                                Cell.Deceased
+                                Cell.b3s23
+
+                    collapsed : Maybe (Grid.Grid Cell.State)
+                    collapsed =
+                        [ [ d, d ]
+                        , [ l, l ]
+                        , [ l, l ]
+                        , [ d, d ]
+                        ]
+                            |> List.concat
+                            |> Grid.makeFromList
+                                (Dimension.make 4 2)
+                                Cell.Deceased
+                                Cell.b3s23
+                in
+                Maybe.map Grid.run skycrapper
+                    |> Expect.equal collapsed
+            )
+        ]
+
+
 cellForetoldFateTests : Test
 cellForetoldFateTests =
     let
@@ -44,13 +92,13 @@ cellForetoldFateTests =
                         Grid.makeFromList
                             (Dimension.make 4 4)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             block
                 in
                 Maybe.map Grid.run grid
                     |> Expect.equal grid
             )
-        , test "Oscillator: blinker"
+        , test "Oscillator: blinker 5×5"
             (\_ ->
                 let
                     block : List Cell.State
@@ -68,7 +116,7 @@ cellForetoldFateTests =
                         Grid.makeFromList
                             (Dimension.make 5 5)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             block
 
                     intermediate : Maybe (Grid.Grid Cell.State)
@@ -83,7 +131,7 @@ cellForetoldFateTests =
                             |> Grid.makeFromList
                                 (Dimension.make 5 5)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     target : Maybe (Grid.Grid Cell.State)
                     target =
@@ -97,7 +145,7 @@ cellForetoldFateTests =
                             |> Grid.makeFromList
                                 (Dimension.make 5 5)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 Maybe.map Grid.run origin
                     |> Expect.all
@@ -109,7 +157,7 @@ cellForetoldFateTests =
                         -- this lambda's quite retard, is there a better syntax?
                         ]
             )
-        , test "Oscillator: beacon"
+        , test "Oscillator: beacon 6x6"
             (\_ ->
                 let
                     block : List Cell.State
@@ -128,7 +176,7 @@ cellForetoldFateTests =
                         Grid.makeFromList
                             (Dimension.make 6 6)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             block
 
                     intermediate : Maybe (Grid.Grid Cell.State)
@@ -144,7 +192,7 @@ cellForetoldFateTests =
                             |> Grid.makeFromList
                                 (Dimension.make 6 6)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     target : Maybe (Grid.Grid Cell.State)
                     target =
@@ -159,54 +207,6 @@ cellForetoldFateTests =
 
                         -- this lambda's quite retard, is there a better syntax?
                         ]
-            )
-        ]
-
-
-basicArrangement : Test
-basicArrangement =
-    let
-        l =
-            Cell.Live
-
-        d =
-            Cell.Deceased
-    in
-    describe
-        """
-            Test basic arrangement
-            """
-        [ test "A line of 4 live elements shrink to a block"
-            (\_ ->
-                let
-                    skycrapper : Maybe (Grid.Grid Cell.State)
-                    skycrapper =
-                        [ [ d, l ]
-                        , [ d, l ]
-                        , [ d, l ]
-                        , [ d, l ]
-                        ]
-                            |> List.concat
-                            |> Grid.makeFromList
-                                (Dimension.make 4 2)
-                                Cell.Deceased
-                                Cell.fateOf
-
-                    collapsed : Maybe (Grid.Grid Cell.State)
-                    collapsed =
-                        [ [ d, d ]
-                        , [ l, l ]
-                        , [ l, l ]
-                        , [ d, d ]
-                        ]
-                            |> List.concat
-                            |> Grid.makeFromList
-                                (Dimension.make 4 2)
-                                Cell.Deceased
-                                Cell.fateOf
-                in
-                Maybe.map Grid.run skycrapper
-                    |> Expect.equal collapsed
             )
         ]
 
@@ -241,13 +241,13 @@ cellInRectangularSandbox =
                         Grid.makeFromList
                             (Dimension.make 4 4)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             block
                 in
                 Maybe.map Grid.run grid
                     |> Expect.equal grid
             )
-        , test "Oscillator: blinker"
+        , test "Oscillator: blinker 5×3"
             (\_ ->
                 let
                     block : List Cell.State
@@ -261,9 +261,9 @@ cellInRectangularSandbox =
                     origin : Maybe (Grid.Grid Cell.State)
                     origin =
                         Grid.makeFromList
-                            (Dimension.make 5 5)
+                            (Dimension.make 3 5)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             block
 
                     intermediate : Maybe (Grid.Grid Cell.State)
@@ -274,9 +274,9 @@ cellInRectangularSandbox =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Dimension.make 5 5)
+                                (Dimension.make 3 5)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     target : Maybe (Grid.Grid Cell.State)
                     target =
@@ -286,9 +286,9 @@ cellInRectangularSandbox =
                         ]
                             |> List.concat
                             |> Grid.makeFromList
-                                (Dimension.make 5 5)
+                                (Dimension.make 3 5)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
                 in
                 Maybe.map Grid.run origin
                     |> Expect.all
@@ -300,7 +300,7 @@ cellInRectangularSandbox =
                         -- this lambda's quite retard, is there a better syntax?
                         ]
             )
-        , test "Oscillator: beacon"
+        , test "Oscillator: beacon 5x5"
             (\_ ->
                 let
                     block : List Cell.State
@@ -317,7 +317,7 @@ cellInRectangularSandbox =
                         Grid.makeFromList
                             (Dimension.make 5 5)
                             Cell.Deceased
-                            Cell.fateOf
+                            Cell.b3s23
                             block
 
                     intermediate : Maybe (Grid.Grid Cell.State)
@@ -331,7 +331,7 @@ cellInRectangularSandbox =
                             |> Grid.makeFromList
                                 (Dimension.make 5 5)
                                 Cell.Deceased
-                                Cell.fateOf
+                                Cell.b3s23
 
                     target : Maybe (Grid.Grid Cell.State)
                     target =

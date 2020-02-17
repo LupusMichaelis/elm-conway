@@ -1,7 +1,4 @@
-module ManyStateGridTests exposing
-    ( manyStates
-    , runStates
-    )
+module ManyStateGridTests exposing (manyStates)
 
 import Array exposing (Array)
 import Cell
@@ -31,9 +28,14 @@ cmpMockState (MockState lhs) (MockState rhs) =
 manyStates : Test
 manyStates =
     let
-        mockFate : MockState -> Array MockState -> MockState
-        mockFate _ _ =
-            MockState 0
+        mockRule : List (Cell.Rule MockState)
+        mockRule =
+            [ Cell.Match
+                (List.range 0 6)
+                (MockState 0)
+                (MockState 0)
+                (MockState 0)
+            ]
     in
     describe "Values held by grid"
         [ test "Have squared grid"
@@ -48,12 +50,12 @@ manyStates =
                             |> Grid.makeFromList
                                 (Dimension.Two 3 3)
                                 (MockState 0)
-                                mockFate
+                                mockRule
                 in
                 Grid.generate
                     (Dimension.Two 3 3)
                     (MockState 0)
-                    mockFate
+                    mockRule
                     mockSeeder
                     |> Just
                     |> Expect.equal expected
@@ -69,12 +71,12 @@ manyStates =
                             |> Grid.makeFromList
                                 (Dimension.Two 2 3)
                                 (MockState 0)
-                                mockFate
+                                mockRule
                 in
                 Grid.generate
                     (Dimension.Two 2 3)
                     (MockState 0)
-                    mockFate
+                    mockRule
                     mockSeeder
                     |> Just
                     |> Expect.equal expected
@@ -91,12 +93,12 @@ manyStates =
                             |> Grid.makeFromList
                                 (Dimension.Two 3 2)
                                 (MockState 0)
-                                mockFate
+                                mockRule
                 in
                 Grid.generate
                     (Dimension.Two 3 2)
                     (MockState 0)
-                    mockFate
+                    mockRule
                     mockSeeder
                     |> Just
                     |> Expect.equal expected
@@ -108,7 +110,7 @@ manyStates =
                     |> Grid.makeFromList
                         (Dimension.Two 10 10)
                         (MockState 0)
-                        mockFate
+                        mockRule
                     |> Maybe.map
                         (Expect.all
                             [ \asset ->
@@ -186,7 +188,7 @@ manyStates =
                     |> Grid.makeFromList
                         (Dimension.Two 8 10)
                         (MockState 0)
-                        mockFate
+                        mockRule
                     |> Maybe.map
                         (Expect.all
                             [ \asset ->
@@ -264,7 +266,7 @@ manyStates =
                     |> Grid.makeFromList
                         (Dimension.Two 10 8)
                         (MockState 0)
-                        mockFate
+                        mockRule
                     |> Maybe.map
                         (Expect.all
                             [ \asset ->
@@ -334,48 +336,5 @@ manyStates =
                             ]
                         )
                     |> Maybe.withDefault (Expect.fail "Grid couldn't be generated")
-            )
-        ]
-
-
-runStates : Test
-runStates =
-    let
-        mockFate : MockState -> Array MockState -> MockState
-        mockFate =
-            Array.foldl (\(MockState neighbour) (MockState me) -> MockState (neighbour + me))
-    in
-    describe "Run states"
-        [ test "Define the state as a sum of neighbours and self"
-            (\_ ->
-                let
-                    skycrapper : Maybe (Grid.Grid MockState)
-                    skycrapper =
-                        [ [ MockState 0, MockState 1 ]
-                        , [ MockState 0, MockState 1 ]
-                        , [ MockState 0, MockState 1 ]
-                        , [ MockState 0, MockState 1 ]
-                        ]
-                            |> List.concat
-                            |> Grid.makeFromList
-                                (Dimension.make 4 2)
-                                (MockState 0)
-                                mockFate
-
-                    collapsed : Maybe (Grid.Grid MockState)
-                    collapsed =
-                        [ [ MockState 2, MockState 2 ]
-                        , [ MockState 3, MockState 3 ]
-                        , [ MockState 3, MockState 3 ]
-                        , [ MockState 2, MockState 2 ]
-                        ]
-                            |> List.concat
-                            |> Grid.makeFromList
-                                (Dimension.make 4 2)
-                                (MockState 0)
-                                mockFate
-                in
-                Maybe.map Grid.run skycrapper
-                    |> Expect.equal collapsed
             )
         ]

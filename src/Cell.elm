@@ -1,8 +1,10 @@
 module Cell exposing
-    ( State(..)
+    ( Rule(..)
+    , State(..)
+    , abideByTheRule
+    , b36s23
+    , b3s23
     , fateOf
-    , shouldACellDie
-    , shouldACellResurrect
     )
 
 import Array exposing (Array)
@@ -14,36 +16,87 @@ type State
     | Deceased -- a corpse's lying there
 
 
-shouldACellDie : Array State -> Bool
-shouldACellDie =
-    Array.filter ((==) Live)
-        >> Array.length
-        >> Basic.flip List.member [ 2, 3 ]
-        >> not
+b3s23 : List (Rule State)
+b3s23 =
+    [ Match [ 2, 3 ] Live Live Live
+    , Match [ 3 ] Live Deceased Live
+    , Always Deceased
+    ]
 
 
-shouldACellResurrect : Array State -> Bool
-shouldACellResurrect =
-    Array.filter ((==) Live)
-        >> Array.length
-        >> (==) 3
+b36s23 : List (Rule State)
+b36s23 =
+    [ Match [ 3, 6 ] Live Deceased Live
+    , Match [ 2, 3 ] Live Live Deceased
+    , Always Deceased
+    ]
 
 
-fateOf : State -> Array State -> State
-fateOf cellState neighbourStates =
-    case cellState of
-        Live ->
-            case shouldACellDie neighbourStates of
-                True ->
-                    Deceased
 
-                False ->
-                    cellState
+-- Match [count] neighbourState currentState newState
 
-        Deceased ->
-            case shouldACellResurrect neighbourStates of
-                True ->
-                    Live
 
-                False ->
-                    cellState
+type Rule state
+    = Match (List Int) state state state
+    | Always state
+
+
+fateOf :
+    List (Rule state)
+    -> state
+    -> Array state
+    -> state
+fateOf rules cellState neighbourStateList =
+    case rules of
+        rule :: remains ->
+            if ruleApplies rule cellState neighbourStateList then
+                abideByTheRule rule cellState neighbourStateList
+
+            else
+                fateOf remains cellState neighbourStateList
+
+        [] ->
+            cellState
+
+
+ruleApplies :
+    Rule state
+    -> state
+    -> Array state
+    -> Bool
+ruleApplies rule cellState neighbourStateList =
+    case rule of
+        Match neighbourCount neighbourState fromState toState ->
+            fromState
+                == cellState
+                && (neighbourStateList
+                        |> Array.filter ((==) neighbourState)
+                        |> Array.length
+                        |> Basic.flip List.member neighbourCount
+                   )
+
+        Always _ ->
+            True
+
+
+abideByTheRule :
+    Rule state
+    -> state
+    -> Array state
+    -> state
+abideByTheRule rule cellState neighbourStateList =
+    case rule of
+        Match neighbourCount neighbourState fromState toState ->
+            if
+                neighbourStateList
+                    |> Array.filter ((==) neighbourState)
+                    |> Array.length
+                    |> Basic.flip List.member neighbourCount
+            then
+                toState
+
+            else
+                cellState
+
+        Always toState ->
+            toState
