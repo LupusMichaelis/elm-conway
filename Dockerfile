@@ -31,6 +31,7 @@ WORKDIR ${ANVIL}
 COPY elm.json elm-package.json package.json LICENSE ${ANVIL}/
 COPY src/ ${ANVIL}/src/
 COPY assets/ ${ANVIL}/assets/
+COPY tests/ ${ANVIL}/tests/
 RUN chown -R ${USER}:${USER} ${ANVIL}
 
 USER ${USER}
