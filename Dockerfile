@@ -28,6 +28,9 @@ RUN mkdir ${HOME}/bin
 RUN mkdir ${ANVIL}
 WORKDIR ${ANVIL}
 
+VOLUME ${ANVIL}/src
+VOLUME ${ANVIL}/tests
+
 COPY elm.json elm-package.json package.json LICENSE ${ANVIL}/
 COPY src/ ${ANVIL}/src/
 COPY assets/ ${ANVIL}/assets/

@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "elm-test",
+    "test": "elm-test --watch",
     "coverage": "elm-coverage",
     "start": "elm-live -h 0.0.0.0 src/Conway.elm"
   },

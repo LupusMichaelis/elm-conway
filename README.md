@@ -23,4 +23,8 @@ docker run --rm -it conway npm test
 
 # Access coverage report
 docker run --rm -it conway npm run coverage
+
+# For development sessions:
+docker run --rm -it -v $PWD/src:/conway/anvil/src:rw -v $PWD/tests:/conway/anvil/tests conway
+docker run --rm -it -v $PWD/src:/conway/anvil/src:rw -v $PWD/tests:/conway/anvil/tests conway npm test
 ```
