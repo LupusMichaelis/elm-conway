@@ -1,41 +1,18 @@
-FROM debian:buster
+FROM lupusmichaelis/alpine-elm-0.19
 
-LABEL description="Debian Buster GNU/Linux with Elm"
+LABEL description="Conway's Game of Life"
 
-ARG HOME
 ARG USER
 ARG UID
-ARG ANVIL
+ARG GID
 
-RUN sed -i 's/main/main non-free contrib/g' /etc/apt/sources.list
-# libtinfo5 : elm dependency
-RUN apt update \
-    && apt install -y \
-		bash \
-		libtinfo5 \
-		npm \
-	&& apt-get clean
-RUN adduser --uid ${UID} --disabled-password --home ${HOME} ${USER}
-
-ENV PATH "${HOME}/bin:$PATH"
-ENV PATH "${ANVIL}/node_modules/.bin:$PATH"
-
-RUN echo \
-	'export PS1="\w $ "'\
-	> ${HOME}/.bashrc
-
-RUN mkdir ${HOME}/bin
-RUN mkdir ${ANVIL}
-WORKDIR ${ANVIL}
-
-VOLUME ${ANVIL}/src
-VOLUME ${ANVIL}/tests
+USER root
 
 COPY elm.json elm-package.json package.json LICENSE ${ANVIL}/
 COPY src/ ${ANVIL}/src/
 COPY assets/ ${ANVIL}/assets/
 COPY tests/ ${ANVIL}/tests/
-RUN chown -R ${USER}:${USER} ${ANVIL}
+RUN chown -R ${UID}:${GID} ${ANVIL}
 
 USER ${USER}
 
