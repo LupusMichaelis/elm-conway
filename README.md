@@ -8,23 +8,33 @@ Any advice on how I designed the piece is welcome.
 ## Usage
 
 ```
+{
+	echo LP_DEV_UID=$(id -u)
+	echo LP_DEV_GID=$(id -g)
+	echo LP_DEV_USER=conway
+	echo ANVIL=/conway/anvil
+} > .env
+
 docker build . \
-    --build-arg HOME=/conway \
-    --build-arg UID \
-    --build-arg USER=conway \
-    --build-arg ANVIL=/conway/anvil \
     -t conway
 
 # Run the app
-docker run --rm -it conway
+docker run --env-file .env --rm -it conway
 
 # Run unit tests
-docker run --rm -it conway npm test
+docker run --env-file .env --rm -it conway npm test
 
 # Access coverage report
-docker run --rm -it conway npm run coverage
+docker run --env-file .env --rm -it conway npm run coverage
 
 # For development sessions:
-docker run --rm -it -v $PWD/src:/conway/anvil/src:rw -v $PWD/tests:/conway/anvil/tests conway
-docker run --rm -it -v $PWD/src:/conway/anvil/src:rw -v $PWD/tests:/conway/anvil/tests conway npm test
+docker run --env-file .env --rm -it \
+	-v $PWD/src:/conway/anvil/src:rw \
+	-v $PWD/tests:/conway/anvil/tests \
+	conway
+
+docker run --env-file .env --rm -it \
+	-v $PWD/src:/conway/anvil/src:rw \
+	-v $PWD/tests:/conway/anvil/tests \
+	conway npm test
 ```

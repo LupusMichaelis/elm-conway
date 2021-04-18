@@ -1,4 +1,4 @@
-FROM lupusmichaelis/alpine-elm:1.0.1
+FROM lupusmichaelis/alpine-elm:1.0.4
 
 LABEL description="Conway's Game of Life"
 
