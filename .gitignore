@@ -1,6 +1,7 @@
 .coverage/
 dist
 elm-stuff
+.export
 *.lock
 node_modules
 package-lock.json

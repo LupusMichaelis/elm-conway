@@ -98,6 +98,20 @@ chisel-bundle()
 		"$install_path"
 }
 
+chisel-export()
+{
+	local -r image_name="$1"
+	local -r image_tag="$2"
+
+	local -r image_full_name="$image_name:$image_tag"
+	local -r export_path="$install_path/.export"
+
+	mkdir -p "$export_path"
+	declare -r cid=$(docker create $image_full_name /bin/false)
+	docker cp "$cid:/index.html" "$export_path/index.html"
+	docker rm "$cid"
+}
+
 chisel-usage()
 {
 	cat <<-eos
@@ -107,6 +121,7 @@ chisel-usage()
 	$0 ip                       know which IPs are used
 
 	$0 bundle [name] [version]  bundle the app in a container the image
+	$0 export [name] [version]  export the HTML file
 	eos
 
 	exit 255
@@ -136,6 +151,9 @@ chisel-main()
 			;;
 		bundle)
 			chisel-bundle "$@"
+			;;
+		export)
+			chisel-export "$@"
 			;;
 		*)
 			chisel-usage
