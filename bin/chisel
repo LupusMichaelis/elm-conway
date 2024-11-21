@@ -84,6 +84,20 @@ chisel-ip()
 		done
 }
 
+chisel-bundle()
+{
+	local -r image_name="$1"
+	local -r image_tag="$2"
+
+	local -r image_full_name="$image_name:$image_tag"
+
+	docker build \
+		--file "$install_path/.docker/Dockerfile" \
+		--tag "$image_full_name" \
+		--target image \
+		"$install_path"
+}
+
 chisel-usage()
 {
 	cat <<-eos
@@ -91,6 +105,8 @@ chisel-usage()
 	$0 start                    deploy locally the project
 	$0 dc [docker compose args] tinker will local deployment
 	$0 ip                       know which IPs are used
+
+	$0 bundle [name] [version]  bundle the app in a container the image
 	eos
 
 	exit 255
@@ -117,6 +133,9 @@ chisel-main()
 			;;
 		ip)
 			chisel-ip
+			;;
+		bundle)
+			chisel-bundle "$@"
 			;;
 		*)
 			chisel-usage
