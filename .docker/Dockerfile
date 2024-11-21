@@ -4,7 +4,7 @@ FROM lupusmichaelis/alpine-elm:1.2.1 AS dev
 USER root
 COPY ../LICENSE $ANVIL/
 
-RUN lupusmichaelis-packaging-add uglify-js
+RUN lupusmichaelis-packaging-add uglify-js uglifycss
 
 VOLUME $ANVIL
 
@@ -29,24 +29,21 @@ RUN elm make src/Conway.elm --optimize --output=$ANVIL/public/conway.js
 RUN uglifyjs $ANVIL/public/conway.js \
 	--compress "pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe" \
 	| uglifyjs --mangle --output $ANVIL/public/conway.min.js
+RUN uglifycss $ANVIL/assets/grid.css --output  $ANVIL/public/conway.min.css
 
 RUN <<eos
-
+shopt -s lastpipe
+declare html
 cat <<eohtml > $ANVIL/public/index.html
 <!DOCTYPE html>
 <html>
   <body>
     <pre id='elm-conway'></pre>
-    <script>
-$(cat $ANVIL/public/conway.min.js)
-
+    <script>$(cat $ANVIL/public/conway.min.js)
     var app = Elm.Conway.init({
       node: document.getElementById('elm-conway')
-    });
-    </script>
-    <style>
-$(cat $ANVIL/assets/grid.css)
-    </style>
+    });</script>
+    <style>$(cat $ANVIL/public/conway.min.css)</style>
   </body>
 </html>
 eohtml
