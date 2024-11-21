@@ -1,0 +1,5 @@
+bin/*
+.docker/*compose.yml
+Dockerfile
+.git/
+.export/

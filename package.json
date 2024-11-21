@@ -8,6 +8,7 @@
   "scripts": {
     "test": "elm-test --watch",
     "coverage": "elm-coverage",
+    "build": "elm make src/Conway.elm",
     "start": "elm-live -h 0.0.0.0 -p 8080 src/Conway.elm"
   },
   "repository": "https://github.com/LupusMichaelis/elm-conway.git",

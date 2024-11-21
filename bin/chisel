@@ -1,0 +1,126 @@
+#!/bin/bash
+
+set -euo pipefail
+
+declare -r bin_path=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
+declare -xr install_path=$(realpath "$bin_path/../")
+declare -r project_name=conway-game-of-life
+
+is-truish()
+{
+	local -r target="$1"
+	case "$target" in
+		0|no|false)
+			false
+			;;
+		1|yes|true)
+			;&
+		*)
+			true
+	esac
+}
+
+[[ -v DEBUG  &&
+		-n "$DEBUG" ]] &&
+		is-truish "$DEBUG" &&
+		set -x ||
+		set +x
+
+chisel-exec-dc()
+{
+	export DOCKER_BUILDKIT=1
+	export COMPOSE_DOCKER_CLI_BUILD=1
+
+	chisel-dc-environment-init
+
+    exec docker compose \
+		--env-file "$install_path/.env" \
+        --project-name "$project_name" \
+        --file .docker/dev.compose.yml \
+        "$@"
+}
+
+chisel-dc-environment-init()
+{
+	local -r env_file="$install_path/.env"
+	if [ -f "$env_file" ]
+	then
+		printf "'%s' already exists, remove it if you want a new one\n" "$env_file" 1>&2
+	else
+		cat <<- eos > "$env_file"
+			LUPUSMICHAELIS_DEV_USER_ALIAS=$(id -u -n)
+			LUPUSMICHAELIS_DEV_UID=$(id -u)
+			LUPUSMICHAELIS_DEV_GID=$(id -g)
+		eos
+	fi
+}
+
+chisel-dc()
+{
+	export DOCKER_BUILDKIT=1
+	export COMPOSE_DOCKER_CLI_BUILD=1
+
+    docker compose \
+        --project-name "$project_name" \
+        --file .docker/dev.compose.yml \
+        "$@"
+}
+
+chisel-ip()
+{
+	local cid
+	local ip
+	chisel-exec-dc ps -q |
+		while read cid
+		do
+			set +e
+			docker exec $cid hostname -i |
+				while read ip
+				do
+					local cname=$(docker inspect --format '{{ .Name }}' $cid)
+					echo "${cid:0-12} $cname https://$ip/"
+				done
+			set -e
+		done
+}
+
+chisel-usage()
+{
+	cat <<-eos
+	$0 env                      generate the .env file if it doesn't exist
+	$0 start                    deploy locally the project
+	$0 dc [docker compose args] tinker will local deployment
+	$0 ip                       know which IPs are used
+	eos
+
+	exit 255
+}
+
+chisel-main()
+{
+	if (( $# > 0 ))
+	then
+		local -r action=$1; shift
+	else
+		chisel-usage
+	fi
+
+	case "$action" in
+		env)
+			chisel-dc-environment-init
+			;;
+		dc)
+			chisel-exec-dc "$@"
+			;;
+		start)
+			chisel-exec-dc up --build -d --remove-orphans
+			;;
+		ip)
+			chisel-ip
+			;;
+		*)
+			chisel-usage
+	esac
+}
+
+chisel-main "$@"
