@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href='assets/grid.css' />
+  </head>
+  <body>
+    <pre id='elm-conway'></pre>
+    <script src='conway.js' defer type='application/javascript'>
+    </script>
+    <script>
+      window.onload = () =>
+      {
+        var app = Elm.Conway.init({
+          node: document.getElementById('elm-conway')
+        });
+      };
+    </script>
+  </body>
+</html>

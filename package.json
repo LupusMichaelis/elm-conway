@@ -9,7 +9,7 @@
     "test": "elm-test --watch",
     "coverage": "elm-coverage",
     "build": "elm make src/Conway.elm",
-    "start": "elm-live -h 0.0.0.0 -p 8080 src/Conway.elm"
+    "start": "elm-live src/Conway.elm --host 0.0.0.0 --port 80 --start-page public/index.html --hot -- --output=conway.js"
   },
   "repository": "https://github.com/LupusMichaelis/elm-conway.git",
   "author": "Mickaël Wolff",

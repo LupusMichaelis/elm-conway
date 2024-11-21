@@ -68,7 +68,6 @@ view model =
         , Controls.gridSlowDown model.speed
         , Controls.gridSwitch model.running
         , Controls.gridSpeedUp model.speed
-        , Controls.decorate
         ]
     }
 

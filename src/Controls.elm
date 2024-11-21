@@ -2,7 +2,6 @@ module Controls exposing
     ( DimensionMsg(..)
     , Msg(..)
     , Speed(..)
-    , decorate
     , gridCanvas
     , gridDimensioner
     , gridRecycler
@@ -49,21 +48,6 @@ type Msg
     | ToggleRunning
     | SlowDown
     | SpeedUp
-
-
-
--- hack to load CSS
-
-
-decorate : Html Msg
-decorate =
-    H.node
-        "link"
-        [ HA.href "/assets/grid.css"
-        , HA.rel "stylesheet"
-        , HA.type_ "text/css"
-        ]
-        []
 
 
 gridDimensioner : Dimension.Two -> Html Msg
