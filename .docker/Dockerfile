@@ -30,14 +30,33 @@ RUN uglifyjs $ANVIL/public/conway.js \
 	--compress "pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe" \
 	| uglifyjs --mangle --output $ANVIL/public/conway.min.js
 
+RUN <<eos
+
+cat <<eohtml > $ANVIL/public/index.html
+<!DOCTYPE html>
+<html>
+  <body>
+    <pre id='elm-conway'></pre>
+    <script>
+$(cat $ANVIL/public/conway.min.js)
+
+    var app = Elm.Conway.init({
+      node: document.getElementById('elm-conway')
+    });
+    </script>
+    <style>
+$(cat $ANVIL/assets/grid.css)
+    </style>
+  </body>
+</html>
+eohtml
+
+eos
+
 ################################################################################
 FROM scratch AS image
 
 COPY --from=builder /home/anvil/public/index.html /
-COPY --from=builder /home/anvil/assets/ /assets/
-COPY --from=builder /home/anvil/public/conway.min.js /
-
-#COPY --from=builder /home/anvil/combined.html /index.html
 
 ################################################################################
 FROM lupusmichaelis/alpine-lighttpd-secure:1.2.3 AS secure-static
@@ -45,6 +64,3 @@ FROM lupusmichaelis/alpine-lighttpd-secure:1.2.3 AS secure-static
 COPY ../.docker/security-header.conf $LIGHTTPD_CONF_DIR/security-header.conf
 
 COPY --from=image /index.html $LIGHTTPD_WWW_ROOT/
-COPY --from=image /conway.min.js $LIGHTTPD_WWW_ROOT/
-COPY --from=image /assets $LIGHTTPD_WWW_ROOT/assets
-#COPY --from=image /conway.min.js $LIGHTTPD_WWW_ROOT/
