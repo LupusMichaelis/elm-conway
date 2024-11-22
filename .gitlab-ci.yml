@@ -1,0 +1,29 @@
+image: alpine:3.20.3
+
+stages:
+  - build
+
+variables:
+  GITLAB_REGISTRY: registry.gitlab.com
+  GITLAB_USER: lupusmichaelis
+  APP_VERSION: 0.0.4
+  APP_IMAGE_NAME: conway-game-of-life
+  APP_IMAGE: $CI_REGISTRY_IMAGE/$APP_IMAGE_NAME
+  APP_IMAGE_CURRENT: $APP_IMAGE:$CI_COMMIT_SHORT_SHA
+  APP_IMAGE_LATEST: $APP_IMAGE:latest
+  # Add this to Settings > CI/CD > Variables
+  GITLAB_LUPUSMICHAELIS_SSH: # As a file
+
+build:
+  image: docker:27.3.1
+  stage: build
+  before_script:
+    - apk update && apk add bash
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+  script:
+    - bin/chisel bundle "$APP_IMAGE" "$CI_COMMIT_SHORT_SHA"
+    - docker image tag "$APP_IMAGE_CURRENT" "$APP_IMAGE_LATEST"
+    - docker image tag "$APP_IMAGE_CURRENT" "$APP_IMAGE:$APP_VERSION"
+    - docker push --all-tags "$APP_IMAGE"
+  services:
+    - docker:27.3.1-dind
