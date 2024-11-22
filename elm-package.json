@@ -1,5 +1,5 @@
 {
-    "version": "0.0.3",
+    "version": "0.0.4",
     "summary": "Conway's game of life",
     "repository": "https://github.com/LupusMichaelis/elm-conway.git",
     "license": "AGPL",
