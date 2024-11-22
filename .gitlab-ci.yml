@@ -2,6 +2,7 @@ image: alpine:3.20.3
 
 stages:
   - build
+  - deploy
 
 variables:
   GITLAB_REGISTRY: registry.gitlab.com
@@ -11,8 +12,16 @@ variables:
   APP_IMAGE: $CI_REGISTRY_IMAGE/$APP_IMAGE_NAME
   APP_IMAGE_CURRENT: $APP_IMAGE:$CI_COMMIT_SHORT_SHA
   APP_IMAGE_LATEST: $APP_IMAGE:latest
-  # Add this to Settings > CI/CD > Variables
-  GITLAB_LUPUSMICHAELIS_SSH: # As a file
+  # Add those variables to Settings > CI/CD > Variables
+  GITLAB_LUPUSMICHAELIS_SSH: # As a file, generate with bin/chisel key
+  SSH_USER:
+  SSH_HOST:
+  DEPLOY_TARGET_DIR:
+  DOMAIN_USER:
+  DOMAIN_PUBLIC_WEB_DIR:
+
+services:
+  - docker:27.3.1-dind
 
 build:
   image: docker:27.3.1
@@ -20,10 +29,39 @@ build:
   before_script:
     - apk update && apk add bash
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+  after_script:
+    - docker logout
   script:
     - bin/chisel bundle "$APP_IMAGE" "$CI_COMMIT_SHORT_SHA"
     - docker image tag "$APP_IMAGE_CURRENT" "$APP_IMAGE_LATEST"
     - docker image tag "$APP_IMAGE_CURRENT" "$APP_IMAGE:$APP_VERSION"
     - docker push --all-tags "$APP_IMAGE"
-  services:
-    - docker:27.3.1-dind
+
+deploy:
+  image: docker:27.3.1
+  stage: deploy
+  variables:
+    SYSUSER: mickael-wolff
+    # Database access, add values in GitLab > Project > Settings > CI/CD
+    APP_DB_CLIENT: 172.21.50.%
+    APP_DB_HOST:
+    APP_DB_USER:
+    APP_DB_PASS:
+    APP_DB_NAME:
+    APP_DB_PORT:
+  before_script:
+    - apk update && apk add bash
+    - echo chmod 0400 "$GITLAB_LUPUSMICHAELIS_SSH"
+    - chmod 0400 "$GITLAB_LUPUSMICHAELIS_SSH"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+  after_script:
+    - docker logout
+  script:
+    - bin/chisel export "$APP_IMAGE" "$APP_VERSION";
+    - eval $(ssh-agent)
+    - ssh-add "$GITLAB_LUPUSMICHAELIS_SSH"
+    - scp -o StrictHostKeyChecking=no
+        .export/index.html
+        "$SSH_USER@$SSH_HOST:$DOMAIN_PUBLIC_WEB_DIR/";
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
